@@ -2,6 +2,7 @@
 #
 # libtcod python tutorial
 #
+#hi bim
 
 import libtcodpy as libtcod
 import math
