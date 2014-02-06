@@ -2537,7 +2537,7 @@ def new_game():
 	hunger_stat = 'Full'
 
 	#a warm welcoming message!
-	message('Welcome Horse!', libtcod.red)
+	message('Welcome to CyberRogue!', libtcod.red)
 
 
 	#initial equipment: a knife, pistol
