@@ -1732,17 +1732,17 @@ def hacking():
 			message('You do not have enough charge')
 	elif choice == 1:
 		if player.fighter.charge >= 10:
-			if player.fighter.hp == player.fighter.max_hp:
-				message('You are already at full health')
-			else:
 				cast_overload()
 				player.fighter.charge -= 10
 		else:
 			message('You do not have enough charge')
 	elif choice == 2:
 		if player.fighter.charge >= 10:
-			cast_heal()
-			player.fighter.charge -= 10
+			if player.fighter.hp != player.fighter.max_hp:
+				cast_heal()
+				player.fighter.charge -= 10
+			else:
+				message('You are already at full health!')
 		else:
 			message('You do not have enough charge')
 	elif choice ==3:
