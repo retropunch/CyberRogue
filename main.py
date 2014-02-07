@@ -91,8 +91,6 @@ class Tile:
 		self.block_sight = block_sight
 
 
-
-
 class Rect:
 	#a rectangle on the map. used to characterize a room.
 	def __init__(self, x, y, w, h):
@@ -1427,9 +1425,11 @@ def place_objects(room):
 	item_chances['dagger'] = from_dungeon_level([[5, 4], [15, 6]])
 	item_chances['nanosteelblade'] = from_dungeon_level([[5, 6], [15, 8]])
 	item_chances['combatblade'] = from_dungeon_level([[5, 9], [8, 12]])
+	item_chances['katana'] = from_dungeon_level([[5, 12], [10, 15]])
 	item_chances['revolver'] = from_dungeon_level([[5, 4], [10, 6]])
 	item_chances['vk19'] = from_dungeon_level([[5, 6], [8, 10]])
 	item_chances['vkp5'] = from_dungeon_level([[5, 6], [8, 10]])
+	item_chances['vk180'] = from_dungeon_level([[5, 12], [10, 15]])
 
 	##Armour:
 	item_chances['meshlegs'] = from_dungeon_level([[5, 3], [8, 5]])
@@ -1508,6 +1508,12 @@ def place_objects(room):
 				item = Object(x, y, '/', 'a combat blade', libtcod.darker_sky, make='Vorikov',
 							  desc='a Vorikov Combat Blade, Deadly but bulky', equipment=equipment_component)
 
+			elif choice == 'Katana':
+				#create a dagger
+				equipment_component = Equipment(slot='Right hand', power_bonus=8, dex_bonus=1)
+				item = Object(x, y, '/', 'a katana', libtcod.darkest_sky, make=' ',
+							  desc='a Katana, Deadly and accurate', equipment=equipment_component)
+
 			elif choice == 'revolver':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=3)
@@ -1525,6 +1531,12 @@ def place_objects(room):
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=6, firearm_acc_bonus=-2)
 				item = Object(x, y, 'f', 'VK-P5', libtcod.darker_sky, make='Vorikov',
 							  desc='a Vorikov VK-P5. A powerful but innacurate peppergun.', value=150, equipment=equipment_component)
+
+			elif choice == 'vk180':
+				#create a dagger
+				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=9, dex_bonus=-3)
+				item = Object(x, y, 'f', 'VK-180', libtcod.darkest_sky, make='Vorikov',
+							  desc='a Vorikov VK-180, an immensely powerful heavy rifle which completely cripples your dexterity', value=300, equipment=equipment_component)
 
 			## Armour:
 
