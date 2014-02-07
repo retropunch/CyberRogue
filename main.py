@@ -1733,20 +1733,20 @@ def hacking():
 			message('You do not have enough charge')
 	elif choice == 1:
 		if player.fighter.charge >= 10:
-			if player.fighter.hp == player.fighter.max_hp:
-				message('You are already at full health')
-			else:
 				cast_overload()
 				player.fighter.charge -= 10
 		else:
 			message('You do not have enough charge')
 	elif choice == 2:
 		if player.fighter.charge >= 10:
-			cast_heal()
-			player.fighter.charge -= 10
+			if player.fighter.hp != player.fighter.max_hp:
+				cast_heal()
+				player.fighter.charge -= 10
+			else:
+				message('You are already at full health!')
 		else:
 			message('You do not have enough charge')
-	elif choice ==3:
+	elif choice == 3:
 		message('You cancel the hack')
 
 
@@ -2080,8 +2080,8 @@ def object_destroy(obj):
 def open_box(obj):
 	global game_turn, cred
 	message('you have opened the box!')
-	x=0
-	y=0
+	x = 0
+	y = 0
 
 	box_chances = {}
 	box_chances['heal'] = 35  #healing potion always shows up, even if all other items have 0 chance
@@ -2441,7 +2441,7 @@ def main_menu():
 		#show the game's title, and some credits!
 		libtcod.console_set_default_foreground(0, libtcod.light_yellow)
 		libtcod.console_print_ex(0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 4, libtcod.BKGND_NONE, libtcod.CENTER,
-								 'CyberPunkRL')
+								 'CyberRogue')
 		libtcod.console_print_ex(0, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 2, libtcod.BKGND_NONE, libtcod.CENTER, ' ')
 
 		#show options and wait for the player's choice
@@ -2449,7 +2449,7 @@ def main_menu():
 
 		if choice == 0:  #new game
 			#while not libtcod.console_is_window_closed():
-			choice = menu('Choose a class:', ['Brawler', 'Marksman', 'Hacker', 'Quit'], 24)
+			choice = menu('Choose a class:', ['Brawler', 'Marksman', 'Hacker', 'Quit'],34)
 			if choice == 0:  #new game
 					pwr = 5
 					sht = 1
@@ -2749,7 +2749,7 @@ def play_game():
 
 
 libtcod.console_set_custom_font('Bisasam15x15.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
-libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'Cyberpunk', False)
+libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'CyberRogue', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 con = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
