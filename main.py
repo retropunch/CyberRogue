@@ -793,24 +793,24 @@ def make_map():
 				if maps.hubmap[y][x] == ' ':
 					map[x][y] = Tile(False, False, False, False, False)
 
-				if maps.hubmap[y][x] == '~':
+				elif maps.hubmap[y][x] == '~':
 					map[x][y] = Tile(False, True, False, False, False)
 
-				if maps.hubmap[y][x] == '_':
+				elif maps.hubmap[y][x] == '_':
 					map[x][y] = Tile(False, False, True, False, False)
 					furniture_component = Furniture(nouse)
 					furniture = Object(x, y, 178, 'bar', libtcod.brass, desc='bar', blocks=True, furniture=furniture_component)
 					objects.append(furniture)
 
-				if maps.hubmap[y][x] == 'X':
+				elif maps.hubmap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
 					furniture = Object(x, y, 'X', 'door', libtcod.brass, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
-				if maps.hubmap[y][x] == 'W':
-				    map[x][y] = Tile(False, False, False, False, True)
+				elif maps.hubmap[y][x] == 'W':
+					map[x][y] = Tile(False, False, False, False, True)
 
 
 
