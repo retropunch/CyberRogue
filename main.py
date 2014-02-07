@@ -63,7 +63,7 @@ HUNGER_BASE = 5
 
 FOV_ALGO = 0  #default FOV algorithm
 FOV_LIGHT_WALLS = True  #light walls or not
-TORCH_RADIUS = 10
+TORCH_RADIUS = 8
 
 LIMIT_FPS = 25  #20 frames-per-second maximum
 
@@ -173,17 +173,17 @@ class Object:
 	#    dy = int(round(dy / distance))
 	#    self.move(dx, dy)
 
-	def move_away(self, target_x, target_y):
-		#vector from this object to the target, and distance
-		dx = target_x + self.x
-		dy = target_y + self.y
-		distance = math.sqrt(dx ** 2 + dy ** 2)
+	#def move_away(self, target_x, target_y):
+	#	#vector from this object to the target, and distance
+	#	dx = target_x + self.x
+	#	dy = target_y + self.y
+	#	distance = math.sqrt(dx ** 2 + dy ** 2)
 
-		#normalize it to length 1 (preserving direction), then round it and
-		#convert to integer so the movement is restricted to the map grid
-		dx = int(round(dx / distance))
-		dy = int(round(dy / distance))
-		self.move(dx, dy)
+	#	#normalize it to length 1 (preserving direction), then round it and
+	#	#convert to integer so the movement is restricted to the map grid
+	#	dx = int(round(dx / distance))
+	#	dy = int(round(dy / distance))
+	#	self.move(dx, dy)
 
 	def distance_to(self, other):
 		#return the distance to another object
@@ -290,6 +290,7 @@ class Fighter:
 		bonus = sum(equipment.max_hp_bonus for equipment in get_all_equipped(self.owner))
 		return self.base_max_hp + bonus
 
+
 	def move_towards(self, target_x, target_y):
 		#get yo' a-star on in a fistful of code?!  this lib is awesome!
 
@@ -310,6 +311,37 @@ class Fighter:
 
 		if reblock:
 			libtcod.map_set_properties(fov_map, target_x, target_y, True, False) #kludge moment over. resume normal viewing!
+
+		if not libtcod.path_is_empty(self.my_path):
+			x, y = libtcod.path_walk(self.my_path,True)
+			if x and not is_blocked(x,y) and libtcod.path_size(self.my_path) < 10: #more than ten is too far, don't worry about it
+				libtcod.map_set_properties(fov_map, self.owner.x, self.owner.y, True, True)
+				self.owner.x = x
+				self.owner.y = y
+				libtcod.map_set_properties(fov_map, x, y, True, False)
+			else:
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+
+	def move_away(self, target_x, target_y):
+		#get yo' a-star on in a fistful of code?!  this lib is awesome!
+
+		#if no path exists yet, get right onto that, stat!
+		if self.my_path is 0:
+			self.my_path = libtcod.path_new_using_map(fov_map, 1.0)
+
+		reblock = False
+
+		#need some logic here...constantly refresh path seems omniscient and computationally expensive
+
+		if not libtcod.map_is_walkable(fov_map, target_x, target_y):
+			reblock = True
+
+		libtcod.map_set_properties(fov_map, target_x, target_y, True, True)	#momentarily set the target to unblocked so the pathing works. kludgy, I know, but easier than writing my own a*!!!!
+
+		libtcod.path_compute(self.my_path, self.owner.x, self.owner.y, target_x+10, target_y+20)
+
+		if reblock:
+			libtcod.map_set_properties(fov_map, target_x+10, target_y+20, True, False) #kludge moment over. resume normal viewing!
 
 		if not libtcod.path_is_empty(self.my_path):
 			x, y = libtcod.path_walk(self.my_path,True)
@@ -521,8 +553,60 @@ class BasicMonster:
 					monster.fighter.lastx = player.x + libtcod.random_get_int(0, -TORCH_RADIUS, TORCH_RADIUS)
 					monster.fighter.lasty = player.y + libtcod.random_get_int(0, -TORCH_RADIUS, TORCH_RADIUS)
 				elif monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty:
- 					monster.fighter.lastx = None
- 					monster.fighter.lasty = None
+					monster.fighter.lastx = None
+					monster.fighter.lasty = None
+
+
+class CleverMonster:
+	def take_turn(self):
+		global game_turn
+		monster = self.owner
+		lowhp = 20
+		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+			#if sees player, stores location
+			monster.fighter.lastx = player.x
+			monster.fighter.lasty = player.y
+
+			if monster.fighter.ammo > 0:
+				if monster.distance_to(player) >= 3 and monster.fighter.hp > lowhp:
+					monster.fighter.shoot(player)
+					monster.fighter.ammo -= 1
+				elif monster.distance_to(player) >= 2 and monster.fighter.hp > lowhp:
+					monster.fighter.move_towards(player.x, player.y)
+				elif player.fighter.hp > 0 and monster.fighter.hp > lowhp:
+					monster.fighter.attack(player)
+				elif player.fighter.hp > 0 and monster.fighter.hp < lowhp:
+					monster.fighter.move_away(player.x, player.y)
+				elif monster.distance_to(player) >= 2 and monster.fighter.hp < lowhp:
+					monster.fighter.move_away(player.x, player.y)
+
+			else:
+				if monster.distance_to(player) >= 2 and monster.fighter.hp > lowhp:
+					monster.fighter.move_towards(player.x, player.y)
+				elif monster.distance_to(player) >= 2 and monster.fighter.hp < lowhp:
+					monster.fighter.move_away(player.x, player.y)
+				elif player.fighter.hp > 0 and monster.fighter.hp > lowhp:
+					monster.fighter.attack(player)
+				elif player.fighter.hp > 0 and monster.fighter.hp < lowhp:
+					monster.fighter.move_away(player.x, player.y)
+
+		else:
+			#if hasn't seen ever player, random moving
+			if monster.fighter.lastx == None and monster.fighter.lasty == None:
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+			else:
+				#if seen player, move towards the location
+				monster.fighter.move_towards(monster.fighter.lastx, monster.fighter.lasty)
+				#same location now where last saw player, set location to none so it resumes normal activity
+				if monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty and monster.distance_to(player) <= TORCH_RADIUS * 1.5:
+					monster.fighter.lastx = player.x + libtcod.random_get_int(0, -TORCH_RADIUS/2, TORCH_RADIUS/2)
+					monster.fighter.lasty = player.y + libtcod.random_get_int(0, -TORCH_RADIUS/2, TORCH_RADIUS/2)
+				elif monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty and monster.distance_to(player) <= TORCH_RADIUS * 2:
+					monster.fighter.lastx = player.x + libtcod.random_get_int(0, -TORCH_RADIUS, TORCH_RADIUS)
+					monster.fighter.lasty = player.y + libtcod.random_get_int(0, -TORCH_RADIUS, TORCH_RADIUS)
+				elif monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty:
+					monster.fighter.lastx = None
+					monster.fighter.lasty = None
 
 
 class BasicHologram:
@@ -1193,6 +1277,7 @@ def render_all():
 							libtcod.console_set_char_background(con, x, y, libtcod.darkest_blue, libtcod.BKGND_SET)
 						else:
 							libtcod.console_set_char_background(con, x, y, color_dark_ground, libtcod.BKGND_SET)
+
 				else:
 					#it's visible
 					if wall:
@@ -1278,7 +1363,7 @@ def place_monsters(room):
 	monster_chances ={}
 	monster_chances['thug'] = from_dungeon_level([[80, 2], [40, 5], [10,9], [0, 12]])   #thug always shows up, even if all other monsters have 0 chance
 	monster_chances['thugboss'] = from_dungeon_level([[10, 3], [15, 5], [10, 7], [0,12]])
-	monster_chances['hologram'] = from_dungeon_level([[0, 1], [10, 4]])
+	#monster_chances['hologram'] = from_dungeon_level([[0, 1], [10, 4]])
 	monster_chances['mutant'] = from_dungeon_level([[15, 4], [30, 6], [40, 9]])
 	monster_chances['fastmutant'] = from_dungeon_level([[5, 5], [10, 8], [20, 11]])
 	#robots:
@@ -1302,28 +1387,28 @@ def place_monsters(room):
 				#create an orc
 				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=0, power=4, dex=2, accuracy=4, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=35, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
-				ai_component = BasicMonster()
+				ai_component = BasicShooter()
 
 				monster = Object(x, y, 't', 'Thug', libtcod.green, desc='a bloodthirsty thug',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
 
 			if choice == 'thugboss':
 				#create an orc
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=30, defense=1, power=4, dex=2, accuracy=6, firearmdmg=4, firearmacc=4,
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=40, defense=1, power=4, dex=2, accuracy=6, firearmdmg=4, firearmacc=4,
 											eloyalty=0, vloyalty=0, ammo=2, charge=0, xp=70, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=2)
-				ai_component = BasicShooter()
+				ai_component = CleverMonster()
 
 				monster = Object(x, y, 'T', 'Thug Lieutenant', libtcod.green, desc='a thug which has risen to the rank of Lieutenant, armed and vaugely intelligent',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
 
-			if choice == 'hologram':
-				#create an hologram
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=10, defense=0, power=0, dex=6, accuracy=0, firearmdmg=0, firearmacc=0,
-											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=70, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
-				ai_component = BasicHologram()
-
-				monster = Object(x, y, 'H', 'hologram', libtcod.green, desc='an annoying though harmless hologram that will stalk travellers through the dungeon',
-								 blocks=True, fighter=fighter_component, ai=ai_component)
+			#if choice == 'hologram':
+			#	#create an hologram
+			#	fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=10, defense=0, power=0, dex=6, accuracy=0, firearmdmg=0, firearmacc=0,
+			#								eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=70, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+			#	ai_component = BasicHologram()
+			#
+			#	monster = Object(x, y, 'H', 'hologram', libtcod.green, desc='an annoying though harmless hologram that will stalk travellers through the dungeon',
+			#					 blocks=True, fighter=fighter_component, ai=ai_component)
 
 			elif choice == 'mutant':
 				#create a troll
@@ -1680,7 +1765,7 @@ def factory():
 	for x,y in cultistplace:
 		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=5, power=8, dex=2, accuracy=5, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
-		ai_component = BasicMonster()
+		ai_component = CleverMonster()
 		monster = Object(x, y, 'c', 'Cultist', libtcod.light_red, desc='a Leucrocota Cultist',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
 		objects.append(monster)
