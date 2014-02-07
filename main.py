@@ -1722,7 +1722,7 @@ def hacking():
 			choice = menu('Choose a hack:\n',
 						['Confusion (-5 charge)',
 						'Overload (-10 charge)',
-						'Repair (-10 charge)'
+						'Repair (-10 charge)',
 						'Cancel'], LEVEL_SCREEN_WIDTH)
 
 	if choice == 0:
@@ -1733,8 +1733,11 @@ def hacking():
 			message('You do not have enough charge')
 	elif choice == 1:
 		if player.fighter.charge >= 10:
-			cast_overload()
-			player.fighter.charge -= 10
+			if player.fighter.hp == player.fighter.max_hp:
+				message('You are already at full health')
+			else:
+				cast_overload()
+				player.fighter.charge -= 10
 		else:
 			message('You do not have enough charge')
 	elif choice == 2:
