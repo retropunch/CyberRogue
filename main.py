@@ -794,24 +794,24 @@ def make_map():
 				if maps.hubmap[y][x] == ' ':
 					map[x][y] = Tile(False, False, False, False, False)
 
-				if maps.hubmap[y][x] == '~':
+				elif maps.hubmap[y][x] == '~':
 					map[x][y] = Tile(False, True, False, False, False)
 
-				if maps.hubmap[y][x] == '_':
+				elif maps.hubmap[y][x] == '_':
 					map[x][y] = Tile(False, False, True, False, False)
 					furniture_component = Furniture(nouse)
 					furniture = Object(x, y, 178, 'bar', libtcod.brass, desc='bar', blocks=True, furniture=furniture_component)
 					objects.append(furniture)
 
-				if maps.hubmap[y][x] == 'X':
+				elif maps.hubmap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
 					furniture = Object(x, y, 'X', 'door', libtcod.brass, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
-				if maps.hubmap[y][x] == 'W':
-				    map[x][y] = Tile(False, False, False, False, True)
+				elif maps.hubmap[y][x] == 'W':
+					map[x][y] = Tile(False, False, False, False, True)
 
 
 
@@ -847,24 +847,24 @@ def make_map():
 				if maps.factorymap[y][x] == ' ':
 					map[x][y] = Tile(False, False, False, False, False)
 
-				if maps.factorymap[y][x] == '~':
+				elif maps.factorymap[y][x] == '~':
 					map[x][y] = Tile(False, True, False, False, False)
 
-				if maps.factorymap[y][x] == '_':
+				elif maps.factorymap[y][x] == '_':
 					map[x][y] = Tile(False, False, True, False, False)
 					furniture_component = Furniture(nouse)
 					furniture = Object(x, y, 178, 'bar', libtcod.brass, desc='bar', blocks=True, furniture=furniture_component)
 					objects.append(furniture)
 
-				if maps.factorymap[y][x] == 'X':
+				elif maps.factorymap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
 					furniture = Object(x, y, 'X', 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
-				if maps.factorymap[y][x] == 'W':
-				    map[x][y] = Tile(False, False, False, False, True, False)
+				elif maps.factorymap[y][x] == 'W':
+					map[x][y] = Tile(False, False, False, False, True, False)
 
 
 		#as I can't be bothered to keep defining the stairs global, I've just put in an invisible one:
@@ -879,7 +879,7 @@ def make_map():
 
 	else:
 	#fill map with "blocked" tiles
-		map = [[Tile(True,False, False, False, True)
+		map = [[Tile(True, False, False, False, False)
 				for y in range(MAP_HEIGHT)]
 			   for x in range(MAP_WIDTH)]
 
