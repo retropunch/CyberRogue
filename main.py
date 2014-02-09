@@ -47,6 +47,7 @@ LIGHTNING_DAMAGE = 40
 LIGHTNING_RANGE = 5
 CONFUSE_RANGE = 8
 CONFUSE_NUM_TURNS = 10
+PARALYSE_NUM_TURNS = 4
 FIREBALL_RADIUS = 3
 FIREBALL_DAMAGE = 25
 
@@ -222,7 +223,7 @@ class Object:
 
 class Fighter:
 	#combat-related properties and methods (monster, player, NPC).
-	def __init__(self, my_path, lastx, lasty, hp, defense, power, dex, accuracy, charge, firearmdmg, firearmacc, eloyalty, vloyalty, ammo, xp, move_speed, flicker, robot=True, death_function=None, creddrop=None,):
+	def __init__(self, my_path, lastx, lasty, hp, defense, power, dex, accuracy, hack, charge, firearmdmg, firearmacc, eloyalty, vloyalty, ammo, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None,):
 		self.my_path = my_path
 		self.lastx = lastx
 		self.lasty = lasty
@@ -232,6 +233,7 @@ class Fighter:
 
 		self.base_defense = defense
 		self.base_power = power
+		self.base_hack = hack
 		self.base_dex = dex
 		self.base_accuracy = accuracy
 		self.base_charge = charge
@@ -250,6 +252,7 @@ class Fighter:
 		self.base_move_speed = move_speed
 		self.flicker = flicker
 		self.robot = robot
+		self.paralysis = paralysis
 
 	@property
 	def power(self):  #return actual power, by summing up the bonuses from all equipped items
@@ -260,6 +263,11 @@ class Fighter:
 	def defense(self):  #return actual defense, by summing up the bonuses from all equipped items
 		bonus = sum(equipment.defense_bonus for equipment in get_all_equipped(self.owner))
 		return self.base_defense + bonus
+
+	@property
+	def hack(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.hack_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_hack + bonus
 
 	@property
 	def eloyalty(self):  #return actual defense, by summing up the bonuses from all equipped items
@@ -363,11 +371,11 @@ class Fighter:
 				#make the target take some damage
 				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' for ' + str(damage) + ' hit points.')
 				target.fighter.take_damage(damage)
-
 			else:
 				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' but it has no effect!')
 		else:
 			message('The ' + self.owner.name.capitalize() + ' misses!')
+
 
 	def attack(self, target):
 		#a simple formula for attack damage
@@ -407,6 +415,24 @@ class Fighter:
 		self.hp += amount
 		if self.hp > self.max_hp:
 			self.hp = self.max_hp
+
+	def paralyse(self, target):
+		#paralyse the player
+		message('The dog bites you', libtcod.blue)
+		target.fighter.become_paralysed()
+
+	def become_paralysed(self):
+		global counter
+
+		if self.paralysis==False:
+			self.paralysis=True
+			counter = PARALYSE_NUM_TURNS
+		else:
+			if counter > 0:
+				counter-=1
+				take_game_turn()
+			else:
+				self.paralysis=False
 
 
 class Item:
@@ -483,9 +509,10 @@ class Furniture:
 
 class Equipment:
 	#an object that can be equipped, yielding bonuses. automatically adds the Item component.
-	def __init__(self, slot, power_bonus=0, defense_bonus=0, dex_bonus=0, accuracy_bonus=0, max_hp_bonus=0, firearm_dmg_bonus=0, eloyalty_bonus=0, vloyalty_bonus=0, firearm_acc_bonus=0):
+	def __init__(self, slot, power_bonus=0, defense_bonus=0, hack_bonus=0, dex_bonus=0, accuracy_bonus=0, max_hp_bonus=0, firearm_dmg_bonus=0, eloyalty_bonus=0, vloyalty_bonus=0, firearm_acc_bonus=0):
 		self.power_bonus = power_bonus
 		self.defense_bonus = defense_bonus
+		self.hack_bonus = hack_bonus
 		self.dex_bonus = dex_bonus
 		self.accuracy_bonus = accuracy_bonus
 		self.max_hp_bonus = max_hp_bonus
@@ -589,6 +616,44 @@ class CleverMonster:
 					monster.fighter.attack(player)
 				elif player.fighter.hp > 0 and monster.fighter.hp < lowhp:
 					monster.fighter.move_away(player.x, player.y)
+
+		else:
+			#if hasn't seen ever player, random moving
+			if monster.fighter.lastx == None and monster.fighter.lasty == None:
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+			else:
+				#if seen player, move towards the location
+				monster.fighter.move_towards(monster.fighter.lastx, monster.fighter.lasty)
+				#same location now where last saw player, set location to none so it resumes normal activity
+				if monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty and monster.distance_to(player) <= TORCH_RADIUS * 1.5:
+					monster.fighter.lastx = player.x + libtcod.random_get_int(0, -TORCH_RADIUS/2, TORCH_RADIUS/2)
+					monster.fighter.lasty = player.y + libtcod.random_get_int(0, -TORCH_RADIUS/2, TORCH_RADIUS/2)
+				elif monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty and monster.distance_to(player) <= TORCH_RADIUS * 2:
+					monster.fighter.lastx = player.x + libtcod.random_get_int(0, -TORCH_RADIUS, TORCH_RADIUS)
+					monster.fighter.lasty = player.y + libtcod.random_get_int(0, -TORCH_RADIUS, TORCH_RADIUS)
+				elif monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty:
+					monster.fighter.lastx = None
+					monster.fighter.lasty = None
+
+
+class BasicDog:
+	def take_turn(self):
+		global game_turn
+		monster = self.owner
+		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+			#if sees player, stores location
+			monster.fighter.lastx = player.x
+			monster.fighter.lasty = player.y
+
+			if monster.distance_to(player) >= 2:
+				monster.fighter.move_towards(player.x, player.y)
+				take_game_turn()
+			elif player.fighter.hp > 0:
+				if random.randint(0,100) < 10:
+					monster.fighter.paralyse(player)
+				else:
+					monster.fighter.attack(player)
+					take_game_turn()
 
 		else:
 			#if hasn't seen ever player, random moving
@@ -1366,6 +1431,7 @@ def place_monsters(room):
 	#monster_chances['hologram'] = from_dungeon_level([[0, 1], [10, 4]])
 	monster_chances['mutant'] = from_dungeon_level([[15, 4], [30, 6], [40, 9]])
 	monster_chances['fastmutant'] = from_dungeon_level([[5, 5], [10, 8], [20, 11]])
+	monster_chances['dog'] = from_dungeon_level([[80, 2], [0, 3]])
 	#robots:
 	monster_chances['manhack'] = from_dungeon_level([[20, 4], [25, 6], [30, 8]])
 	monster_chances['vturret'] = from_dungeon_level([[15, 5], [30, 7]])
@@ -1385,16 +1451,16 @@ def place_monsters(room):
 			choice = random_choice(monster_chances)
 			if choice == 'thug':
 				#create an orc
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=0, power=4, dex=2, accuracy=4, firearmdmg=0, firearmacc=0,
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=0, power=4, dex=2, hack=0, accuracy=4, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=35, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
-				ai_component = BasicShooter()
+				ai_component = BasicMonster()
 
 				monster = Object(x, y, 't', 'Thug', libtcod.green, desc='a bloodthirsty thug',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
 
 			if choice == 'thugboss':
 				#create an orc
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=40, defense=1, power=4, dex=2, accuracy=6, firearmdmg=4, firearmacc=4,
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=40, defense=1, power=4, dex=2, hack=0, accuracy=6, firearmdmg=4, firearmacc=4,
 											eloyalty=0, vloyalty=0, ammo=2, charge=0, xp=70, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=2)
 				ai_component = CleverMonster()
 
@@ -1412,7 +1478,7 @@ def place_monsters(room):
 
 			elif choice == 'mutant':
 				#create a troll
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=60, defense=2, power=10, dex=1, accuracy=4, firearmdmg=0, firearmacc=2,
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=60, defense=2, power=10, dex=1, hack=0, accuracy=4, firearmdmg=0, firearmacc=2,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=3, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 				ai_component = BasicMonster()
 
@@ -1421,16 +1487,26 @@ def place_monsters(room):
 
 			elif choice == 'fastmutant':
 				#create a troll
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=30, defense=2, power=9, dex=2, accuracy=5, firearmdmg=0, firearmacc=2,
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=30, defense=2, power=9, dex=2, hack=0, accuracy=5, firearmdmg=0, firearmacc=2,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=1, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 				ai_component = BasicMonster()
 
 				monster = Object(x, y, 'm', 'Fast Mutant', libtcod.darker_green, desc='a fast mutant, contaminated by radiation and failed biotech',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
+
+			elif choice == 'dog':
+				#create a troll
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=10, defense=2, power=2, dex=2, hack=0, accuracy=4, firearmdmg=0, firearmacc=0,
+											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=1, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+				ai_component = BasicDog()
+
+				monster = Object(x, y, 'd', 'Dog', libtcod.dark_green, desc='a rabid hound capable of sniffing out its victims',
+								 blocks=True, fighter=fighter_component, ai=ai_component)
+
 			##robots:
 			elif choice == 'manhack':
 				#create a manhack
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=15, defense=0, power=4, dex=3, accuracy=5, firearmdmg=0, firearmacc=2,
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=15, defense=0, power=4, dex=3, hack=0, accuracy=5, firearmdmg=0, firearmacc=2,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=50, move_speed=1, flicker=0, robot=True, death_function=robot_death, creddrop=0)
 				ai_component = BasicMonster()
 
@@ -1439,7 +1515,7 @@ def place_monsters(room):
 
 			elif choice == 'vturret':
 				#create a manhack
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=25, defense=2, power=0, dex=3, accuracy=5, firearmdmg=2, firearmacc=4,
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=25, defense=2, power=0, dex=3, hack=0, accuracy=5, firearmdmg=2, firearmacc=4,
 											eloyalty=0, vloyalty=0, ammo=6, charge=0, xp=50, move_speed=2, flicker=0, robot=True, death_function=robot_death, creddrop=0)
 				ai_component = BasicTurret()
 
@@ -1448,8 +1524,8 @@ def place_monsters(room):
 
 			elif choice == 'replicant':
 				#create a replicant
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=50, defense=4, power=10, dex=4, accuracy=5, firearmdmg=6, firearmacc=5,
-											eloyalty=0, vloyalty=0, ammo=4, charge=0, xp=200, move_speed=2, flicker=0, robot=True, death_function=monster_death, creddrop=5)
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=50, defense=4, power=10, dex=4, hack=0, accuracy=5, firearmdmg=6, firearmacc=5,
+											eloyalty=0, vloyalty=0, ammo=4, charge=0, xp=200, move_speed=2, flicker=0, robot=True, death_function=robot_death, creddrop=5)
 				ai_component = BasicShooter()
 
 				monster = Object(x, y, 'R', 'Replicant', libtcod.dark_flame, desc='A skin-job on the run, tears in the rain',
@@ -1699,7 +1775,7 @@ def hub():
 	for x,y in npcplace:
 		libtcod.namegen_parse('names.txt')
 		name = libtcod.namegen_generate('npcnames')
-		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, dex=10, accuracy=4, firearmdmg=0, firearmacc=0,
+		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 		ai_component = BasicNpc()
 		monster = Object(x, y, 'N', name, libtcod.light_fuchsia, desc=name,
@@ -1803,36 +1879,76 @@ def player_move_or_attack(dx, dy):
 def hacking():
 	message('Choose a hack to launch, your charge level is ' + str(player.fighter.charge) + '!', libtcod.yellow)
 	choice = None
-	while choice == None:  #keep asking until a choice is made
-			choice = menu('Choose a hack:\n',
-						['Confusion (-5 charge)',
-						'Overload (-10 charge)',
-						'Repair (-10 charge)',
-						'Cancel'], LEVEL_SCREEN_WIDTH)
+	if player.fighter.hack == 1:
+		while choice == None:  #keep asking until a choice is made
+				choice = menu('Choose a hack:\n',
+							['Confusion (-5 charge)',
+							'Cancel'], LEVEL_SCREEN_WIDTH)
 
-	if choice == 0:
-		if player.fighter.charge >= 5:
-			cast_confuse()
-			player.fighter.charge -= 5
-		else:
-			message('You do not have enough charge')
-	elif choice == 1:
-		if player.fighter.charge >= 10:
-				cast_overload()
-				player.fighter.charge -= 10
-		else:
-			message('You do not have enough charge')
-	elif choice == 2:
-		if player.fighter.charge >= 10:
-			if player.fighter.hp != player.fighter.max_hp:
-				cast_heal()
-				player.fighter.charge -= 10
+		if choice == 0:
+			if player.fighter.charge >= 5:
+				cast_confuse()
+				player.fighter.charge -= 5
 			else:
-				message('You are already at full health!')
-		else:
-			message('You do not have enough charge')
-	elif choice == 3:
-		message('You cancel the hack')
+				message('You do not have enough charge')
+		elif choice == 1:
+			message('You cancel the hack')
+
+	elif player.fighter.hack == 2:
+
+		while choice == None:  #keep asking until a choice is made
+				choice = menu('Choose a hack:\n',
+							['Confusion (-5 charge)',
+							'Overload (-10 charge)',
+							'Cancel'], LEVEL_SCREEN_WIDTH)
+
+		if choice == 0:
+			if player.fighter.charge >= 5:
+				cast_confuse()
+				player.fighter.charge -= 5
+			else:
+				message('You do not have enough charge')
+		elif choice == 1:
+			if player.fighter.charge >= 10:
+					cast_overload()
+					player.fighter.charge -= 10
+			else:
+				message('You do not have enough charge')
+
+		elif choice == 2:
+			message('You cancel the hack')
+
+	elif player.fighter.hack >= 3:
+		while choice == None:  #keep asking until a choice is made
+				choice = menu('Choose a hack:\n',
+							['Confusion (-5 charge)',
+							'Overload (-10 charge)',
+							'Repair (-10 charge)'
+							'Cancel'], LEVEL_SCREEN_WIDTH)
+
+		if choice == 0:
+			if player.fighter.charge >= 5:
+				cast_confuse()
+				player.fighter.charge -= 5
+			else:
+				message('You do not have enough charge')
+		elif choice == 1:
+			if player.fighter.charge >= 10:
+					cast_overload()
+					player.fighter.charge -= 10
+			else:
+				message('You do not have enough charge')
+		elif choice == 2:
+			if player.fighter.charge >= 10:
+				if player.fighter.hp != player.fighter.max_hp:
+					cast_heal()
+					player.fighter.charge -= 10
+				else:
+					message('You are already at full health!')
+			else:
+				message('You do not have enough charge')
+		elif choice == 3:
+			message('You cancel the hack')
 
 
 def inventory_menu(header):
@@ -1886,32 +2002,77 @@ def handle_keys():
 	if game_state == 'playing':
 		#movement keys
 		if key.vk == libtcod.KEY_UP or key.vk == libtcod.KEY_KP8:
-			player_move_or_attack(0, -1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				take_game_turn()
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(0, -1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_DOWN or key.vk == libtcod.KEY_KP2:
-			player_move_or_attack(0, 1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				random.randint(0,100) < 36
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(0, 1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_LEFT or key.vk == libtcod.KEY_KP4:
-			player_move_or_attack(-1, 0)
-			take_game_turn()
+			if player.fighter.paralysis:
+				take_game_turn()
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(-1, 0)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_RIGHT or key.vk == libtcod.KEY_KP6:
-			player_move_or_attack(1, 0)
-			take_game_turn()
+			if player.fighter.paralysis:
+				take_game_turn()
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(1, 0)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_HOME or key.vk == libtcod.KEY_KP7:
-			player_move_or_attack(-1, -1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				take_game_turn()
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(-1, -1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_PAGEUP or key.vk == libtcod.KEY_KP9:
-			player_move_or_attack(1, -1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				take_game_turn()
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(1, -1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_END or key.vk == libtcod.KEY_KP1:
-			player_move_or_attack(-1, 1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				take_game_turn()
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(-1, 1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_PAGEDOWN or key.vk == libtcod.KEY_KP3:
-			player_move_or_attack(1, 1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				take_game_turn()
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(1, 1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_KP5:
-			#pass  #do nothing ie wait for the monster to come to you
-			game_turn += 2
+			if player.fighter.paralysis:
+				take_game_turn()
+				message('You are paralysed', libtcod.red)
+				player.figher.become_paralysed()
+			else:
+				#pass  #do nothing ie wait for the monster to come to you
+				take_game_turn()
 
 		else:
 			#test for other keys
@@ -1949,6 +2110,7 @@ def handle_keys():
 				for obj in objects:
 					if obj.x == x and obj.y == y and obj.furniture:
 						obj.furniture.use_function(obj)
+
 			#! make this message only show if not able to use, or if no object is in range!
 
 			if key_char == 'x':
@@ -2000,14 +2162,15 @@ def handle_keys():
 				if player.fighter.ammo >= 1:
 					message('Left-click an enemy to shoot it, or right-click to cancel.', libtcod.light_cyan)
 					monster = target_monster()
-					if monster is None: return 'cancelled'
-
-					player.fighter.shoot(monster)
-					player.fighter.ammo -= 1
-					game_turn +=2
+					if monster is None:
+						return 'cancelled'
+					else:
+						player.fighter.shoot(monster)
+						player.fighter.ammo -= 1
 
 				else:
 					message('you have run out of bullets')
+
 
 			if key_char == 'h':
 				#ask the player for a target tile to hack it
@@ -2058,7 +2221,7 @@ def level_up():
 						  ['Constitution (+20 HP, from ' + str(player.fighter.max_hp) + ')',
 						   'Strength (+1 attack, from ' + str(player.fighter.power) + ')',
 						   'Dexterity (+1 dexterity, from ' + str(player.fighter.base_dex) + ')',
-						   'Charge (+2 charge, from ' + str(player.fighter.charge) + ')'], LEVEL_SCREEN_WIDTH)
+						   'Hacking (+1 hacking, +2 charge, from ' + str(player.fighter.charge) + ')'], LEVEL_SCREEN_WIDTH)
 
 		if choice == 0:
 			player.fighter.base_max_hp += 20
@@ -2068,6 +2231,7 @@ def level_up():
 		elif choice == 2:
 			player.fighter.base_dex += 1
 		elif choice == 3:
+			player.fighter.hack += 1
 			player.fighter.base_charge += 2
 			player.fighter.charge += 2
 
@@ -2509,6 +2673,7 @@ def cast_confuse():
 def reload_ammo():
 	global game_turn
 	player.fighter.ammo += 5
+	take_game_turn()
 	message('you reload your ammo')
 
 
@@ -2538,19 +2703,19 @@ def main_menu():
 			if choice == 0:  #new game
 					pwr = 5
 					sht = 1
-					hck = 10
+					hck = 1
 					new_game()
 					play_game()
 			if choice == 1:  #new game
 					pwr = 3
 					sht = 5
-					hck = 10
+					hck = 1
 					new_game()
 					play_game()
 			if choice == 2:
 					pwr = 2
 					sht = 3
-					hck = 15
+					hck = 2
 					new_game()
 					play_game()
 			elif choice == 3:  #quit
@@ -2622,7 +2787,7 @@ def new_game():
 
 	#create object representing the player
 	fighter_component = Fighter(hp=900, lastx=0, lasty=0, my_path=0, defense=1, dex=4, accuracy=2, firearmdmg=2, vloyalty=0, eloyalty=0,
-								firearmacc=sht, ammo=3, power=pwr, charge=hck, xp=0, move_speed=2, flicker=0, robot=False, death_function=player_death)
+								firearmacc=sht, ammo=10, power=pwr, hack=hck, charge=10+(hck * 2), xp=0, move_speed=2, flicker=0, robot=False, paralysis=False, death_function=player_death)
 	player = Object(0, 0, '@', 'Player', libtcod.white, blocks=True, desc='you!', fighter=fighter_component)
 
 	#add player start variables - pretty much whatever we want really.
