@@ -47,6 +47,7 @@ LIGHTNING_DAMAGE = 40
 LIGHTNING_RANGE = 5
 CONFUSE_RANGE = 8
 CONFUSE_NUM_TURNS = 10
+PARALYSE_NUM_TURNS = 4
 FIREBALL_RADIUS = 3
 FIREBALL_DAMAGE = 25
 
@@ -222,7 +223,7 @@ class Object:
 
 class Fighter:
 	#combat-related properties and methods (monster, player, NPC).
-	def __init__(self, my_path, lastx, lasty, hp, defense, power, dex, accuracy, charge, firearmdmg, firearmacc, eloyalty, vloyalty, ammo, xp, move_speed, flicker, robot=True, death_function=None, creddrop=None,):
+	def __init__(self, my_path, lastx, lasty, hp, defense, power, dex, accuracy, charge, firearmdmg, firearmacc, eloyalty, vloyalty, ammo, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None,):
 		self.my_path = my_path
 		self.lastx = lastx
 		self.lasty = lasty
@@ -250,6 +251,7 @@ class Fighter:
 		self.base_move_speed = move_speed
 		self.flicker = flicker
 		self.robot = robot
+		self.paralysis = paralysis
 
 	@property
 	def power(self):  #return actual power, by summing up the bonuses from all equipped items
@@ -407,6 +409,23 @@ class Fighter:
 		self.hp += amount
 		if self.hp > self.max_hp:
 			self.hp = self.max_hp
+
+	def paralyse(self, target):
+		#paralyse the player
+		message('The dog bites you', libtcod.blue)
+		target.fighter.become_paralysed()
+
+	def become_paralysed(self):
+		global counter
+
+		if self.paralysis==False:
+			self.paralysis=True
+			counter = PARALYSE_NUM_TURNS
+		else:
+			if counter > 0:
+				counter-=1
+			else:
+				self.paralysis=False
 
 
 class Item:
@@ -589,6 +608,44 @@ class CleverMonster:
 					monster.fighter.attack(player)
 				elif player.fighter.hp > 0 and monster.fighter.hp < lowhp:
 					monster.fighter.move_away(player.x, player.y)
+
+		else:
+			#if hasn't seen ever player, random moving
+			if monster.fighter.lastx == None and monster.fighter.lasty == None:
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+			else:
+				#if seen player, move towards the location
+				monster.fighter.move_towards(monster.fighter.lastx, monster.fighter.lasty)
+				#same location now where last saw player, set location to none so it resumes normal activity
+				if monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty and monster.distance_to(player) <= TORCH_RADIUS * 1.5:
+					monster.fighter.lastx = player.x + libtcod.random_get_int(0, -TORCH_RADIUS/2, TORCH_RADIUS/2)
+					monster.fighter.lasty = player.y + libtcod.random_get_int(0, -TORCH_RADIUS/2, TORCH_RADIUS/2)
+				elif monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty and monster.distance_to(player) <= TORCH_RADIUS * 2:
+					monster.fighter.lastx = player.x + libtcod.random_get_int(0, -TORCH_RADIUS, TORCH_RADIUS)
+					monster.fighter.lasty = player.y + libtcod.random_get_int(0, -TORCH_RADIUS, TORCH_RADIUS)
+				elif monster.x == monster.fighter.lastx and monster.y == monster.fighter.lasty:
+					monster.fighter.lastx = None
+					monster.fighter.lasty = None
+
+
+class BasicDog:
+	def take_turn(self):
+		global game_turn
+		monster = self.owner
+		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+			#if sees player, stores location
+			monster.fighter.lastx = player.x
+			monster.fighter.lasty = player.y
+
+			if monster.distance_to(player) >= 2:
+				monster.fighter.move_towards(player.x, player.y)
+
+			elif player.fighter.hp > 0:
+				if random.randint(0,100) < 10:
+					monster.fighter.paralyse(player)
+				else:
+					monster.fighter.attack(player)
+
 
 		else:
 			#if hasn't seen ever player, random moving
@@ -1366,6 +1423,7 @@ def place_monsters(room):
 	#monster_chances['hologram'] = from_dungeon_level([[0, 1], [10, 4]])
 	monster_chances['mutant'] = from_dungeon_level([[15, 4], [30, 6], [40, 9]])
 	monster_chances['fastmutant'] = from_dungeon_level([[5, 5], [10, 8], [20, 11]])
+	monster_chances['dog'] = from_dungeon_level([[80, 2], [0, 3]])
 	#robots:
 	monster_chances['manhack'] = from_dungeon_level([[20, 4], [25, 6], [30, 8]])
 	monster_chances['vturret'] = from_dungeon_level([[15, 5], [30, 7]])
@@ -1387,7 +1445,7 @@ def place_monsters(room):
 				#create an orc
 				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=0, power=4, dex=2, accuracy=4, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=35, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
-				ai_component = BasicShooter()
+				ai_component = BasicMonster()
 
 				monster = Object(x, y, 't', 'Thug', libtcod.green, desc='a bloodthirsty thug',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
@@ -1427,6 +1485,16 @@ def place_monsters(room):
 
 				monster = Object(x, y, 'm', 'Fast Mutant', libtcod.darker_green, desc='a fast mutant, contaminated by radiation and failed biotech',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
+
+			elif choice == 'dog':
+				#create a troll
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=60, defense=2, power=10, dex=1, accuracy=4, firearmdmg=0, firearmacc=2,
+											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=1, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+				ai_component = BasicDog()
+
+				monster = Object(x, y, 'd', 'Dog', libtcod.dark_green, desc='a rabid hound capable of sniffing out its victims',
+								 blocks=True, fighter=fighter_component, ai=ai_component)
+
 			##robots:
 			elif choice == 'manhack':
 				#create a manhack
@@ -1886,32 +1954,77 @@ def handle_keys():
 	if game_state == 'playing':
 		#movement keys
 		if key.vk == libtcod.KEY_UP or key.vk == libtcod.KEY_KP8:
-			player_move_or_attack(0, -1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(0, -1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_DOWN or key.vk == libtcod.KEY_KP2:
-			player_move_or_attack(0, 1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(0, 1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_LEFT or key.vk == libtcod.KEY_KP4:
-			player_move_or_attack(-1, 0)
-			take_game_turn()
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(-1, 0)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_RIGHT or key.vk == libtcod.KEY_KP6:
-			player_move_or_attack(1, 0)
-			take_game_turn()
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(1, 0)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_HOME or key.vk == libtcod.KEY_KP7:
-			player_move_or_attack(-1, -1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(-1, -1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_PAGEUP or key.vk == libtcod.KEY_KP9:
-			player_move_or_attack(1, -1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(1, -1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_END or key.vk == libtcod.KEY_KP1:
-			player_move_or_attack(-1, 1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(-1, 1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_PAGEDOWN or key.vk == libtcod.KEY_KP3:
-			player_move_or_attack(1, 1)
-			take_game_turn()
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.fighter.become_paralysed()
+			else:
+				player_move_or_attack(1, 1)
+				take_game_turn()
 		elif key.vk == libtcod.KEY_KP5:
-			#pass  #do nothing ie wait for the monster to come to you
-			game_turn += 2
+			if player.fighter.paralysis:
+				game_turn += 2
+				message('You are paralysed', libtcod.red)
+				player.figher.become_paralysed()
+			else:
+				#pass  #do nothing ie wait for the monster to come to you
+				game_turn += 2
 
 		else:
 			#test for other keys
@@ -2622,7 +2735,7 @@ def new_game():
 
 	#create object representing the player
 	fighter_component = Fighter(hp=900, lastx=0, lasty=0, my_path=0, defense=1, dex=4, accuracy=2, firearmdmg=2, vloyalty=0, eloyalty=0,
-								firearmacc=sht, ammo=3, power=pwr, charge=hck, xp=0, move_speed=2, flicker=0, robot=False, death_function=player_death)
+								firearmacc=sht, ammo=3, power=pwr, charge=hck, xp=0, move_speed=2, flicker=0, robot=False, paralysis=False, death_function=player_death)
 	player = Object(0, 0, '@', 'Player', libtcod.white, blocks=True, desc='you!', fighter=fighter_component)
 
 	#add player start variables - pretty much whatever we want really.
