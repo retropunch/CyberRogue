@@ -396,6 +396,21 @@ class Fighter:
 		else:
 			message('The ' + self.owner.name.capitalize() + ' misses!')
 
+	def lightattack(self, target):
+		#a simple formula for attack damage
+		damage = ((self.power - target.fighter.defense) - 2) + libtcod.random_get_int(0, 0, 3)
+		tohit = (((self.dex / 2) + self.accuracy)+2) - libtcod.random_get_int(0, 0, 3)
+		if tohit >= target.fighter.dex:
+			if damage > 0:
+				#make the target take some damage
+				message('The ' + self.owner.name.capitalize() + ' quickly hits the ' + target.name + ' for ' + str(damage) + ' hit points.')
+				target.fighter.take_damage(damage)
+
+			else:
+				message('The ' + self.owner.name.capitalize() + ' quickly attacks the ' + target.name + ' but it has no effect!')
+		else:
+			message('The ' + self.owner.name.capitalize() + ' misses!')
+
 	def take_damage(self, damage):
 		#apply damage if possible
 		if damage > 0:
@@ -1690,7 +1705,7 @@ def place_monsters(room):
 			elif choice == 'dog':
 				#create a troll
 				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=10, defense=2, power=2, dex=2, hack=0, accuracy=4, firearmdmg=0, firearmacc=0,
-											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=1, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=20, move_speed=1, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 				ai_component = BasicDog()
 
 				monster = Object(x, y, 'd', 'Dog', libtcod.dark_green, desc='a rabid hound capable of sniffing out its victims',
@@ -2080,6 +2095,31 @@ def player_move_or_attack(dx, dy):
 		fov_recompute = True
 		take_game_turn()
 
+def player_move_or_lightattack(dx, dy):
+	global fov_recompute
+	global game_turn
+
+	#if game_turn % player.fighter.move_speed == 0:
+		#the coordinates the player is moving to/attacking
+	x = player.x + dx
+	y = player.y + dy
+
+		#try to find an attackable object there
+	target = None
+	for object in objects:
+		if object.fighter and object.x == x and object.y == y:
+			target = object
+			break
+
+		#attack if target found, move otherwise
+	if target is not None:
+		player.fighter.lightattack(target)
+		take_game_turn()
+	else:
+		player.move(dx, dy)
+		fov_recompute = True
+		take_game_turn()
+
 
 def hacking():
 	message('Choose a hack to launch, your charge level is ' + str(player.fighter.charge) + '!', libtcod.yellow)
@@ -2212,64 +2252,104 @@ def handle_keys():
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(0, -1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(0, -1)
+					take_game_turn()
+				else:
+					player_move_or_attack(0, -1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_DOWN or key.vk == libtcod.KEY_KP2:
 			if player.fighter.paralysis:
 				random.randint(0,100) < 36
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(0, 1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(0, 1)
+					take_game_turn()
+				else:
+					player_move_or_attack(0, 1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_LEFT or key.vk == libtcod.KEY_KP4:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(-1, 0)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(-1, 0)
+					take_game_turn()
+				else:
+					player_move_or_attack(-1, 0)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_RIGHT or key.vk == libtcod.KEY_KP6:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(1, 0)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(1, 0)
+					take_game_turn()
+				else:
+					player_move_or_attack(1, 0)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_HOME or key.vk == libtcod.KEY_KP7:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(-1, -1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(-1, -1)
+					take_game_turn()
+				else:
+					player_move_or_attack(-1, -1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_PAGEUP or key.vk == libtcod.KEY_KP9:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(1, -1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(1, -1)
+					take_game_turn()
+				else:
+					player_move_or_attack(1, -1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_END or key.vk == libtcod.KEY_KP1:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(-1, 1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(-1, 1)
+					take_game_turn()
+				else:
+					player_move_or_attack(-1, 1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_PAGEDOWN or key.vk == libtcod.KEY_KP3:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(1, 1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(1, 1)
+					take_game_turn()
+				else:
+					player_move_or_attack(1, 1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_KP5:
 			if player.fighter.paralysis:
 				take_game_turn()
