@@ -114,7 +114,7 @@ class Rect:
 class Object:
 	#this is a generic object: the player, a monster, an item, the stairs...
 	#it's always represented by a character on screen.
-	def __init__(self, x, y, char, name, color, make=None, desc=None, value=0, blocks=False, open=None, always_visible=False, fighter=None, ai=None, item=None,
+	def __init__(self, x, y, char, name, color, make=None, desc=None, value=0, blocks=False, open=None, always_visible=False, fighter=None, nonplayerchar=None, ai=None, item=None,
 				 equipment=None, furniture=None):
 		self.x = x
 		self.y = y
@@ -131,6 +131,10 @@ class Object:
 
 		if self.fighter:  #let the fighter component know who owns it
 			self.fighter.owner = self
+
+		self.nonplayerchar = nonplayerchar
+		if self.nonplayerchar:
+			self.nonplayerchar.owner = self
 
 		self.ai = ai
 		if self.ai:  #let the AI component know who owns it
@@ -433,6 +437,195 @@ class Fighter:
 				take_game_turn()
 			else:
 				self.paralysis=False
+
+
+class NonplayerChar:
+	#combat-related properties and methods (monster, player, NPC).
+	def __init__(self, my_path, lastx, lasty, hp, defense, power, dex, accuracy, hack, eloyalty, vloyalty, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None, use_function=None):
+		self.my_path = my_path
+		self.lastx = lastx
+		self.lasty = lasty
+
+		self.base_max_hp = hp
+		self.hp = hp
+
+		self.base_defense = defense
+		self.base_power = power
+		self.base_hack = hack
+		self.base_dex = dex
+		self.base_accuracy = accuracy
+
+		self.base_eloyalty = eloyalty
+		self.base_vloyalty = vloyalty
+
+		self.xp = xp
+		self.death_function = death_function
+		self.creddrop = creddrop
+		self.base_move_speed = move_speed
+		self.flicker = flicker
+		self.robot = robot
+		self.use_function = use_function
+
+	@property
+	def power(self):  #return actual power, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.power_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_power + bonus
+
+	@property
+	def defense(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.defense_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_defense + bonus
+
+	@property
+	def hack(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.hack_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_hack + bonus
+
+	@property
+	def eloyalty(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.eloyalty_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_eloyalty + bonus
+
+	@property
+	def vloyalty(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.vloyalty_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_vloyalty + bonus
+
+	@property
+	def dex(self):
+		bonus = sum(equipment.dex_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_dex + bonus
+
+	@property
+	def accuracy(self):
+		bonus = sum(equipment.accuracy_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_accuracy + bonus
+
+	@property
+	def move_speed(self):
+		return self.base_move_speed
+
+	@property
+	def max_hp(self):  #return actual max_hp, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.max_hp_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_max_hp + bonus
+
+
+	def move_towards(self, target_x, target_y):
+		#get yo' a-star on in a fistful of code?!  this lib is awesome!
+
+		#if no path exists yet, get right onto that, stat!
+		if self.my_path is 0:
+			self.my_path = libtcod.path_new_using_map(fov_map, 1.0)
+
+		reblock = False
+
+		#need some logic here...constantly refresh path seems omniscient and computationally expensive
+
+		if not libtcod.map_is_walkable(fov_map, target_x, target_y):
+			reblock = True
+
+		libtcod.map_set_properties(fov_map, target_x, target_y, True, True)	#momentarily set the target to unblocked so the pathing works. kludgy, I know, but easier than writing my own a*!!!!
+
+		libtcod.path_compute(self.my_path, self.owner.x, self.owner.y, target_x, target_y)
+
+		if reblock:
+			libtcod.map_set_properties(fov_map, target_x, target_y, True, False) #kludge moment over. resume normal viewing!
+
+		if not libtcod.path_is_empty(self.my_path):
+			x, y = libtcod.path_walk(self.my_path,True)
+			if x and not is_blocked(x,y) and libtcod.path_size(self.my_path) < 10: #more than ten is too far, don't worry about it
+				libtcod.map_set_properties(fov_map, self.owner.x, self.owner.y, True, True)
+				self.owner.x = x
+				self.owner.y = y
+				libtcod.map_set_properties(fov_map, x, y, True, False)
+			else:
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+
+	def move_away(self, target_x, target_y):
+		#get yo' a-star on in a fistful of code?!  this lib is awesome!
+
+		#if no path exists yet, get right onto that, stat!
+		if self.my_path is 0:
+			self.my_path = libtcod.path_new_using_map(fov_map, 1.0)
+
+		reblock = False
+
+		#need some logic here...constantly refresh path seems omniscient and computationally expensive
+
+		if not libtcod.map_is_walkable(fov_map, target_x, target_y):
+			reblock = True
+
+		libtcod.map_set_properties(fov_map, target_x, target_y, True, True)	#momentarily set the target to unblocked so the pathing works. kludgy, I know, but easier than writing my own a*!!!!
+
+		libtcod.path_compute(self.my_path, self.owner.x, self.owner.y, target_x+10, target_y+20)
+
+		if reblock:
+			libtcod.map_set_properties(fov_map, target_x+10, target_y+20, True, False) #kludge moment over. resume normal viewing!
+
+		if not libtcod.path_is_empty(self.my_path):
+			x, y = libtcod.path_walk(self.my_path,True)
+			if x and not is_blocked(x,y) and libtcod.path_size(self.my_path) < 10: #more than ten is too far, don't worry about it
+				libtcod.map_set_properties(fov_map, self.owner.x, self.owner.y, True, True)
+				self.owner.x = x
+				self.owner.y = y
+				libtcod.map_set_properties(fov_map, x, y, True, False)
+			else:
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+
+	def shoot(self, target):
+		#a simple formula for attack damage
+		global game_turn
+		damage = (self.firearmdmg - target.fighter.defense) + libtcod.random_get_int(0, 0, 6)
+		tohit = ((self.dex / 4) + self.firearmacc + 2) - libtcod.random_get_int(0, 0, 4)
+		if tohit >= target.fighter.dex:
+			if damage > 0:
+				#make the target take some damage
+				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' for ' + str(damage) + ' hit points.')
+				target.fighter.take_damage(damage)
+			else:
+				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' but it has no effect!')
+		else:
+			message('The ' + self.owner.name.capitalize() + ' misses!')
+
+	def use(self):
+		#just call the "use_function" if it is defined
+		if self.use_function is None:
+			message('The ' + self.owner.name + ' cannot be used.')
+
+	def attack(self, target):
+		#a simple formula for attack damage
+		damage = (self.power - target.fighter.defense) + libtcod.random_get_int(0, 0, 3)
+		tohit = ((self.dex / 2) + self.accuracy) - libtcod.random_get_int(0, 0, 3)
+		if tohit >= target.fighter.dex:
+			if damage > 0:
+				#make the target take some damage
+				message('The ' + self.owner.name.capitalize() + ' attacks the ' + target.name + ' for ' + str(damage) + ' hit points.')
+				target.fighter.take_damage(damage)
+
+			else:
+				message('The ' + self.owner.name.capitalize() + ' attacks the ' + target.name + ' but it has no effect!')
+		else:
+			message('The ' + self.owner.name.capitalize() + ' misses!')
+
+	def take_damage(self, damage):
+		#apply damage if possible
+		if damage > 0:
+			self.hp -= damage
+			self.flicker = 1
+
+			if self.hp <= 4 and self.hp > 0 :
+				message('The ' + self.owner.name.capitalize() + ' looks badly wounded!')
+
+			#check for death. if there's a death function, call it
+			if self.hp <= 0:
+				function = self.death_function
+				if function is not None:
+					function(self.owner)
+
+				if self.owner != player:  #yield experience to the player
+					player.fighter.xp += self.xp
+
 
 
 class Item:
@@ -1771,16 +1964,28 @@ def hub():
 	furniture.always_visible = True
 
 	#NPCs
-	npcplace = [(4,24), (5,24), (7, 4), (9, 8), (30, 10)]
+	#NPC direct placement:
+	npcplace = [(4,24), (5,24), (7, 4), (9, 8), (15, 28), (30, 10)]
 	for x,y in npcplace:
 		libtcod.namegen_parse('names.txt')
 		name = libtcod.namegen_generate('npcnames')
-		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4, firearmdmg=0, firearmacc=0,
-											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
+											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
-		monster = Object(x, y, 'N', name, libtcod.light_fuchsia, desc=name,
-								 blocks=True, fighter=fighter_component, ai=ai_component)
-		objects.append(monster)
+		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc=name,
+								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
+		objects.append(npc)
+
+	for n in range(1,10):
+		libtcod.namegen_parse('names.txt')
+		name = libtcod.namegen_generate('npcnames')
+		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
+											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
+		ai_component = BasicNpc()
+		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc=name,
+								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
+		npc.x, npc.y = random_unblocked_tile_on_map()
+		objects.append(npc)
 
 	#n = range(1,15)
 	for n in range(1,15):
@@ -2111,6 +2316,9 @@ def handle_keys():
 					if obj.x == x and obj.y == y and obj.furniture:
 						obj.furniture.use_function(obj)
 
+					elif obj.x == x and obj.y == y and obj.nonplayerchar:
+						obj.nonplayerchar.use_function(obj)
+
 			#! make this message only show if not able to use, or if no object is in range!
 
 			if key_char == 'x':
@@ -2356,6 +2564,12 @@ def open_box(obj):
 	inventory.append(item)
 	message('You picked up ' + item.name + '!', libtcod.green)
 	object_destroy(obj)
+
+
+def convo(obj):
+	talk = ['Go away', 'Why are you talking to me?', 'Who are you?', 'Get lost.']
+	from random import choice
+	message(choice(talk))
 
 
 def rubble(obj):
@@ -2991,8 +3205,12 @@ def play_game():
 		#let monsters take their turn
 		if game_state == 'playing' and player_action != 'didnt-take-turn':
 			for object in objects:
-				if object.ai and (game_turn % object.fighter.move_speed) == 0:
-					object.ai.take_turn()
+				try:
+					if object.ai and (game_turn % object.fighter.move_speed) == 0:
+						object.ai.take_turn()
+				except AttributeError:
+					if object.ai and (game_turn % object.nonplayerchar.move_speed) == 0:
+						object.ai.take_turn()
 
 
 
