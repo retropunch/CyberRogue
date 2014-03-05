@@ -2059,10 +2059,19 @@ def hub():
 def factory():
 	cultistplace = [(20,5), (5,24), (7, 4), (9, 8), (30, 10)]
 	for x,y in cultistplace:
-		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=5, power=8, dex=2, accuracy=5, firearmdmg=0, firearmacc=0,
+		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=5, power=8, dex=2, hack=0, accuracy=5, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 		ai_component = CleverMonster()
 		monster = Object(x, y, 'c', 'Cultist', libtcod.light_red, desc='a Leucrocota Cultist',
+								 blocks=True, fighter=fighter_component, ai=ai_component)
+		objects.append(monster)
+
+	deviationplace = [(10,5), (5,30), (7, 9), (9, 15), (32, 20)]
+	for x,y in deviationplace:
+		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=120, defense=5, power=10, dex=1, hack=0, accuracy=6, firearmdmg=0, firearmacc=0,
+											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=120, move_speed=3, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+		ai_component = CleverMonster()
+		monster = Object(x, y, 'D', 'Deviation', libtcod.red, desc='a Leucrocota Deviation, a towering amalgamation of decaying flesh and sharp bone',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
 		objects.append(monster)
 
@@ -2094,6 +2103,7 @@ def player_move_or_attack(dx, dy):
 		player.move(dx, dy)
 		fov_recompute = True
 		take_game_turn()
+
 
 def player_move_or_lightattack(dx, dy):
 	global fov_recompute
