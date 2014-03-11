@@ -15,15 +15,15 @@ import random
 
 #actual size of the window
 SCREEN_WIDTH = 89
-SCREEN_HEIGHT = 40
+SCREEN_HEIGHT = 44
 
 #size of the map
 MAP_WIDTH = 80
-MAP_HEIGHT = 80
+MAP_HEIGHT = 88
 
 #sizes and coordinates relevant for the GUI
 BAR_WIDTH = 20
-PANEL_HEIGHT = 8
+PANEL_HEIGHT = 11
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
