@@ -14,7 +14,7 @@ import random
 
 
 #actual size of the window
-SCREEN_WIDTH = 71
+SCREEN_WIDTH = 89
 SCREEN_HEIGHT = 40
 
 #size of the map
@@ -27,6 +27,13 @@ PANEL_HEIGHT = 8
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
+
+SIDEBAR_HEIGHT = 20
+SIDEBAR_WIDTH = 18
+SIDEBAR_Y = 0
+SIDEBAR_X = 81
+#SCREEN_WIDTH - SIDEBAR_WIDTH
+
 MSG_X = BAR_WIDTH + 2
 MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
 MSG_HEIGHT = PANEL_HEIGHT - 1
@@ -1409,17 +1416,17 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 	bar_width = int(float(value) / maximum * total_width)
 
 	#render the background first
-	libtcod.console_set_default_background(panel, back_color)
-	libtcod.console_rect(panel, x, y, total_width, 1, False, libtcod.BKGND_SCREEN)
+	libtcod.console_set_default_background(sidebar, back_color)
+	libtcod.console_rect(sidebar, x, y, total_width, 1, False, libtcod.BKGND_SCREEN)
 
 	#now render the bar on top
-	libtcod.console_set_default_background(panel, bar_color)
+	libtcod.console_set_default_background(sidebar, bar_color)
 	if bar_width > 0:
-		libtcod.console_rect(panel, x, y, bar_width, 1, False, libtcod.BKGND_SCREEN)
+		libtcod.console_rect(sidebar, x, y, bar_width, 1, False, libtcod.BKGND_SCREEN)
 
 	#finally, some centered text with the values
-	libtcod.console_set_default_foreground(panel, libtcod.white)
-	libtcod.console_print_ex(panel, x + total_width / 2, y, libtcod.BKGND_NONE, libtcod.CENTER,
+	libtcod.console_set_default_foreground(sidebar, libtcod.white)
+	libtcod.console_print_ex(sidebar, x + total_width / 2, y, libtcod.BKGND_NONE, libtcod.CENTER,
 							 name + ': ' + str(value) + '/' + str(maximum))
 
 
@@ -1436,15 +1443,15 @@ def menu(header, options, width):
 	window = libtcod.console_new(width, height)
 
 	#print the header, with auto-wrap
-	libtcod.console_set_default_foreground(window, libtcod.white)
-	libtcod.console_print_rect_ex(window, 0, 0, width, height, libtcod.BKGND_NONE, libtcod.LEFT, header)
+	libtcod.console_set_default_foreground(window, libtcod.green)
+	libtcod.console_print_rect_ex(window, 0, 0, width, height, libtcod.BKGND_ADD, libtcod.LEFT, header)
 
 	#print all the options
 	y = header_height
 	letter_index = ord('a')
 	for option_text in options:
 		text = '(' + chr(letter_index) + ') ' + option_text
-		libtcod.console_print_ex(window, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, text)
+		libtcod.console_print_ex(window, 0, y, libtcod.BKGND_ADD, libtcod.LEFT, text)
 		y += 1
 		letter_index += 1
 
@@ -1580,38 +1587,45 @@ def render_all():
 
 
 	#prepare to render the GUI panel
+
 	libtcod.console_set_default_background(panel, libtcod.black)
 	libtcod.console_clear(panel)
 
+
 	#print the game messages, one line at a time
 	y = 1
+	x = 1
 	for (line, color) in game_msgs:
 		libtcod.console_set_default_foreground(panel, color)
-		libtcod.console_print_ex(panel, MSG_X, y, libtcod.BKGND_NONE, libtcod.LEFT, line)
+		libtcod.console_print_ex(panel, x, y, libtcod.BKGND_NONE, libtcod.LEFT, line)
 		y += 1
 
+
 	#show the player's stats
-	render_bar(1, 1, BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp,
+
+	libtcod.console_set_default_background(sidebar, libtcod.black)
+	libtcod.console_clear(sidebar)
+
+	libtcod.console_print_ex(sidebar, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
+
+	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
+	libtcod.console_print_ex(sidebar, 9, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
+	libtcod.console_print_ex(sidebar, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour))
+	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
+
+
+	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
+	libtcod.console_print_ex(sidebar, 9, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(sidebar, 1, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
+	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
+
+
+
+	render_bar(0, 1, BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp,
 			   libtcod.light_red, libtcod.darker_red)
 
-	render_bar(1, 2, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
+	render_bar(0, 2, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
 			   libtcod.light_blue, libtcod.darker_blue)
-
-	#render_bar(1, 3, BAR_WIDTH, 'Hunger', hunger, 100,
-	#		   libtcod.dark_green, libtcod.darker_green)
-	libtcod.console_print_ex(panel, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
-
-	libtcod.console_print_ex(panel, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
-
-	libtcod.console_print_ex(panel, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(panel, 9, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-
-	libtcod.console_print_ex(panel, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour))
-	libtcod.console_print_ex(panel, 9, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
-
-	libtcod.console_print_ex(panel, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
-	libtcod.console_print_ex(panel, 9, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
-
 
 	#display names of objects under the mouse
 	libtcod.console_set_default_foreground(panel, libtcod.light_gray)
@@ -1619,6 +1633,7 @@ def render_all():
 
 	#blit the contents of "panel" to the root console
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
+	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0, 71, SIDEBAR_Y, 0.94, 0.2)
 
 
 ## Object placement!!!!!!
@@ -2373,6 +2388,7 @@ def handle_keys():
 				player.figher.become_paralysed()
 			else:
 				#pass  #do nothing ie wait for the monster to come to you
+				take_game_turn()
 				take_game_turn()
 
 		else:
@@ -3346,4 +3362,5 @@ libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'CyberRogue', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 con = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
+sidebar = libtcod.console_new(SIDEBAR_WIDTH, SCREEN_HEIGHT)
 main_menu()
