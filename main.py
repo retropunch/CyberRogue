@@ -642,7 +642,6 @@ class NonplayerChar:
 					player.fighter.xp += self.xp
 
 
-
 class Item:
 
 	#an item that can be picked up and used.
@@ -1396,6 +1395,8 @@ def target_monster(max_range=None):
 				return obj
 
 
+
+
 ## Rendering and visuals
 
 
@@ -1521,7 +1522,7 @@ def flicker_all():
 def render_all():
 	global fov_map, color_dark_wall, color_light_wall
 	global color_dark_ground, color_light_ground
-	global fov_recompute
+	global fov_recompute, hour
 	#plyx = player.x + 2
 	#plyy = player.y + 2
 
@@ -1605,7 +1606,7 @@ def render_all():
 	libtcod.console_print_ex(panel, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
 	libtcod.console_print_ex(panel, 9, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
 
-	libtcod.console_print_ex(panel, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(panel, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour))
 	libtcod.console_print_ex(panel, 9, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
 
 	libtcod.console_print_ex(panel, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
@@ -2014,6 +2015,11 @@ def hub():
 	#misc
 	furniture_component = Furniture(use_function=playerterminal)
 	furniture = Object(60, 21, '&', 'Player Terminal', libtcod.white, desc='Your Terminal', blocks=True, furniture=furniture_component)
+	objects.append(furniture)
+	furniture.always_visible = True
+
+	furniture_component = Furniture(use_function=bed)
+	furniture = Object(56, 21, '#', 'Bed', libtcod.lightest_amber, desc='Your Bed', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
@@ -2534,7 +2540,6 @@ def level_up():
 			player.fighter.charge += 2
 
 
-
 #Death!
 
 def player_death(player):
@@ -2666,6 +2671,14 @@ def rubble(obj):
 	global game_turn
 	message('you break up the rubble!')
 	object_destroy(obj)
+
+
+def bed(obj):
+	global hour
+	hour += 8
+	player.fighter.hp = player.fighter.max_hp
+	player.fighter.charge = player.fighter.base_charge
+	message('you feel rested')
 
 
 def recharge(obj):
@@ -3079,14 +3092,33 @@ def load_game():
 
 
 def take_game_turn():
-	global game_turn, hunger
+	global game_turn, hunger, time
 	game_turn += 1
+	time += 1
 	if random.randint(0,100) < HUNGER_BASE:
 		hunger -= 1
 
 
+def check_time():
+	global time, hour
+	if time == 240:
+		hour += 1
+		time = 0
+	if hour == 6 and time == 0:
+		message('it is morning')
+	if hour == 12 and time == 0:
+		message('It is mid-day')
+	if hour == 18 and time == 0:
+		message ('It is evening')
+	if hour == 21 and time == 0:
+		message ('It is night time')
+	if hour >= 24 and time >= 0:
+		hour = 0
+
+
+
 def new_game():
-	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat
+	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour
 
 
 	#create object representing the player
@@ -3111,6 +3143,8 @@ def new_game():
 	game_state = 'playing'
 	game_turn = 0
 	hunger = 100
+	time = 0
+	hour = 5
 	hunger_stat = 'Full'
 
 	#a warm welcoming message!
@@ -3274,6 +3308,7 @@ def play_game():
 		#main loop checks
 		check_level_up()
 		check_hunger()
+		check_time()
 
 		#erase all objects at their old locations, before they move
 		for object in objects:
