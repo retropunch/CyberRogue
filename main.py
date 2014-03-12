@@ -2,7 +2,7 @@
 #
 # libtcod python tutorial
 #
-#hi bim
+
 
 import libtcodpy as libtcod
 import math
@@ -73,7 +73,7 @@ FOV_ALGO = 0  #default FOV algorithm
 FOV_LIGHT_WALLS = True  #light walls or not
 TORCH_RADIUS = 8
 
-LIMIT_FPS = 25  #20 frames-per-second maximum
+LIMIT_FPS = 25  #25 frames-per-second maximum
 
 color_dark_wall = libtcod.Color(22, 22, 22)
 color_light_wall = libtcod.Color(54, 54, 54)
@@ -917,6 +917,7 @@ class BasicNpc:
 		monster = self.owner
 		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
 				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+
 
 class EveningNpc:
 	def set_place(self):
