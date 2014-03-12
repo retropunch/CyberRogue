@@ -3321,7 +3321,7 @@ def exitfactory():
 	color_dark_ground = libtcod.Color(48, 38, 38)
 	color_light_ground = libtcod.Color(86, 76, 76)
 
-	message('You arrive back at the hub')
+	message('You arrive back at the hub.')
 	initialize_fov()
 
 
