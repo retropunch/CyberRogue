@@ -1,5 +1,0 @@
-name "npcnames" {
-syllablesStart = "Moira, Moirae, Futura, Calla, Jade, Arista, Samandra, Alexios, Apollo, Cael, Jordon, Jerimiah, Sterling, Slade, Rylee, Ryker"
-rules = "%50$s"
-}
-
