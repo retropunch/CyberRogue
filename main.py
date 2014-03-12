@@ -1544,7 +1544,7 @@ def flicker_all():
 def render_all():
 	global fov_map, color_dark_wall, color_light_wall
 	global color_dark_ground, color_light_ground
-	global fov_recompute, hour
+	global fov_recompute, hour, day
 	#plyx = player.x + 2
 	#plyy = player.y + 2
 
@@ -1624,9 +1624,10 @@ def render_all():
 	libtcod.console_print_ex(sidebar, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
 
 	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
-	libtcod.console_print_ex(sidebar, 9, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
+	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
 	libtcod.console_print_ex(sidebar, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour))
-	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
+	libtcod.console_print_ex(sidebar, 9, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
+	libtcod.console_print_ex(sidebar, 1, 12, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
 
 
 	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
@@ -2052,6 +2053,10 @@ def hub():
 		n+=1
 
 	#misc
+	furniture_component = Furniture(use_function=playerdoor)
+	furniture = Object(61, 22, 'X', 'door', libtcod.dark_flame, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
+	objects.append(furniture)
+
 	furniture_component = Furniture(use_function=playerterminal)
 	furniture = Object(60, 21, '&', 'Player Terminal', libtcod.white, desc='Your Terminal', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
@@ -2527,7 +2532,7 @@ def handle_keys():
 
 			if key_char == 't':
 				#show the inventory; if an item is selected, use it
-				time += 40
+				time += 240
 
 			return 'didnt-take-turn'
 
@@ -2541,12 +2546,15 @@ def check_hunger():
 	if hunger == 60:
 		message ('You are hungry', libtcod.dark_red)
 		hunger_stat = 'Hungry'
+		hunger -=1
 	if hunger == 30:
-		message (' You are very hungry', libtcod.dark_red)
-		hunger_stat = 'Very Hungry'
+		message ('You are very hungry', libtcod.dark_red)
+		hunger_stat = 'V.Hungry'
+		hunger -=1
 	elif hunger == 15:
 		message (' You are starving!', libtcod.dark_red)
 		hunger_stat = 'Starving'
+		hunger -=1
 	elif hunger < 0:
 		message('You died of starvation', libtcod.dark_red)
 		game_state = 'dead'
@@ -2962,6 +2970,23 @@ def door(obj):
 	libtcod.map_set_properties(fov_map, obj.x, obj.y, True, True)
 	initialize_fov()
 
+def playerdoor(obj):
+	global rentpaid
+	if rentpaid == True:
+		message('you open the door')
+		obj.char = '_'
+		obj.color = libtcod.light_grey
+		obj.blocks = False
+		obj.furniture = None
+		map[obj.x][obj.y].block_sight = False
+		obj.name = 'open door'
+		obj.send_to_back()
+		#door.opened = 1
+		libtcod.map_set_properties(fov_map, obj.x, obj.y, True, True)
+		initialize_fov()
+	else:
+		message('it has been locked by the landlord')
+
 
 def nouse(obj):
 	message('Nothing useful can be done with this')
@@ -3146,22 +3171,40 @@ def take_game_turn():
 
 
 def check_time():
-	global time, hour
-	if time == 240:
+	global time, hour, day, cred, rentpaid
+	if time >= 240:
 		hour += 1
 		time = 0
 	if hour == 6 and time == 0:
 		message('it is morning')
+		time +=2
 		morning()
 	if hour == 12 and time == 0:
+		time +=2
 		message('It is mid-day')
 	if hour == 18 and time == 0:
+		time +=2
 		message ('It is evening')
 		evening()
 	if hour == 21 and time == 0:
+		time +=2
 		message ('It is night time')
 	if hour >= 24 and time >= 0:
+		time +=2
+		day += 1
 		hour = 0
+
+	if day == 8:
+		day = 0
+		if cred >= 300:
+			cred -= 300
+			message ('Rent has been deducted from your account.')
+			rentpaid = True
+		else:
+			message ('You have no money to pay the rent with.')
+			rentpaid = False
+
+
 
 def evening():
 	#change NPC AI to eveningnpc.
@@ -3170,14 +3213,16 @@ def evening():
 	color_light_ground = libtcod.Color(68, 68, 68)
 	initialize_fov()
 
+
 def morning():
 	global color_light_ground, color_light_wall
 	color_light_wall = libtcod.Color(54, 54, 54)
 	color_light_ground = libtcod.Color(86, 76, 76)
 	initialize_fov()
 
+
 def new_game():
-	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour
+	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour, day, rentpaid
 
 
 	#create object representing the player
@@ -3187,7 +3232,8 @@ def new_game():
 
 	#add player start variables - pretty much whatever we want really.
 	player.level = 1
-	cred = 50
+	cred = 450
+	rentpaid = True
 	player.reloadable = 0
 	inventory = []
 
@@ -3204,6 +3250,7 @@ def new_game():
 	hunger = 100
 	time = 0
 	hour = 6
+	day = 1
 	hunger_stat = 'Full'
 
 	#a warm welcoming message!
@@ -3274,7 +3321,7 @@ def exitfactory():
 	color_dark_ground = libtcod.Color(48, 38, 38)
 	color_light_ground = libtcod.Color(86, 76, 76)
 
-	message('You arrive back at the hub')
+	message('You arrive back at the hub.')
 	initialize_fov()
 
 
