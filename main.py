@@ -918,6 +918,21 @@ class BasicNpc:
 		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
 				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
+class EveningNpc:
+	def set_place(self):
+		findspotx = range(2,22)
+		findspoty = range(22,30)
+
+	def take_turn(self):
+		monster = self.owner
+		if is_blocked(findspotx,findspoty) == False:
+			self.owner.move(findspotx, findspoty)
+		else:
+			set_place()
+
+		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+			self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+
 
 class BasicShooter:
 	#AI for a basic monster.
@@ -2266,7 +2281,7 @@ def get_all_equipped(obj):  #returns a list of equipped items
 
 
 def handle_keys():
-	global key, game_turn, upstairs, factoryexitstairs
+	global key, game_turn, upstairs, factoryexitstairs, time
 
 	if key.vk == libtcod.KEY_ENTER and key.lalt:
 		#Alt+Enter: toggle fullscreen
@@ -2416,9 +2431,6 @@ def handle_keys():
 				if chosen_item is not None:
 					chosen_item.use()
 
-			if key_char == 'j':
-				#show the inventory; if an item is selected, use it
-				next_level()
 
 			if key_char == 'e':
 				message('Left-click an object to use, or right-click to cancel.', libtcod.light_cyan)
@@ -2498,6 +2510,15 @@ def handle_keys():
 					hacking()
 				else:
 					message('you have run out of charge! ')
+
+			#DEBUG KEYS
+			if key_char == 'j':
+				#show the inventory; if an item is selected, use it
+				next_level()
+
+			if key_char == 't':
+				#show the inventory; if an item is selected, use it
+				time += 40
 
 			return 'didnt-take-turn'
 
@@ -3122,16 +3143,29 @@ def check_time():
 		time = 0
 	if hour == 6 and time == 0:
 		message('it is morning')
+		morning()
 	if hour == 12 and time == 0:
 		message('It is mid-day')
 	if hour == 18 and time == 0:
 		message ('It is evening')
+		evening()
 	if hour == 21 and time == 0:
 		message ('It is night time')
 	if hour >= 24 and time >= 0:
 		hour = 0
 
+def evening():
+	#change NPC AI to eveningnpc.
+	global color_light_ground, color_light_wall
+	color_light_wall = libtcod.Color(36, 46, 46)
+	color_light_ground = libtcod.Color(68, 68, 68)
+	initialize_fov()
 
+def morning():
+	global color_light_ground, color_light_wall
+	color_light_wall = libtcod.Color(54, 54, 54)
+	color_light_ground = libtcod.Color(86, 76, 76)
+	initialize_fov()
 
 def new_game():
 	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour
