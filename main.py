@@ -2013,22 +2013,31 @@ def hub():
 	#NPC direct placement:
 	npcplace = [(4,24), (5,24), (7, 4), (9, 8), (15, 28), (30, 10)]
 	for x,y in npcplace:
-		libtcod.namegen_parse('names.txt')
+		libtcod.namegen_parse('npcattrib.txt')
 		name = libtcod.namegen_generate('npcnames')
+		clothes = libtcod.namegen_generate('clothes')
+		features = libtcod.namegen_generate('features')
+		libtcod.namegen_parse('colours.txt')
+		colours = libtcod.namegen_generate('colours')
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
-		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc=name,
+		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
 		objects.append(npc)
 
 	for n in range(1,10):
-		libtcod.namegen_parse('names.txt')
+		libtcod.namegen_parse('npcattrib.txt')
 		name = libtcod.namegen_generate('npcnames')
+		clothes = libtcod.namegen_generate('clothes')
+		features = libtcod.namegen_generate('features')
+		libtcod.namegen_parse('colours.txt')
+		colours = libtcod.namegen_generate('colours')
+
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
-		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc=name,
+		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
 		npc.x, npc.y = random_unblocked_tile_on_map()
 		objects.append(npc)
@@ -3184,7 +3193,7 @@ def new_game():
 
 	#create the list of game messages and their colors, starts empty
 	game_msgs = []
-	#libtcod.namegen_parse('names.txt')
+	#libtcod.namegen_parse('npcattrib.txt')
 	#generate map (at this point it's not drawn to the screen)
 	dungeon_level = 1
 	make_map()
@@ -3194,7 +3203,7 @@ def new_game():
 	game_turn = 0
 	hunger = 100
 	time = 0
-	hour = 5
+	hour = 6
 	hunger_stat = 'Full'
 
 	#a warm welcoming message!

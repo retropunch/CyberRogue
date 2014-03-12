@@ -1,0 +1,12 @@
+name "npcnames" {
+syllablesStart = "Moira, Moirae, Futura, Calla, Jade, Arista, Samandra, Alexios, Apollo, Cael, Jordon, Jerimiah, Sterling, Slade, Rylee, Ryker"
+rules = "%50$s"
+}
+name "features" {
+syllablesStart = "thin, quite_thin, slim, slender, skinny, overweight, fat, strong, muscular, athletic, attractive, good-looking, beautiful, handsome, plain, plain-looking, unattractive, ugly, well-dressed, nicely_dressed, casually_dressed, poorly_dressed, untidy, dirty"
+rules = "%10$s"
+}
+name "clothes" {
+syllablesStart = "jacket,coat,tank_top,shirt,t-shirt,hat,headband,bracelet,overall"
+rules = "%50$s"
+}
