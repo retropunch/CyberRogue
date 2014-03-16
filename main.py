@@ -10,6 +10,7 @@ import textwrap
 import shelve
 import maps
 import random
+import worldgen
 
 
 
@@ -2446,6 +2447,10 @@ def handle_keys():
 				if chosen_item is not None:
 					chosen_item.use()
 
+			if key_char == 'h':
+				#show the history; if an item is selected, use it
+				show_world()
+
 
 			if key_char == 'e':
 				message('Left-click an object to use, or right-click to cancel.', libtcod.light_cyan)
@@ -2971,6 +2976,7 @@ def door(obj):
 	libtcod.map_set_properties(fov_map, obj.x, obj.y, True, True)
 	initialize_fov()
 
+
 def playerdoor(obj):
 	global rentpaid
 	if rentpaid == True:
@@ -3205,7 +3211,12 @@ def check_time():
 			message ('You have no money to pay the rent with.')
 			rentpaid = False
 
+def show_world():
 
+	msgbox(
+		'Corporation:' + str(worldgen.corpone) + '\n Deals in: ' + str(worldgen.corponeproducts) +
+		'\nCorporation:' + str(worldgen.corptwo) + '\n Deals in: ' + str(worldgen.corptwoproducts) +
+		CHARACTER_SCREEN_WIDTH)
 
 def evening():
 	#change NPC AI to eveningnpc.

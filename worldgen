@@ -1,0 +1,23 @@
+import random
+import libtcodpy as libtcod
+
+def setcorps():
+	libtcod.namegen_parse('corpgen.txt')
+	corpname = libtcod.namegen_generate('corpnames')
+	corpproducts = libtcod.namegen_generate('corproducts')
+	corpactions = libtcod.namegen_generate('corpactions')
+
+	corpone = corpname
+	corponeproducts = corpproducts
+	corponedealings = corpone + "deals in" + corponeproducts
+	corponehistory = "in the year" + random.randrange(2014, 2017) + corpone + corpactions + corpname + "causing" + corpone + "to gain a monopoly on" + corponeproducts
+
+	corptwo = corpname
+	corptwoproducts = corpproducts
+	corptwodealings = corptwo + "deals in" + corptwoproducts
+	corptwohistory = "in the year" + random.randrange(2014, 2017) + corptwo + corpactions + corpname + "causing" + corptwo + "to gain a monopoly on" + corptwoproducts
+
+	corpthree = corpname
+	corpthreeproducts = corpproducts
+	corpthreedealings = corpone + "deals in" + corpthreeproducts
+	corpthreehistory = "in the year" + random.randrange(2014, 2017) + corpthree + corpactions + corpname + "causing" + corpthree + "to gain a monopoly on" + corpthreeproducts
