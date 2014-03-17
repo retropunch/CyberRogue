@@ -2,7 +2,7 @@
 #
 # libtcod python tutorial
 #
-#hi bim
+
 
 import libtcodpy as libtcod
 import math
@@ -10,23 +10,31 @@ import textwrap
 import shelve
 import maps
 import random
+import worldgen
 
 
 
 #actual size of the window
-SCREEN_WIDTH = 71
-SCREEN_HEIGHT = 40
+SCREEN_WIDTH = 89
+SCREEN_HEIGHT = 44
 
 #size of the map
 MAP_WIDTH = 80
-MAP_HEIGHT = 80
+MAP_HEIGHT = 88
 
 #sizes and coordinates relevant for the GUI
 BAR_WIDTH = 20
-PANEL_HEIGHT = 8
+PANEL_HEIGHT = 11
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
+
+SIDEBAR_HEIGHT = 20
+SIDEBAR_WIDTH = 18
+SIDEBAR_Y = 0
+SIDEBAR_X = 81
+#SCREEN_WIDTH - SIDEBAR_WIDTH
+
 MSG_X = BAR_WIDTH + 2
 MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
 MSG_HEIGHT = PANEL_HEIGHT - 1
@@ -66,7 +74,7 @@ FOV_ALGO = 0  #default FOV algorithm
 FOV_LIGHT_WALLS = True  #light walls or not
 TORCH_RADIUS = 8
 
-LIMIT_FPS = 25  #20 frames-per-second maximum
+LIMIT_FPS = 25  #25 frames-per-second maximum
 
 color_dark_wall = libtcod.Color(22, 22, 22)
 color_light_wall = libtcod.Color(54, 54, 54)
@@ -114,7 +122,7 @@ class Rect:
 class Object:
 	#this is a generic object: the player, a monster, an item, the stairs...
 	#it's always represented by a character on screen.
-	def __init__(self, x, y, char, name, color, make=None, desc=None, value=0, blocks=False, open=None, always_visible=False, fighter=None, ai=None, item=None,
+	def __init__(self, x, y, char, name, color, make=None, desc=None, value=0, blocks=False, open=None, always_visible=False, fighter=None, nonplayerchar=None, ai=None, item=None,
 				 equipment=None, furniture=None):
 		self.x = x
 		self.y = y
@@ -131,6 +139,10 @@ class Object:
 
 		if self.fighter:  #let the fighter component know who owns it
 			self.fighter.owner = self
+
+		self.nonplayerchar = nonplayerchar
+		if self.nonplayerchar:
+			self.nonplayerchar.owner = self
 
 		self.ai = ai
 		if self.ai:  #let the AI component know who owns it
@@ -392,6 +404,21 @@ class Fighter:
 		else:
 			message('The ' + self.owner.name.capitalize() + ' misses!')
 
+	def lightattack(self, target):
+		#a simple formula for attack damage
+		damage = ((self.power - target.fighter.defense) - 2) + libtcod.random_get_int(0, 0, 3)
+		tohit = (((self.dex / 2) + self.accuracy)+2) - libtcod.random_get_int(0, 0, 3)
+		if tohit >= target.fighter.dex:
+			if damage > 0:
+				#make the target take some damage
+				message('The ' + self.owner.name.capitalize() + ' quickly hits the ' + target.name + ' for ' + str(damage) + ' hit points.')
+				target.fighter.take_damage(damage)
+
+			else:
+				message('The ' + self.owner.name.capitalize() + ' quickly attacks the ' + target.name + ' but it has no effect!')
+		else:
+			message('The ' + self.owner.name.capitalize() + ' misses!')
+
 	def take_damage(self, damage):
 		#apply damage if possible
 		if damage > 0:
@@ -433,6 +460,194 @@ class Fighter:
 				take_game_turn()
 			else:
 				self.paralysis=False
+
+
+class NonplayerChar:
+	#combat-related properties and methods (monster, player, NPC).
+	def __init__(self, my_path, lastx, lasty, hp, defense, power, dex, accuracy, hack, eloyalty, vloyalty, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None, use_function=None):
+		self.my_path = my_path
+		self.lastx = lastx
+		self.lasty = lasty
+
+		self.base_max_hp = hp
+		self.hp = hp
+
+		self.base_defense = defense
+		self.base_power = power
+		self.base_hack = hack
+		self.base_dex = dex
+		self.base_accuracy = accuracy
+
+		self.base_eloyalty = eloyalty
+		self.base_vloyalty = vloyalty
+
+		self.xp = xp
+		self.death_function = death_function
+		self.creddrop = creddrop
+		self.base_move_speed = move_speed
+		self.flicker = flicker
+		self.robot = robot
+		self.use_function = use_function
+
+	@property
+	def power(self):  #return actual power, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.power_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_power + bonus
+
+	@property
+	def defense(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.defense_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_defense + bonus
+
+	@property
+	def hack(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.hack_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_hack + bonus
+
+	@property
+	def eloyalty(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.eloyalty_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_eloyalty + bonus
+
+	@property
+	def vloyalty(self):  #return actual defense, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.vloyalty_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_vloyalty + bonus
+
+	@property
+	def dex(self):
+		bonus = sum(equipment.dex_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_dex + bonus
+
+	@property
+	def accuracy(self):
+		bonus = sum(equipment.accuracy_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_accuracy + bonus
+
+	@property
+	def move_speed(self):
+		return self.base_move_speed
+
+	@property
+	def max_hp(self):  #return actual max_hp, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.max_hp_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_max_hp + bonus
+
+
+	def move_towards(self, target_x, target_y):
+		#get yo' a-star on in a fistful of code?!  this lib is awesome!
+
+		#if no path exists yet, get right onto that, stat!
+		if self.my_path is 0:
+			self.my_path = libtcod.path_new_using_map(fov_map, 1.0)
+
+		reblock = False
+
+		#need some logic here...constantly refresh path seems omniscient and computationally expensive
+
+		if not libtcod.map_is_walkable(fov_map, target_x, target_y):
+			reblock = True
+
+		libtcod.map_set_properties(fov_map, target_x, target_y, True, True)	#momentarily set the target to unblocked so the pathing works. kludgy, I know, but easier than writing my own a*!!!!
+
+		libtcod.path_compute(self.my_path, self.owner.x, self.owner.y, target_x, target_y)
+
+		if reblock:
+			libtcod.map_set_properties(fov_map, target_x, target_y, True, False) #kludge moment over. resume normal viewing!
+
+		if not libtcod.path_is_empty(self.my_path):
+			x, y = libtcod.path_walk(self.my_path,True)
+			if x and not is_blocked(x,y) and libtcod.path_size(self.my_path) < 10: #more than ten is too far, don't worry about it
+				libtcod.map_set_properties(fov_map, self.owner.x, self.owner.y, True, True)
+				self.owner.x = x
+				self.owner.y = y
+				libtcod.map_set_properties(fov_map, x, y, True, False)
+			else:
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+
+	def move_away(self, target_x, target_y):
+		#get yo' a-star on in a fistful of code?!  this lib is awesome!
+
+		#if no path exists yet, get right onto that, stat!
+		if self.my_path is 0:
+			self.my_path = libtcod.path_new_using_map(fov_map, 1.0)
+
+		reblock = False
+
+		#need some logic here...constantly refresh path seems omniscient and computationally expensive
+
+		if not libtcod.map_is_walkable(fov_map, target_x, target_y):
+			reblock = True
+
+		libtcod.map_set_properties(fov_map, target_x, target_y, True, True)	#momentarily set the target to unblocked so the pathing works. kludgy, I know, but easier than writing my own a*!!!!
+
+		libtcod.path_compute(self.my_path, self.owner.x, self.owner.y, target_x+10, target_y+20)
+
+		if reblock:
+			libtcod.map_set_properties(fov_map, target_x+10, target_y+20, True, False) #kludge moment over. resume normal viewing!
+
+		if not libtcod.path_is_empty(self.my_path):
+			x, y = libtcod.path_walk(self.my_path,True)
+			if x and not is_blocked(x,y) and libtcod.path_size(self.my_path) < 10: #more than ten is too far, don't worry about it
+				libtcod.map_set_properties(fov_map, self.owner.x, self.owner.y, True, True)
+				self.owner.x = x
+				self.owner.y = y
+				libtcod.map_set_properties(fov_map, x, y, True, False)
+			else:
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+
+	def shoot(self, target):
+		#a simple formula for attack damage
+		global game_turn
+		damage = (self.firearmdmg - target.fighter.defense) + libtcod.random_get_int(0, 0, 6)
+		tohit = ((self.dex / 4) + self.firearmacc + 2) - libtcod.random_get_int(0, 0, 4)
+		if tohit >= target.fighter.dex:
+			if damage > 0:
+				#make the target take some damage
+				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' for ' + str(damage) + ' hit points.')
+				target.fighter.take_damage(damage)
+			else:
+				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' but it has no effect!')
+		else:
+			message('The ' + self.owner.name.capitalize() + ' misses!')
+
+	def use(self):
+		#just call the "use_function" if it is defined
+		if self.use_function is None:
+			message('The ' + self.owner.name + ' cannot be used.')
+
+	def attack(self, target):
+		#a simple formula for attack damage
+		damage = (self.power - target.fighter.defense) + libtcod.random_get_int(0, 0, 3)
+		tohit = ((self.dex / 2) + self.accuracy) - libtcod.random_get_int(0, 0, 3)
+		if tohit >= target.fighter.dex:
+			if damage > 0:
+				#make the target take some damage
+				message('The ' + self.owner.name.capitalize() + ' attacks the ' + target.name + ' for ' + str(damage) + ' hit points.')
+				target.fighter.take_damage(damage)
+
+			else:
+				message('The ' + self.owner.name.capitalize() + ' attacks the ' + target.name + ' but it has no effect!')
+		else:
+			message('The ' + self.owner.name.capitalize() + ' misses!')
+
+	def take_damage(self, damage):
+		#apply damage if possible
+		if damage > 0:
+			self.hp -= damage
+			self.flicker = 1
+
+			if self.hp <= 4 and self.hp > 0 :
+				message('The ' + self.owner.name.capitalize() + ' looks badly wounded!')
+
+			#check for death. if there's a death function, call it
+			if self.hp <= 0:
+				function = self.death_function
+				if function is not None:
+					function(self.owner)
+
+				if self.owner != player:  #yield experience to the player
+					player.fighter.xp += self.xp
 
 
 class Item:
@@ -703,6 +918,22 @@ class BasicNpc:
 		monster = self.owner
 		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
 				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+
+
+class EveningNpc:
+	def set_place(self):
+		findspotx = range(2,22)
+		findspoty = range(22,30)
+
+	def take_turn(self):
+		monster = self.owner
+		if is_blocked(findspotx,findspoty) == False:
+			self.owner.move(findspotx, findspoty)
+		else:
+			set_place()
+
+		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+			self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
 
 class BasicShooter:
@@ -1188,6 +1419,8 @@ def target_monster(max_range=None):
 				return obj
 
 
+
+
 ## Rendering and visuals
 
 
@@ -1200,17 +1433,17 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 	bar_width = int(float(value) / maximum * total_width)
 
 	#render the background first
-	libtcod.console_set_default_background(panel, back_color)
-	libtcod.console_rect(panel, x, y, total_width, 1, False, libtcod.BKGND_SCREEN)
+	libtcod.console_set_default_background(sidebar, back_color)
+	libtcod.console_rect(sidebar, x, y, total_width, 1, False, libtcod.BKGND_SCREEN)
 
 	#now render the bar on top
-	libtcod.console_set_default_background(panel, bar_color)
+	libtcod.console_set_default_background(sidebar, bar_color)
 	if bar_width > 0:
-		libtcod.console_rect(panel, x, y, bar_width, 1, False, libtcod.BKGND_SCREEN)
+		libtcod.console_rect(sidebar, x, y, bar_width, 1, False, libtcod.BKGND_SCREEN)
 
 	#finally, some centered text with the values
-	libtcod.console_set_default_foreground(panel, libtcod.white)
-	libtcod.console_print_ex(panel, x + total_width / 2, y, libtcod.BKGND_NONE, libtcod.CENTER,
+	libtcod.console_set_default_foreground(sidebar, libtcod.white)
+	libtcod.console_print_ex(sidebar, x + total_width / 2, y, libtcod.BKGND_NONE, libtcod.CENTER,
 							 name + ': ' + str(value) + '/' + str(maximum))
 
 
@@ -1227,15 +1460,15 @@ def menu(header, options, width):
 	window = libtcod.console_new(width, height)
 
 	#print the header, with auto-wrap
-	libtcod.console_set_default_foreground(window, libtcod.white)
-	libtcod.console_print_rect_ex(window, 0, 0, width, height, libtcod.BKGND_NONE, libtcod.LEFT, header)
+	libtcod.console_set_default_foreground(window, libtcod.green)
+	libtcod.console_print_rect_ex(window, 0, 0, width, height, libtcod.BKGND_ADD, libtcod.LEFT, header)
 
 	#print all the options
 	y = header_height
 	letter_index = ord('a')
 	for option_text in options:
 		text = '(' + chr(letter_index) + ') ' + option_text
-		libtcod.console_print_ex(window, 0, y, libtcod.BKGND_NONE, libtcod.LEFT, text)
+		libtcod.console_print_ex(window, 0, y, libtcod.BKGND_ADD, libtcod.LEFT, text)
 		y += 1
 		letter_index += 1
 
@@ -1313,7 +1546,7 @@ def flicker_all():
 def render_all():
 	global fov_map, color_dark_wall, color_light_wall
 	global color_dark_ground, color_light_ground
-	global fov_recompute
+	global fov_recompute, hour, day, amorpm
 	#plyx = player.x + 2
 	#plyy = player.y + 2
 
@@ -1371,38 +1604,52 @@ def render_all():
 
 
 	#prepare to render the GUI panel
+
 	libtcod.console_set_default_background(panel, libtcod.black)
 	libtcod.console_clear(panel)
 
+
 	#print the game messages, one line at a time
 	y = 1
+	x = 1
 	for (line, color) in game_msgs:
 		libtcod.console_set_default_foreground(panel, color)
-		libtcod.console_print_ex(panel, MSG_X, y, libtcod.BKGND_NONE, libtcod.LEFT, line)
+		libtcod.console_print_ex(panel, x, y, libtcod.BKGND_NONE, libtcod.LEFT, line)
 		y += 1
 
+
 	#show the player's stats
-	render_bar(1, 1, BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp,
+
+	libtcod.console_set_default_background(sidebar, libtcod.black)
+	libtcod.console_clear(sidebar)
+
+
+	for line in range(3,33):
+		libtcod.console_set_char_background(sidebar, 0, line, libtcod.darkest_gray, libtcod.BKGND_SET)
+
+	libtcod.console_print_ex(sidebar, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
+
+	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
+	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
+	libtcod.console_print_ex(sidebar, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
+
+
+	libtcod.console_print_ex(sidebar, 11, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
+	libtcod.console_print_ex(sidebar, 1, 12, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
+
+
+	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
+	libtcod.console_print_ex(sidebar, 9, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(sidebar, 1, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
+	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
+
+
+
+	render_bar(0, 1, BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp,
 			   libtcod.light_red, libtcod.darker_red)
 
-	render_bar(1, 2, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
+	render_bar(0, 2, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
 			   libtcod.light_blue, libtcod.darker_blue)
-
-	#render_bar(1, 3, BAR_WIDTH, 'Hunger', hunger, 100,
-	#		   libtcod.dark_green, libtcod.darker_green)
-	libtcod.console_print_ex(panel, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
-
-	libtcod.console_print_ex(panel, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
-
-	libtcod.console_print_ex(panel, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(panel, 9, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-
-	libtcod.console_print_ex(panel, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
-	libtcod.console_print_ex(panel, 9, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
-
-	libtcod.console_print_ex(panel, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
-	libtcod.console_print_ex(panel, 9, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
-
 
 	#display names of objects under the mouse
 	libtcod.console_set_default_foreground(panel, libtcod.light_gray)
@@ -1410,6 +1657,7 @@ def render_all():
 
 	#blit the contents of "panel" to the root console
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
+	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0, 71, SIDEBAR_Y, 0.94, 0.2)
 
 
 ## Object placement!!!!!!
@@ -1497,7 +1745,7 @@ def place_monsters(room):
 			elif choice == 'dog':
 				#create a troll
 				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=10, defense=2, power=2, dex=2, hack=0, accuracy=4, firearmdmg=0, firearmacc=0,
-											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=1, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=20, move_speed=1, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 				ai_component = BasicDog()
 
 				monster = Object(x, y, 'd', 'Dog', libtcod.dark_green, desc='a rabid hound capable of sniffing out its victims',
@@ -1771,16 +2019,37 @@ def hub():
 	furniture.always_visible = True
 
 	#NPCs
-	npcplace = [(4,24), (5,24), (7, 4), (9, 8), (30, 10)]
+	#NPC direct placement:
+	npcplace = [(4,24), (5,24), (7, 4), (9, 8), (15, 28), (30, 10)]
 	for x,y in npcplace:
-		libtcod.namegen_parse('names.txt')
+		libtcod.namegen_parse('npcattrib.txt')
 		name = libtcod.namegen_generate('npcnames')
-		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4, firearmdmg=0, firearmacc=0,
-											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+		clothes = libtcod.namegen_generate('clothes')
+		features = libtcod.namegen_generate('features')
+		libtcod.namegen_parse('colours.txt')
+		colours = libtcod.namegen_generate('colours')
+		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
+											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
-		monster = Object(x, y, 'N', name, libtcod.light_fuchsia, desc=name,
-								 blocks=True, fighter=fighter_component, ai=ai_component)
-		objects.append(monster)
+		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
+								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
+		objects.append(npc)
+
+	for n in range(1,10):
+		libtcod.namegen_parse('npcattrib.txt')
+		name = libtcod.namegen_generate('npcnames')
+		clothes = libtcod.namegen_generate('clothes')
+		features = libtcod.namegen_generate('features')
+		libtcod.namegen_parse('colours.txt')
+		colours = libtcod.namegen_generate('colours')
+
+		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
+											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
+		ai_component = BasicNpc()
+		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
+								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
+		npc.x, npc.y = random_unblocked_tile_on_map()
+		objects.append(npc)
 
 	#n = range(1,15)
 	for n in range(1,15):
@@ -1792,8 +2061,17 @@ def hub():
 		n+=1
 
 	#misc
+	furniture_component = Furniture(use_function=playerdoor)
+	furniture = Object(61, 22, 'X', 'door', libtcod.dark_flame, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
+	objects.append(furniture)
+
 	furniture_component = Furniture(use_function=playerterminal)
 	furniture = Object(60, 21, '&', 'Player Terminal', libtcod.white, desc='Your Terminal', blocks=True, furniture=furniture_component)
+	objects.append(furniture)
+	furniture.always_visible = True
+
+	furniture_component = Furniture(use_function=bed)
+	furniture = Object(56, 21, '#', 'Bed', libtcod.lightest_amber, desc='Your Bed', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
@@ -1839,10 +2117,19 @@ def hub():
 def factory():
 	cultistplace = [(20,5), (5,24), (7, 4), (9, 8), (30, 10)]
 	for x,y in cultistplace:
-		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=5, power=8, dex=2, accuracy=5, firearmdmg=0, firearmacc=0,
+		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=5, power=8, dex=2, hack=0, accuracy=5, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 		ai_component = CleverMonster()
 		monster = Object(x, y, 'c', 'Cultist', libtcod.light_red, desc='a Leucrocota Cultist',
+								 blocks=True, fighter=fighter_component, ai=ai_component)
+		objects.append(monster)
+
+	deviationplace = [(10,5), (5,30), (7, 9), (9, 15), (32, 20)]
+	for x,y in deviationplace:
+		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=120, defense=5, power=10, dex=1, hack=0, accuracy=6, firearmdmg=0, firearmacc=0,
+											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=120, move_speed=3, flicker=0, robot=False, death_function=monster_death, creddrop=0)
+		ai_component = CleverMonster()
+		monster = Object(x, y, 'D', 'Deviation', libtcod.red, desc='a Leucrocota Deviation, a towering amalgamation of decaying flesh and sharp bone',
 								 blocks=True, fighter=fighter_component, ai=ai_component)
 		objects.append(monster)
 
@@ -1869,6 +2156,32 @@ def player_move_or_attack(dx, dy):
 		#attack if target found, move otherwise
 	if target is not None:
 		player.fighter.attack(target)
+		take_game_turn()
+	else:
+		player.move(dx, dy)
+		fov_recompute = True
+		take_game_turn()
+
+
+def player_move_or_lightattack(dx, dy):
+	global fov_recompute
+	global game_turn
+
+	#if game_turn % player.fighter.move_speed == 0:
+		#the coordinates the player is moving to/attacking
+	x = player.x + dx
+	y = player.y + dy
+
+		#try to find an attackable object there
+	target = None
+	for object in objects:
+		if object.fighter and object.x == x and object.y == y:
+			target = object
+			break
+
+		#attack if target found, move otherwise
+	if target is not None:
+		player.fighter.lightattack(target)
 		take_game_turn()
 	else:
 		player.move(dx, dy)
@@ -1990,7 +2303,7 @@ def get_all_equipped(obj):  #returns a list of equipped items
 
 
 def handle_keys():
-	global key, game_turn, upstairs, factoryexitstairs
+	global key, game_turn, upstairs, factoryexitstairs, time
 
 	if key.vk == libtcod.KEY_ENTER and key.lalt:
 		#Alt+Enter: toggle fullscreen
@@ -2007,64 +2320,104 @@ def handle_keys():
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(0, -1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(0, -1)
+					take_game_turn()
+				else:
+					player_move_or_attack(0, -1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_DOWN or key.vk == libtcod.KEY_KP2:
 			if player.fighter.paralysis:
 				random.randint(0,100) < 36
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(0, 1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(0, 1)
+					take_game_turn()
+				else:
+					player_move_or_attack(0, 1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_LEFT or key.vk == libtcod.KEY_KP4:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(-1, 0)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(-1, 0)
+					take_game_turn()
+				else:
+					player_move_or_attack(-1, 0)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_RIGHT or key.vk == libtcod.KEY_KP6:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(1, 0)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(1, 0)
+					take_game_turn()
+				else:
+					player_move_or_attack(1, 0)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_HOME or key.vk == libtcod.KEY_KP7:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(-1, -1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(-1, -1)
+					take_game_turn()
+				else:
+					player_move_or_attack(-1, -1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_PAGEUP or key.vk == libtcod.KEY_KP9:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(1, -1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(1, -1)
+					take_game_turn()
+				else:
+					player_move_or_attack(1, -1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_END or key.vk == libtcod.KEY_KP1:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(-1, 1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(-1, 1)
+					take_game_turn()
+				else:
+					player_move_or_attack(-1, 1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_PAGEDOWN or key.vk == libtcod.KEY_KP3:
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
 				player.fighter.become_paralysed()
 			else:
-				player_move_or_attack(1, 1)
-				take_game_turn()
+				if key.lctrl:
+					player_move_or_lightattack(1, 1)
+					take_game_turn()
+				else:
+					player_move_or_attack(1, 1)
+					take_game_turn()
+
 		elif key.vk == libtcod.KEY_KP5:
 			if player.fighter.paralysis:
 				take_game_turn()
@@ -2072,6 +2425,7 @@ def handle_keys():
 				player.figher.become_paralysed()
 			else:
 				#pass  #do nothing ie wait for the monster to come to you
+				take_game_turn()
 				take_game_turn()
 
 		else:
@@ -2099,9 +2453,10 @@ def handle_keys():
 				if chosen_item is not None:
 					chosen_item.use()
 
-			if key_char == 'j':
-				#show the inventory; if an item is selected, use it
-				next_level()
+			if key.vk == libtcod.KEY_BACKSPACE:
+				#show the history; if an item is selected, use it
+				show_world()
+
 
 			if key_char == 'e':
 				message('Left-click an object to use, or right-click to cancel.', libtcod.light_cyan)
@@ -2110,6 +2465,9 @@ def handle_keys():
 				for obj in objects:
 					if obj.x == x and obj.y == y and obj.furniture:
 						obj.furniture.use_function(obj)
+
+					elif obj.x == x and obj.y == y and obj.nonplayerchar:
+						obj.nonplayerchar.use_function(obj)
 
 			#! make this message only show if not able to use, or if no object is in range!
 
@@ -2179,6 +2537,15 @@ def handle_keys():
 				else:
 					message('you have run out of charge! ')
 
+			#DEBUG KEYS
+			if key_char == 'j':
+				#show the inventory; if an item is selected, use it
+				next_level()
+
+			if key_char == 't':
+				#show the inventory; if an item is selected, use it
+				time += 240
+
 			return 'didnt-take-turn'
 
 
@@ -2191,12 +2558,15 @@ def check_hunger():
 	if hunger == 60:
 		message ('You are hungry', libtcod.dark_red)
 		hunger_stat = 'Hungry'
+		hunger -=1
 	if hunger == 30:
-		message (' You are very hungry', libtcod.dark_red)
-		hunger_stat = 'Very Hungry'
+		message ('You are very hungry', libtcod.dark_red)
+		hunger_stat = 'V.Hungry'
+		hunger -=1
 	elif hunger == 15:
 		message (' You are starving!', libtcod.dark_red)
 		hunger_stat = 'Starving'
+		hunger -=1
 	elif hunger < 0:
 		message('You died of starvation', libtcod.dark_red)
 		game_state = 'dead'
@@ -2234,7 +2604,6 @@ def level_up():
 			player.fighter.hack += 1
 			player.fighter.base_charge += 2
 			player.fighter.charge += 2
-
 
 
 #Death!
@@ -2358,10 +2727,24 @@ def open_box(obj):
 	object_destroy(obj)
 
 
+def convo(obj):
+	talk = ['Go away', 'Why are you talking to me?', 'Who are you?', 'Get lost.']
+	from random import choice
+	message(choice(talk))
+
+
 def rubble(obj):
 	global game_turn
 	message('you break up the rubble!')
 	object_destroy(obj)
+
+
+def bed(obj):
+	global hour
+	hour += 8
+	player.fighter.hp = player.fighter.max_hp
+	player.fighter.charge = player.fighter.base_charge
+	message('you feel rested')
 
 
 def recharge(obj):
@@ -2600,6 +2983,24 @@ def door(obj):
 	initialize_fov()
 
 
+def playerdoor(obj):
+	global rentpaid
+	if rentpaid == True:
+		message('you open the door')
+		obj.char = '_'
+		obj.color = libtcod.light_grey
+		obj.blocks = False
+		obj.furniture = None
+		map[obj.x][obj.y].block_sight = False
+		obj.name = 'open door'
+		obj.send_to_back()
+		#door.opened = 1
+		libtcod.map_set_properties(fov_map, obj.x, obj.y, True, True)
+		initialize_fov()
+	else:
+		message('it has been locked by the landlord')
+
+
 def nouse(obj):
 	message('Nothing useful can be done with this')
 
@@ -2775,14 +3176,89 @@ def load_game():
 
 
 def take_game_turn():
-	global game_turn, hunger
+	global game_turn, hunger, time
 	game_turn += 1
+	time += 1
 	if random.randint(0,100) < HUNGER_BASE:
 		hunger -= 1
 
 
+def check_time():
+	global time, hour, day, cred, rentpaid, amorpm
+	if time >= 240:
+		hour += 1
+		time = 0
+	if hour == 6 and time == 0:
+		message('it is morning')
+		time +=2
+		morning()
+	if hour == 12 and time == 0:
+		time +=2
+		message('It is mid-day')
+	if hour == 18 and time == 0:
+		time +=2
+		message ('It is evening')
+		evening()
+	if hour == 21 and time == 0:
+		time +=2
+		message ('It is night time')
+	if hour >= 24 and time >= 0:
+		time +=2
+		day += 1
+		hour = 0
+
+	if day == 8:
+		day = 0
+		if cred >= 300:
+			cred -= 300
+			message ('Rent has been deducted from your account.')
+			rentpaid = True
+		else:
+			message ('You have no money to pay the rent with.')
+			rentpaid = False
+
+	if hour <= 12:
+		amorpm = 'am'
+	else:
+		amorpm = 'pm'
+
+def show_world():
+	msgbox(
+		'Corporation: ' + str(worldgen.corpone)
+		+ '\n Deals in: ' + str(worldgen.corponeproducts)
+		+ '\n' +
+		'\n History: ' + str(worldgen.corponehistory)
+		+ '\n' +
+
+		'\nCorporation: ' + str(worldgen.corptwo)
+		+ '\n Deals in: ' + str(worldgen.corptwoproducts)
+		+ '\n' +
+		'\n History: ' + str(worldgen.corptwohistory)
+		+ '\n' +
+
+		'\nCorporation: ' + str(worldgen.corpthree)
+		+ '\n Deals in: ' + str(worldgen.corpthreeproducts)
+		+ '\n' +
+		'\n History: ' + str(worldgen.corpthreehistory)
+		)
+
+def evening():
+	#change NPC AI to eveningnpc.
+	global color_light_ground, color_light_wall
+	color_light_wall = libtcod.Color(36, 46, 46)
+	color_light_ground = libtcod.Color(68, 68, 68)
+	initialize_fov()
+
+
+def morning():
+	global color_light_ground, color_light_wall
+	color_light_wall = libtcod.Color(54, 54, 54)
+	color_light_ground = libtcod.Color(86, 76, 76)
+	initialize_fov()
+
+
 def new_game():
-	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat
+	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour, day, rentpaid, amorpm
 
 
 	#create object representing the player
@@ -2792,14 +3268,16 @@ def new_game():
 
 	#add player start variables - pretty much whatever we want really.
 	player.level = 1
-	cred = 50
+	cred = 450
+	rentpaid = True
 	player.reloadable = 0
 	inventory = []
 
 	#create the list of game messages and their colors, starts empty
 	game_msgs = []
-	#libtcod.namegen_parse('names.txt')
+	#libtcod.namegen_parse('npcattrib.txt')
 	#generate map (at this point it's not drawn to the screen)
+	worldgen.setcorps()
 	dungeon_level = 1
 	make_map()
 	initialize_fov()
@@ -2807,6 +3285,10 @@ def new_game():
 	game_state = 'playing'
 	game_turn = 0
 	hunger = 100
+	time = 0
+	hour = 6
+	amorpm = 'am'
+	day = 1
 	hunger_stat = 'Full'
 
 	#a warm welcoming message!
@@ -2827,7 +3309,7 @@ def new_game():
 	equipment_component.equip()
 
 	equipment_component = Equipment(slot='Insert 1', eloyalty_bonus=1)
-	obj3 = Object(0, 0, '*', 'Erma Loyalty Chip', libtcod.black, equipment=equipment_component)
+	obj3 = Object(0, 0, '*', worldgen.corpone +' Loyalty Chip', libtcod.black, equipment=equipment_component)
 
 	inventory.append(obj3)
 	equipment_component.equip()
@@ -2877,7 +3359,7 @@ def exitfactory():
 	color_dark_ground = libtcod.Color(48, 38, 38)
 	color_light_ground = libtcod.Color(86, 76, 76)
 
-	message('You arrive back at the hub')
+	message('You arrive back at the hub.')
 	initialize_fov()
 
 
@@ -2970,6 +3452,7 @@ def play_game():
 		#main loop checks
 		check_level_up()
 		check_hunger()
+		check_time()
 
 		#erase all objects at their old locations, before they move
 		for object in objects:
@@ -2991,8 +3474,12 @@ def play_game():
 		#let monsters take their turn
 		if game_state == 'playing' and player_action != 'didnt-take-turn':
 			for object in objects:
-				if object.ai and (game_turn % object.fighter.move_speed) == 0:
-					object.ai.take_turn()
+				try:
+					if object.ai and (game_turn % object.fighter.move_speed) == 0:
+						object.ai.take_turn()
+				except AttributeError:
+					if object.ai and (game_turn % object.nonplayerchar.move_speed) == 0:
+						object.ai.take_turn()
 
 
 
@@ -3003,4 +3490,5 @@ libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'CyberRogue', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 con = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = libtcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
+sidebar = libtcod.console_new(SIDEBAR_WIDTH, SCREEN_HEIGHT)
 main_menu()
