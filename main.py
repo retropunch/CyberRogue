@@ -44,7 +44,7 @@ LEVEL_SCREEN_WIDTH = 50
 
 
 #parameters for dungeon generator
-ROOM_MAX_SIZE = 12
+ROOM_MAX_SIZE = 16
 ROOM_MIN_SIZE = 5
 MAX_ROOMS = 35
 
@@ -864,7 +864,7 @@ class BasicDog:
 				monster.fighter.move_towards(player.x, player.y)
 				take_game_turn()
 			elif player.fighter.hp > 0:
-				if random.randint(0,100) < 10:
+				if random.randint(0,100) < 5:
 					monster.fighter.paralyse(player)
 				else:
 					monster.fighter.attack(player)
@@ -1135,6 +1135,26 @@ def create_room(room):
 			map[x][y].block_sight = False
 
 
+def create_circular_room(room):
+    global map
+    #center of circle
+    cx = (room.x1 + room.x2) / 2
+    cy = (room.y1 + room.y2) / 2
+
+    #radius of circle: make it fit nicely inside the room, by making the
+    #radius be half the width or height (whichever is smaller)
+    width = room.x2 - room.x1
+    height = room.y2 - room.y1
+    r = min(width, height) / 1.8
+
+    #go through the tiles in the circle and make them passable
+    for x in range(room.x1, room.x2 + 1):
+        for y in range(room.y1, room.y2 + 1):
+            if math.sqrt((x - cx) ** 2 + (y - cy) ** 2) <= r:
+                map[x][y].blocked = False
+                map[x][y].block_sight = False
+
+
 def create_h_tunnel(x1, x2, y):
 	global map
 	#horizontal tunnel. min() and max() are used in case x1>x2
@@ -1149,6 +1169,9 @@ def create_v_tunnel(y1, y2, x):
 	for y in range(min(y1, y2), max(y1, y2) + 1):
 		map[x][y].blocked = False
 		map[x][y].block_sight = False
+
+
+
 
 
 def make_map():
@@ -1285,8 +1308,10 @@ def make_map():
 			if not failed:
 				#this means there are no intersections, so this room is valid
 
-				#"paint" it to the map's tiles
-				create_room(new_room)
+				#"paint" it to the map's tiles8
+				roomchoice = [create_circular_room(new_room), create_room(new_room)]
+				random.choice(roomchoice)
+				create_circular_room(new_room)
 
 				#add some contents to this room
 				place_objects(new_room)
@@ -3222,6 +3247,7 @@ def check_time():
 	else:
 		amorpm = 'pm'
 
+
 def show_world():
 	msgbox(
 		'Corporation: ' + str(worldgen.corpone)
@@ -3241,6 +3267,7 @@ def show_world():
 		+ '\n' +
 		'\n History: ' + str(worldgen.corpthreehistory)
 		)
+
 
 def evening():
 	#change NPC AI to eveningnpc.

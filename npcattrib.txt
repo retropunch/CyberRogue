@@ -10,3 +10,4 @@ name "clothes" {
 syllablesStart = "jacket,coat,tank_top,shirt,t-shirt,hat,headband,bracelet,overall"
 rules = "%50$s"
 }
+
