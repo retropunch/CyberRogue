@@ -1546,7 +1546,7 @@ def flicker_all():
 def render_all():
 	global fov_map, color_dark_wall, color_light_wall
 	global color_dark_ground, color_light_ground
-	global fov_recompute, hour, day
+	global fov_recompute, hour, day, amorpm
 	#plyx = player.x + 2
 	#plyy = player.y + 2
 
@@ -1623,12 +1623,18 @@ def render_all():
 	libtcod.console_set_default_background(sidebar, libtcod.black)
 	libtcod.console_clear(sidebar)
 
+
+	for line in range(3,33):
+		libtcod.console_set_char_background(sidebar, 0, line, libtcod.darkest_gray, libtcod.BKGND_SET)
+
 	libtcod.console_print_ex(sidebar, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
 
 	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
 	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
-	libtcod.console_print_ex(sidebar, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour))
-	libtcod.console_print_ex(sidebar, 9, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
+	libtcod.console_print_ex(sidebar, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
+
+
+	libtcod.console_print_ex(sidebar, 11, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
 	libtcod.console_print_ex(sidebar, 1, 12, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
 
 
@@ -2447,7 +2453,7 @@ def handle_keys():
 				if chosen_item is not None:
 					chosen_item.use()
 
-			if key_char == 'h':
+			if key.vk == libtcod.KEY_BACKSPACE:
 				#show the history; if an item is selected, use it
 				show_world()
 
@@ -3178,7 +3184,7 @@ def take_game_turn():
 
 
 def check_time():
-	global time, hour, day, cred, rentpaid
+	global time, hour, day, cred, rentpaid, amorpm
 	if time >= 240:
 		hour += 1
 		time = 0
@@ -3211,12 +3217,30 @@ def check_time():
 			message ('You have no money to pay the rent with.')
 			rentpaid = False
 
-def show_world():
+	if hour <= 12:
+		amorpm = 'am'
+	else:
+		amorpm = 'pm'
 
+def show_world():
 	msgbox(
-		'Corporation:' + str(worldgen.corpone) + '\n Deals in: ' + str(worldgen.corponeproducts) +
-		'\nCorporation:' + str(worldgen.corptwo) + '\n Deals in: ' + str(worldgen.corptwoproducts) +
-		CHARACTER_SCREEN_WIDTH)
+		'Corporation: ' + str(worldgen.corpone)
+		+ '\n Deals in: ' + str(worldgen.corponeproducts)
+		+ '\n' +
+		'\n History: ' + str(worldgen.corponehistory)
+		+ '\n' +
+
+		'\nCorporation: ' + str(worldgen.corptwo)
+		+ '\n Deals in: ' + str(worldgen.corptwoproducts)
+		+ '\n' +
+		'\n History: ' + str(worldgen.corptwohistory)
+		+ '\n' +
+
+		'\nCorporation: ' + str(worldgen.corpthree)
+		+ '\n Deals in: ' + str(worldgen.corpthreeproducts)
+		+ '\n' +
+		'\n History: ' + str(worldgen.corpthreehistory)
+		)
 
 def evening():
 	#change NPC AI to eveningnpc.
@@ -3234,7 +3258,7 @@ def morning():
 
 
 def new_game():
-	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour, day, rentpaid
+	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour, day, rentpaid, amorpm
 
 
 	#create object representing the player
@@ -3253,6 +3277,7 @@ def new_game():
 	game_msgs = []
 	#libtcod.namegen_parse('npcattrib.txt')
 	#generate map (at this point it's not drawn to the screen)
+	worldgen.setcorps()
 	dungeon_level = 1
 	make_map()
 	initialize_fov()
@@ -3262,6 +3287,7 @@ def new_game():
 	hunger = 100
 	time = 0
 	hour = 6
+	amorpm = 'am'
 	day = 1
 	hunger_stat = 'Full'
 
@@ -3283,7 +3309,7 @@ def new_game():
 	equipment_component.equip()
 
 	equipment_component = Equipment(slot='Insert 1', eloyalty_bonus=1)
-	obj3 = Object(0, 0, '*', 'Erma Loyalty Chip', libtcod.black, equipment=equipment_component)
+	obj3 = Object(0, 0, '*', worldgen.corpone +' Loyalty Chip', libtcod.black, equipment=equipment_component)
 
 	inventory.append(obj3)
 	equipment_component.equip()
