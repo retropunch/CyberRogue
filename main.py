@@ -33,7 +33,7 @@ SIDEBAR_HEIGHT = 20
 SIDEBAR_WIDTH = 18
 SIDEBAR_Y = 0
 SIDEBAR_X = 81
-#SCREEN_WIDTH - SIDEBAR_WIDTH
+
 
 MSG_X = BAR_WIDTH + 2
 MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
@@ -68,7 +68,7 @@ PLAYER_RADIUS = 2
 #experience and level-ups
 LEVEL_UP_BASE = 200
 LEVEL_UP_FACTOR = 150
-HUNGER_BASE = 5
+HUNGER_BASE = 4
 
 FOV_ALGO = 0  #default FOV algorithm
 FOV_LIGHT_WALLS = True  #light walls or not
@@ -920,20 +920,20 @@ class BasicNpc:
 				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
 
-class EveningNpc:
-	def set_place(self):
-		findspotx = range(2,22)
-		findspoty = range(22,30)
-
-	def take_turn(self):
-		monster = self.owner
-		if is_blocked(findspotx,findspoty) == False:
-			self.owner.move(findspotx, findspoty)
-		else:
-			set_place()
-
-		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
-			self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+#class EveningNpc:
+#	def set_place(self):
+#		findspotx = range(2,22)
+#		findspoty = range(22,30)
+#
+#	def take_turn(self):
+#		monster = self.owner
+#		if is_blocked(findspotx,findspoty) == False:
+#			self.owner.move(findspotx, findspoty)
+#		else:
+#			set_place()
+#
+#		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+#			self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
 
 class BasicShooter:
@@ -1135,6 +1135,18 @@ def create_room(room):
 			map[x][y].block_sight = False
 
 
+def create_boundaries():
+	for y in range(MAP_HEIGHT):
+		map[0][y].blocked = True
+		map[0][y].block_sight = True
+		map[69][y].blocked = True
+		map[69][y].block_sight = True
+	for x in range(MAP_WIDTH):
+		map[x][0].blocked = True
+		map[x][0].block_sight = True
+		map[x][31].blocked = True
+		map[x][31].block_sight = True
+
 def create_circular_room(room):
     global map
     #center of circle
@@ -1312,6 +1324,7 @@ def make_map():
 				roomchoice = [create_circular_room(new_room), create_room(new_room)]
 				random.choice(roomchoice)
 				create_circular_room(new_room)
+				create_boundaries()
 
 				#add some contents to this room
 				place_objects(new_room)
