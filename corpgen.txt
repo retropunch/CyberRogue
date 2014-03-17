@@ -2,7 +2,7 @@
 name "corpnames" {
 syllablesStart = "Xan, Ix, Wey, Intel, Ming, Yuo, Machine, Xing, Frana, Tactical, Power, Bowen, Dynamic, Avery, Avi, Tech, Shi, Yutani"
 syllablesMiddle = "/-,_"
-syllablesEnd = "/Corp., Systems, /.ltd, Group"
+syllablesEnd = "/Corp., Systems, /ltd., Group"
 rules = "%50$s$m%50$s_$20e"
 }
 

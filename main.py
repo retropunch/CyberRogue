@@ -1147,6 +1147,7 @@ def create_boundaries():
 		map[x][31].blocked = True
 		map[x][31].block_sight = True
 
+
 def create_circular_room(room):
     global map
     #center of circle
@@ -3264,22 +3265,22 @@ def check_time():
 def show_world():
 	msgbox(
 		'Corporation: ' + str(worldgen.corpone)
-		+ '\n Deals in: ' + str(worldgen.corponeproducts)
+		+ '\nDeals in: ' + str(worldgen.corponeproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corponehistory)
 		+ '\n' +
 
 		'\nCorporation: ' + str(worldgen.corptwo)
-		+ '\n Deals in: ' + str(worldgen.corptwoproducts)
+		+ '\nDeals in: ' + str(worldgen.corptwoproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corptwohistory)
 		+ '\n' +
 
 		'\nCorporation: ' + str(worldgen.corpthree)
-		+ '\n Deals in: ' + str(worldgen.corpthreeproducts)
+		+ '\nDeals in: ' + str(worldgen.corpthreeproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corpthreehistory)
-		)
+		, 40)
 
 
 def evening():
