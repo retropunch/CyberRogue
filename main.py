@@ -3189,7 +3189,7 @@ def check_time():
 		hour += 1
 		time = 0
 	if hour == 6 and time == 0:
-		message('it is morning')
+		message('It is morning')
 		time +=2
 		morning()
 	if hour == 12 and time == 0:
@@ -3256,9 +3256,51 @@ def morning():
 	color_light_ground = libtcod.Color(86, 76, 76)
 	initialize_fov()
 
+def enter_text_menu(header, width, max_length):
+
+	#create an off-screen console that represents the menu's window
+	window = libtcod.console_new(width, 2)
+
+	#print the header, with auto-wrap
+	libtcod.console_set_default_foreground(window, libtcod.green)
+	libtcod.console_print_rect(window, 0, 0, width, 30, header)
+
+
+	user_input = ''
+	char_position = 0
+	x = SCREEN_WIDTH/2 - width/2
+	y = SCREEN_HEIGHT/2 - 1
+	libtcod.console_set_default_foreground(window, libtcod.white)
+	while True:
+		key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED)
+
+		if key.vk == libtcod.KEY_BACKSPACE and char_position >= 0:
+			user_input = user_input[:-1]
+			char_position -= 1
+			libtcod.console_print_ex(window, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, ' ')
+		elif key.vk == libtcod.KEY_ENTER:
+			break
+		elif key.vk == libtcod.KEY_ESCAPE:
+			user_input = ""
+			break
+		elif key.c > 0 and len(user_input) < max_length:
+			letter = chr(key.c)
+			libtcod.console_print_ex(window, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, letter)
+			user_input += letter  #add to the string
+			char_position += 1
+		libtcod.console_blit(window, 0, 0, width, 2, 0, x, y, 1.0, 0.7)
+		libtcod.console_flush()
+	return user_input
+
 
 def new_game():
 	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour, day, rentpaid, amorpm
+
+	#get player name
+	libtcod.console_flush()
+
+	name = enter_text_menu('Enter your name: ', 20, 10)
+	name = name.capitalize()
 
 
 	#create object representing the player
@@ -3292,7 +3334,7 @@ def new_game():
 	hunger_stat = 'Full'
 
 	#a warm welcoming message!
-	message('Welcome to CyberRogue!', libtcod.red)
+	message('Greetings ' + name + '. Welcome to CyberRogue!', libtcod.red)
 
 
 	#initial equipment: a knife, pistol
