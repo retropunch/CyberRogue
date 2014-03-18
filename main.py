@@ -3299,7 +3299,7 @@ def morning():
 def enter_text_menu(header, width, max_length):
 
 	#create an off-screen console that represents the menu's window
-	window = libtcod.console_new(width, 2)
+	window = libtcod.console_new(width,4)
 
 	#print the header, with auto-wrap
 	libtcod.console_set_default_foreground(window, libtcod.green)
@@ -3346,7 +3346,7 @@ def new_game():
 	#create object representing the player
 	fighter_component = Fighter(hp=900, lastx=0, lasty=0, my_path=0, defense=1, dex=4, accuracy=2, firearmdmg=2, vloyalty=0, eloyalty=0,
 								firearmacc=sht, ammo=10, power=pwr, hack=hck, charge=10+(hck * 2), xp=0, move_speed=2, flicker=0, robot=False, paralysis=False, death_function=player_death)
-	player = Object(0, 0, '@', 'Player', libtcod.white, blocks=True, desc='you!', fighter=fighter_component)
+	player = Object(0, 0, '@', name, libtcod.white, blocks=True, desc=name, fighter=fighter_component)
 
 	#add player start variables - pretty much whatever we want really.
 	player.level = 1
