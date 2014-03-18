@@ -2,6 +2,7 @@
 #
 # libtcod python tutorial
 #
+# i hate git hub
 
 
 import libtcodpy as libtcod
