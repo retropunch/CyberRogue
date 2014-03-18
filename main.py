@@ -172,8 +172,6 @@ class Object:
 			self.x += dx
 			self.y += dy
 
-
-
 	#def move_towards(self, target_x, target_y):
 	#    #vector from this object to the target, and distance
 	#    dx = target_x - self.x
@@ -557,7 +555,7 @@ class NonplayerChar:
 
 		if not libtcod.path_is_empty(self.my_path):
 			x, y = libtcod.path_walk(self.my_path,True)
-			if x and not is_blocked(x,y) and libtcod.path_size(self.my_path) < 10: #more than ten is too far, don't worry about it
+			if x and not is_blocked(x,y) and libtcod.path_size(self.my_path) < 40: #more than ten is too far, don't worry about it
 				libtcod.map_set_properties(fov_map, self.owner.x, self.owner.y, True, True)
 				self.owner.x = x
 				self.owner.y = y
@@ -920,20 +918,18 @@ class BasicNpc:
 				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
 
-#class EveningNpc:
-#	def set_place(self):
-#		findspotx = range(2,22)
-#		findspoty = range(22,30)
-#
-#	def take_turn(self):
-#		monster = self.owner
-#		if is_blocked(findspotx,findspoty) == False:
-#			self.owner.move(findspotx, findspoty)
-#		else:
-#			set_place()
-#
-#		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
-#			self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+class EveningNpc:
+
+	def take_turn(self):
+		monster = self.owner
+
+		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
+		else:
+			monster.nonplayerchar.move_towards(12,26)
+
+		#if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+		#	self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
 
 class BasicShooter:
@@ -1244,7 +1240,7 @@ def make_map():
 		factorystairs.send_to_back()  #so it's drawn below the monsters
 
 		##Call the hub objects!
-		hub()
+		hub(npcai=BasicNpc())
 
 	elif dungeon_level == 'factory':
 		#use custom map from samples
@@ -1905,7 +1901,7 @@ def place_objects(room):
 			if choice == 'heal':
 				#create a healing potion
 				item_component = Item(use_function=cast_heal)
-				item = Object(x, y, '!', 'a medikit', libtcod.magenta, desc='a basic Erma medikit', value=50, item=item_component)
+				item = Object(x, y, 173, 'a medikit', libtcod.magenta, desc='a basic Erma medikit', value=50, item=item_component)
 
 			elif choice == 'food':
 				item_component = Item(use_function=eat)
@@ -1919,7 +1915,7 @@ def place_objects(room):
 			elif choice == 'overload':
 				#create a lightning bolt scroll
 				item_component = Item(use_function=cast_overload)
-				item = Object(x, y, '#', 'an overload pack', libtcod.light_yellow, desc='a standard Erma overload pack, used for short circuiting faulty stock', value=80, item=item_component)
+				item = Object(x, y, 15, 'an overload pack', libtcod.light_yellow, desc='a standard Erma overload pack, used for short circuiting faulty stock', value=80, item=item_component)
 
 			#elif choice == 'fireball':
 			#	#create a fireball scroll
@@ -1991,27 +1987,27 @@ def place_objects(room):
 			elif choice == 'Type1':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=1)
-				item = Object(x, y, 'A', 'a Type 1 vest', libtcod.yellow, make='Erma', desc='an Erma Type 1 armoured vest', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 1 vest', libtcod.yellow, make='Erma', desc='an Erma Type 1 armoured vest', equipment=equipment_component)
 
 			elif choice == 'Type2':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=2)
-				item = Object(x, y, 'A', 'a Type 2 vest', libtcod.orange, make='Erma', desc='an Erma Type 2 armoured vest', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 2 vest', libtcod.orange, make='Erma', desc='an Erma Type 2 armoured vest', equipment=equipment_component)
 
 			elif choice == 'Type3':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=3, dex_bonus=-1, eloyalty_bonus=1)
-				item = Object(x, y, 'A', 'a Type 3 vest', libtcod.red, make='Erma', desc='an Erma Type 3 armoured vest, quite bulky', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 3 vest', libtcod.red, make='Erma', desc='an Erma Type 3 armoured vest, quite bulky', equipment=equipment_component)
 
 			elif choice == 'meshlegs':
 				#create a shield
 				equipment_component = Equipment(slot='Legs', defense_bonus=1)
-				item = Object(x, y, '{', 'Mesh Leg Armour', libtcod.orange, make='Erma', desc='Erma mesh leg armour', equipment=equipment_component)
+				item = Object(x, y, 22, 'Mesh Leg Armour', libtcod.orange, make='Erma', desc='Erma mesh leg armour', equipment=equipment_component)
 
 			elif choice == 'platedlegs':
 				#create a shield
 				equipment_component = Equipment(slot='Legs', defense_bonus=3, dex_bonus=-1)
-				item = Object(x, y, '{', 'Plated Leg Armour', libtcod.red, make='Erma', desc='Erma plated leg armour, quite bulky', equipment=equipment_component)
+				item = Object(x, y, 22, 'Plated Leg Armour', libtcod.red, make='Erma', desc='Erma plated leg armour, quite bulky', equipment=equipment_component)
 
 			elif choice == 'goggles':
 				#create a shield
@@ -2029,7 +2025,7 @@ def place_objects(room):
 			item.always_visible = True  #items are visible even out-of-FOV, if in an explored area
 
 
-def hub():
+def hub(npcai):
 
 	#Shops
 	furniture_component = Furniture(use_function=Ermashopsell)
@@ -2069,12 +2065,12 @@ def hub():
 		colours = libtcod.namegen_generate('colours')
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
-		ai_component = BasicNpc()
+		ai_component = npcai
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
 		objects.append(npc)
 
-	for n in range(1,10):
+	for n in range(1,15):
 		libtcod.namegen_parse('npcattrib.txt')
 		name = libtcod.namegen_generate('npcnames')
 		clothes = libtcod.namegen_generate('clothes')
@@ -2084,7 +2080,7 @@ def hub():
 
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
-		ai_component = BasicNpc()
+		ai_component = EveningNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
 		npc.x, npc.y = random_unblocked_tile_on_map()
@@ -3289,6 +3285,8 @@ def evening():
 	color_light_wall = libtcod.Color(36, 46, 46)
 	color_light_ground = libtcod.Color(68, 68, 68)
 	initialize_fov()
+	hub.npcai = EveningNpc
+
 
 
 def morning():
@@ -3296,10 +3294,11 @@ def morning():
 	color_light_wall = libtcod.Color(54, 54, 54)
 	color_light_ground = libtcod.Color(86, 76, 76)
 	initialize_fov()
+	hub.npcai = BasicNpc
 
 
 def new_game():
-	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour, day, rentpaid, amorpm
+	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour, day, rentpaid, amorpm, hublevel
 
 
 	#create object representing the player
@@ -3331,6 +3330,7 @@ def new_game():
 	amorpm = 'am'
 	day = 1
 	hunger_stat = 'Full'
+	hublevel = True
 
 	#a warm welcoming message!
 	message('Welcome to CyberRogue!', libtcod.red)
