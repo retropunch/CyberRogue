@@ -3292,7 +3292,7 @@ def evening():
 def morning():
 	global color_light_ground, color_light_wall
 	color_light_wall = libtcod.Color(54, 54, 54)
-	color_light_ground = libtcod.Color(86, 76, 75)
+	color_light_ground = libtcod.Color(86, 76, 76)
 	initialize_fov()
 	hub.npcai = BasicNpc
 
