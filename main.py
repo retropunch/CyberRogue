@@ -912,24 +912,15 @@ class BasicHologram:
 
 
 class BasicNpc:
+	global hour
 	def take_turn(self):
 		monster = self.owner
-		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
-				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
-
-
-class EveningNpc:
-
-	def take_turn(self):
-		monster = self.owner
-
-		if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
-				self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
-		else:
+		if hour == 18:
 			monster.nonplayerchar.move_towards(12,26)
+		else:
+			if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+					self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
-		#if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
-		#	self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
 
 class BasicShooter:
@@ -1240,7 +1231,7 @@ def make_map():
 		factorystairs.send_to_back()  #so it's drawn below the monsters
 
 		##Call the hub objects!
-		hub(npcai=BasicNpc())
+		hub()
 
 	elif dungeon_level == 'factory':
 		#use custom map from samples
@@ -1779,7 +1770,7 @@ def place_monsters(room):
 
 			elif choice == 'dog':
 				#create a troll
-				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=10, defense=2, power=2, dex=2, hack=0, accuracy=4, firearmdmg=0, firearmacc=0,
+				fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=10, defense=1, power=2, dex=2, hack=0, accuracy=4, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=20, move_speed=1, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 				ai_component = BasicDog()
 
@@ -2025,8 +2016,7 @@ def place_objects(room):
 			item.always_visible = True  #items are visible even out-of-FOV, if in an explored area
 
 
-def hub(npcai):
-
+def hub():
 	#Shops
 	furniture_component = Furniture(use_function=Ermashopsell)
 	furniture = Object(8, 2, '$', 'Erma Shopping Terminal', libtcod.red, desc='an Erma Shopping Terminal', blocks=True, furniture=furniture_component)
@@ -2065,7 +2055,7 @@ def hub(npcai):
 		colours = libtcod.namegen_generate('colours')
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
-		ai_component = npcai
+		ai_component = BasicNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
 		objects.append(npc)
@@ -2080,7 +2070,7 @@ def hub(npcai):
 
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
-		ai_component = EveningNpc()
+		ai_component = BasicNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
 		npc.x, npc.y = random_unblocked_tile_on_map()
@@ -3284,8 +3274,9 @@ def evening():
 	global color_light_ground, color_light_wall
 	color_light_wall = libtcod.Color(36, 46, 46)
 	color_light_ground = libtcod.Color(68, 68, 68)
+
 	initialize_fov()
-	hub.npcai = EveningNpc
+
 
 
 
@@ -3293,8 +3284,10 @@ def morning():
 	global color_light_ground, color_light_wall
 	color_light_wall = libtcod.Color(54, 54, 54)
 	color_light_ground = libtcod.Color(86, 76, 75)
+
 	initialize_fov()
-	hub.npcai = BasicNpc
+
+
 
 def enter_text_menu(header, width, max_length):
 
@@ -3334,7 +3327,9 @@ def enter_text_menu(header, width, max_length):
 
 
 def new_game():
-	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, cred, pwr, sht, hck, hunger, hunger_stat, time, hour, day, rentpaid, amorpm, hublevel
+	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, \
+		cred, pwr, sht, hck, hunger, hunger_stat, \
+		time, hour, day, rentpaid, amorpm, hublevel
 
 	#get player name
 	libtcod.console_flush()
@@ -3361,6 +3356,7 @@ def new_game():
 	#generate map (at this point it's not drawn to the screen)
 	worldgen.setcorps()
 	dungeon_level = 1
+
 	make_map()
 	initialize_fov()
 
