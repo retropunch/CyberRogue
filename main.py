@@ -264,6 +264,12 @@ class Fighter:
 		self.flicker = flicker
 		self.robot = robot
 		self.paralysis = paralysis
+		if isinstance(death_function, str):
+			self.death_function = globals()[death_function]
+		else:
+			self.death_function = death_function
+
+
 
 	@property
 	def power(self):  #return actual power, by summing up the bonuses from all equipped items
@@ -427,12 +433,12 @@ class Fighter:
 			if self.hp <= 4 and self.hp > 0 :
 				message('The ' + self.owner.name.capitalize() + ' looks badly wounded!')
 
+
 			#check for death. if there's a death function, call it
 			if self.hp <= 0:
 				function = self.death_function
 				if function is not None:
 					function(self.owner)
-
 				if self.owner != player:  #yield experience to the player
 					player.fighter.xp += self.xp
 
@@ -3460,6 +3466,7 @@ def load_data():
 	libtcod.struct_add_property(monsterStruct, 'name', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'character', libtcod.TYPE_CHAR, True)
 	libtcod.struct_add_property(monsterStruct, 'character_color', libtcod.TYPE_COLOR, True)
+	libtcod.struct_add_property(monsterStruct, 'desc', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'hp', libtcod.TYPE_INT, True)
 	libtcod.struct_add_property(monsterStruct, 'defense', libtcod.TYPE_INT, True)
 	libtcod.struct_add_property(monsterStruct, 'power', libtcod.TYPE_INT, True)
