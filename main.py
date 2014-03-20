@@ -1447,7 +1447,7 @@ def closest_monster(max_range):
 	return closest_enemy
 
 
-def target_tile(max_range=None):
+def target_tile(max_range=None): 
 	global key, mouse
 	#return the position of a tile left-clicked in player's FOV (optionally in a range), or (None,None) if right-clicked.
 	while True:
