@@ -1447,25 +1447,44 @@ def closest_monster(max_range):
 
 
 def target_tile(max_range=None):
-	global key, mouse
-	#return the position of a tile left-clicked in player's FOV (optionally in a range), or (None,None) if right-clicked.
-	while True:
-		#render the screen. this erases the inventory and shows the names of objects under the mouse.
-		libtcod.console_flush()
-		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-		render_all()
+	global keys, mouse
+ 	old_background = [[ Tile(True, False, False, False, False)
+ 		for dy in range(MAP_HEIGHT) ]
+ 			for dx in range(MAP_WIDTH) ]
+	for dy in range(MAP_HEIGHT): #loop through map and store old background cell colours to preserve information
+ 		for dx in range(MAP_WIDTH):
+ 			old_background[dx][dy] = libtcod.console_get_char_background(con, dx, dy)
+ 	redraw = True
+  	while True:
+  		#render the screen. this erases the inventory and shows the names of objects under the mouse.
+ 		if redraw:
+ 			for dy in range(MAP_HEIGHT): #restore all old background cell colours from previously stored information
+ 				for dx in range(MAP_WIDTH):
+ 					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
 
-		(x, y) = (mouse.cx, mouse.cy)
 
-		if mouse.rbutton_pressed or key.vk == libtcod.KEY_ESCAPE:
-			message('Cancelled')
-			return (None, None)  #cancel if the player right-clicked or pressed Escape
+ 			(x, y) = (mouse.cx, mouse.cy)
+ 			libtcod.line_init(player.x, player.y, x, y)
+ 			dx = player.x
+ 			dy = player.y
+ 			while not dx == None and libtcod.map_is_in_fov(fov_map, dx, dy):
+
+ 				libtcod.console_set_char_background(con, dx, dy, libtcod.light_red, libtcod.BKGND_SET)
+ 				dx, dy = libtcod.line_step()
+ 				libtcod.console_set_char_background(con, x, y, libtcod.dark_red, libtcod.BKGND_SET)
+
+ 			libtcod.console_flush()
+ 			libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+ 			render_all()
+
+  		libtcod.console_flush()
+  		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+
+  		if mouse.rbutton_pressed or key.vk == libtcod.KEY_ESCAPE:
+  			message('Cancelled')
+			
 
 
-		#accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
-		if (mouse.lbutton_pressed and libtcod.map_is_in_fov(fov_map, x, y) and
-				(max_range is None or player.distance(x, y) <= max_range)):
-			return (x, y)
 
 
 def target_monster(max_range=None):
@@ -3465,7 +3484,7 @@ def load_data():
 	monsterStruct = libtcod.parser_new_struct(parser, 'monster')
 	libtcod.struct_add_property(monsterStruct, 'name', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'character', libtcod.TYPE_CHAR, True)
-	libtcod.struct_add_property(monsterStruct, 'character_color', libtcod.TYPE_COLOR, True)
+	libtcod.struct_add_property(monsterStruct, 'character_color', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'desc', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'hp', libtcod.TYPE_INT, True)
 	libtcod.struct_add_property(monsterStruct, 'defense', libtcod.TYPE_INT, True)
