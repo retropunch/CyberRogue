@@ -2790,7 +2790,7 @@ def open_box(obj):
 
 
 def convo(obj):
-	talk = ['Go away', 'Why are you talking to me?', 'Who are you?', 'Get lost.']
+	talk = ['Go away', 'Why are you talking to me?', 'Who are you?', 'Get lost.', 'Stay away from the hotel.']
 	from random import choice
 	message(choice(talk))
 
