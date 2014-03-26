@@ -16,12 +16,15 @@ import os
 
 
 #actual size of the window
-SCREEN_WIDTH = 89
+SCREEN_WIDTH = 79
 SCREEN_HEIGHT = 44
 
 #size of the map
-MAP_WIDTH = 80
-MAP_HEIGHT = 88
+MAP_WIDTH = 60
+MAP_HEIGHT = 32
+
+CAMERA_WIDTH = 60
+CAMERA_HEIGHT = 31
 
 #sizes and coordinates relevant for the GUI
 BAR_WIDTH = 16
@@ -33,12 +36,12 @@ PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
 SIDEBAR_HEIGHT = 20
 SIDEBAR_WIDTH = 18
 SIDEBAR_Y = 0
-SIDEBAR_X = 81
+SIDEBAR_X = 40
 
 
 MSG_X = BAR_WIDTH + 2
 MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
-MSG_HEIGHT = PANEL_HEIGHT - 1
+MSG_HEIGHT = PANEL_HEIGHT - 2
 INVENTORY_WIDTH = 40
 CHARACTER_SCREEN_WIDTH = 40
 LEVEL_SCREEN_WIDTH = 50
@@ -222,15 +225,19 @@ class Object:
 
 	def draw(self):
 		#only show if it's visible to the player; or it's set to "always visible" and on an explored tile
-		if (libtcod.map_is_in_fov(fov_map, self.x, self.y) or
-				(self.always_visible and map[self.x][self.y].explored)):
-			#set the color and then draw the character that represents this object at its position
-			libtcod.console_set_default_foreground(con, self.color)
-			libtcod.console_put_char(con, self.x, self.y, self.char, libtcod.BKGND_NONE)
+		if libtcod.map_is_in_fov(fov_map, self.x, self.y):
+			(x, y) = to_camera_coordinates(self.x, self.y)
+
+			if x is not None:
+				#set the color and then draw the character that represents this object at its position
+				libtcod.console_set_default_foreground(con, self.color)
+				libtcod.console_put_char(con, x, y, self.char, libtcod.BKGND_NONE)
 
 	def clear(self):
+		(x, y) = to_camera_coordinates(self.x, self.y)
+		if x is not None:
 		#erase the character that represents this object
-		libtcod.console_put_char(con, self.x, self.y, ' ', libtcod.BKGND_NONE)
+			libtcod.console_put_char(con, x, y, ' ', libtcod.BKGND_NONE)
 
 
 class Fighter:
@@ -1449,44 +1456,58 @@ def closest_monster(max_range):
 
 
 def target_tile(max_range=None):
-	global keys, mouse
- 	old_background = [[ Tile(True, False, False, False, False)
- 		for dy in range(MAP_HEIGHT) ]
- 			for dx in range(MAP_WIDTH) ]
+	global key, mouse
+	old_background = [[ Tile(True, False, False, False, False)
+		for dy in range(MAP_HEIGHT) ]
+			for dx in range(MAP_WIDTH) ]
 	for dy in range(MAP_HEIGHT): #loop through map and store old background cell colours to preserve information
- 		for dx in range(MAP_WIDTH):
- 			old_background[dx][dy] = libtcod.console_get_char_background(con, dx, dy)
- 	redraw = True
-  	while True:
-  		#render the screen. this erases the inventory and shows the names of objects under the mouse.
- 		if redraw:
- 			for dy in range(MAP_HEIGHT): #restore all old background cell colours from previously stored information
- 				for dx in range(MAP_WIDTH):
- 					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
+		for dx in range(MAP_WIDTH):
+			old_background[dx][dy] = libtcod.console_get_char_background(con, dx, dy)
+	redraw = True
+	while True:
+		#render the screen. this erases the inventory and shows the names of objects under the mouse.
+		if redraw:
+			for dy in range(MAP_HEIGHT): #restore all old background cell colours from previously stored information
+				for dx in range(MAP_WIDTH):
+					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
 
 
- 			(x, y) = (mouse.cx, mouse.cy)
- 			libtcod.line_init(player.x, player.y, x, y)
- 			dx = player.x
- 			dy = player.y
- 			while not dx == None and libtcod.map_is_in_fov(fov_map, dx, dy):
+			(x, y) = (mouse.cx, mouse.cy)
+			(x, y) = (camera_x + x, camera_y + y)
+			libtcod.line_init(player.x, player.y, x, y)
+			dx = player.x
+			dy = player.y
+			while not dx == None and libtcod.map_is_in_fov(fov_map, dx, dy):
 
- 				libtcod.console_set_char_background(con, dx, dy, libtcod.light_red, libtcod.BKGND_SET)
- 				dx, dy = libtcod.line_step()
- 				libtcod.console_set_char_background(con, x, y, libtcod.dark_red, libtcod.BKGND_SET)
-
- 			libtcod.console_flush()
- 			libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
- 			render_all()
-
-  		libtcod.console_flush()
-  		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
-
-  		if mouse.rbutton_pressed or key.vk == libtcod.KEY_ESCAPE:
-  			message('Cancelled')
+				libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
+				dx, dy = libtcod.line_step()
+                if libtcod.map_is_in_fov(fov_map, x, y):
+				    libtcod.console_set_char_background(con, x, y, libtcod.dark_green, libtcod.BKGND_SET)
+                else:
+                    libtcod.console_set_char_background(con, x, y, libtcod.dark_red, libtcod.BKGND_SET)
 
 
+		libtcod.console_flush()
+		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+		render_all()
 
+
+		if mouse.rbutton_pressed or key.vk == libtcod.KEY_ESCAPE:
+			message('Cancelled')
+
+			for dy in range(MAP_HEIGHT): #restore all old background cell colours from previously stored information
+				for dx in range(MAP_WIDTH):
+					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
+			return (None, None)  #cancel if the player right-clicked or pressed Escape
+
+
+		#accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
+		if (mouse.lbutton_pressed and libtcod.map_is_in_fov(fov_map, x, y) and
+				(max_range is None or player.distance(x, y) <= max_range)):
+			for dy in range(MAP_HEIGHT): #restore all old background cell colours from previously stored information
+				for dx in range(MAP_WIDTH):
+					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
+			return (x, y)
 
 
 def target_monster(max_range=None):
@@ -1594,7 +1615,7 @@ def get_names_under_mouse():
 	#return a string with the names of all objects under the mouse
 
 	(x, y) = (mouse.cx, mouse.cy)
-
+	(x, y) = (camera_x + x, camera_y + y)  #from screen to map coordinates
 	#create a list with the names of all objects at the mouse's coordinates and in FOV
 	names = [obj.name for obj in objects
 			 if obj.x == x and obj.y == y and libtcod.map_is_in_fov(fov_map, obj.x, obj.y)]
@@ -1602,6 +1623,31 @@ def get_names_under_mouse():
 	names = ', '.join(names)  #join the names, separated by commas
 	return names.capitalize()
 
+def move_camera(target_x, target_y):
+	global camera_x, camera_y, fov_recompute
+
+	#new camera coordinates (top-left corner of the screen relative to the map)
+	x = target_x - CAMERA_WIDTH / 2  #coordinates so that the target is at the center of the screen
+	y = target_y - CAMERA_HEIGHT / 2
+
+	#make sure the camera doesn't see outside the map
+	if x < 0: x = 0
+	if y < 0: y = 0
+	if x > MAP_WIDTH - CAMERA_WIDTH - 1: x = MAP_WIDTH - CAMERA_WIDTH - 1
+	if y > MAP_HEIGHT - CAMERA_HEIGHT - 1: y = MAP_HEIGHT - CAMERA_HEIGHT - 1
+
+	if x != camera_x or y != camera_y: fov_recompute = True
+
+	(camera_x, camera_y) = (x, y)
+
+def to_camera_coordinates(x, y):
+	#convert coordinates on the map to coordinates on the screen
+	(x, y) = (x - camera_x, y - camera_y)
+
+	if (x < 0 or y < 0 or x >= CAMERA_WIDTH or y >= CAMERA_HEIGHT):
+		return (None, None)  #if it's outside the view, return nothing
+
+	return (x, y)
 
 def flicker_all():
 	global fov_recompute
@@ -1634,24 +1680,29 @@ def render_all():
 	global fov_recompute, hour, day, amorpm, playername
 	#plyx = player.x + 2
 	#plyy = player.y + 2
+	move_camera(player.x, player.y)
+	#floordirt = 12;
+	#noise2d = libtcod.noise_new(2,h=libtcod.NOISE_DEFAULT_HURST,l=libtcod.NOISE_DEFAULT_LACUNARITY,random=0)
 
 	if fov_recompute:
 		#recompute FOV if needed (the player moved or something)
 		fov_recompute = False
 		libtcod.map_compute_fov(fov_map, player.x, player.y, TORCH_RADIUS, FOV_LIGHT_WALLS, FOV_ALGO)
+		libtcod.console_clear(con)
 
 		#go through all tiles, and set their background color according to the FOV
-		for y in range(MAP_HEIGHT):
-			for x in range(MAP_WIDTH):
-				visible = libtcod.map_is_in_fov(fov_map, x, y)
+		for y in range(CAMERA_HEIGHT):
+			for x in range(CAMERA_WIDTH):
+				(map_x, map_y) = (camera_x + x, camera_y + y)
+				visible = libtcod.map_is_in_fov(fov_map, map_x, map_y)
 
-				wall = map[x][y].block_sight
-				sludge = map[x][y].sludge
-				water = map[x][y].water
+				wall = map[map_x][map_y].block_sight
+				sludge = map[map_x][map_y].sludge
+				water = map[map_x][map_y].water
 
 				if not visible:
 					#if it's not visible right now, the player can only see it if it's explored
-					if map[x][y].explored:
+					if map[map_x][map_y].explored:
 						if wall:
 							libtcod.console_set_char_background(con, x, y, color_dark_wall, libtcod.BKGND_SET)
 						elif sludge:
@@ -1671,8 +1722,9 @@ def render_all():
 						libtcod.console_set_char_background(con, x, y, libtcod.darkest_blue, libtcod.BKGND_SET)
 					else:
 						libtcod.console_set_char_background(con, x, y, color_light_ground, libtcod.BKGND_SET)
+
 						#since it's visible, explore it
-					map[x][y].explored = True
+					map[map_x][map_y].explored = True
 
 
 
@@ -1692,7 +1744,7 @@ def render_all():
 
 	libtcod.console_set_default_background(panel, libtcod.black)
 	libtcod.console_clear(panel)
-	libtcod.console_print_frame(panel, 0, 0, 71, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
+	libtcod.console_print_frame(panel, 0, 0, 61, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
 
 	#print the game messages, one line at a time
@@ -1743,7 +1795,7 @@ def render_all():
 
 	#blit the contents of "panel" to the root console
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
-	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0, 71, SIDEBAR_Y, 0.94, 0.2)
+	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,61, SIDEBAR_Y, 0.94, 0.2)
 
 
 ## Object placement!!!!!!
@@ -2629,7 +2681,7 @@ def player_death(player):
 
 
 def monster_death(monster):
-	global cred
+	global cred, camera_x,camera_y
 	#transform it into a nasty corpse! it doesn't block, can't be
 	#attacked and doesn't move
 	addcred = 0
@@ -2654,8 +2706,8 @@ def monster_death(monster):
 			bloodcolour= libtcod.darker_red
 		else:
 			bloodcolour= libtcod.darkest_red
-		libtcod.console_set_char_background(con, monster.x+n, monster.y, bloodcolour)
-		libtcod.console_set_char_background(con, monster.x, monster.y-n, bloodcolour)
+		libtcod.console_set_char_background(con, camera_x+monster.x+n, camera_y+monster.y, bloodcolour)
+		libtcod.console_set_char_background(con, camera_x+monster.x, camera_y+monster.y-n, bloodcolour)
 		y += 1
 
 
@@ -3091,7 +3143,7 @@ def reload_ammo():
 ## Overarching stuff
 
 def main_menu():
-	global pwr, sht, hck
+	global pwr, sht, hck, playername
 	img = libtcod.image_load('menubackground.png')
 
 	while not libtcod.console_is_window_closed():
@@ -3099,7 +3151,7 @@ def main_menu():
 		libtcod.image_blit_2x(img, 0, 0, 0,)
 
 		#show the game's title, and some credits!
-		libtcod.console_set_default_foreground(0, libtcod.light_yellow)
+		libtcod.console_set_default_foreground(0, libtcod.black)
 		libtcod.console_print_ex(0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 4, libtcod.BKGND_NONE, libtcod.CENTER,
 								 'CyberRogue')
 		libtcod.console_print_ex(0, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 2, libtcod.BKGND_NONE, libtcod.CENTER, ' ')
@@ -3109,11 +3161,13 @@ def main_menu():
 
 		if choice == 0:  #new game
 			#while not libtcod.console_is_window_closed():
+			libtcod.image_blit_2x(img, 0, 0, 0,)
 			choice = menu('Choose a class:', ['Brawler', 'Marksman', 'Hacker', 'Quit'],34)
 			if choice == 0:  #new game
 					pwr = 5
 					sht = 1
 					hck = 1
+					libtcod.image_blit_2x(img, 0, 0, 0,)
 					new_game()
 					play_game()
 			if choice == 1:  #new game
@@ -3262,8 +3316,6 @@ def evening():
 	initialize_fov()
 
 
-
-
 def morning():
 	global color_light_ground, color_light_wall
 	color_light_wall = libtcod.Color(54, 54, 54)
@@ -3276,25 +3328,26 @@ def morning():
 def enter_text_menu(header, width, max_length):
 
 	#create an off-screen console that represents the menu's window
-	window = libtcod.console_new(width,4)
+	promptwindow = libtcod.console_new(60,60)
 
 	#print the header, with auto-wrap
-	libtcod.console_set_default_foreground(window, libtcod.green)
-	libtcod.console_print_rect(window, 0, 0, width, 30, header)
+	libtcod.console_set_default_background(0,libtcod.black)
+	libtcod.console_set_default_foreground(promptwindow, libtcod.green)
+	libtcod.console_print_rect(promptwindow, 0, 0, 40, 60, header)
 
 
 	user_input = ''
 	char_position = 0
 	x = SCREEN_WIDTH/2 - width/2
 	y = SCREEN_HEIGHT/2 - 1
-	libtcod.console_set_default_foreground(window, libtcod.white)
+	libtcod.console_set_default_foreground(promptwindow, libtcod.white)
 	while True:
 		key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED)
 
 		if key.vk == libtcod.KEY_BACKSPACE and char_position >= 0:
 			user_input = user_input[:-1]
 			char_position -= 1
-			libtcod.console_print_ex(window, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, ' ')
+			libtcod.console_print_ex(promptwindow, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, ' ')
 		elif key.vk == libtcod.KEY_ENTER:
 			break
 		elif key.vk == libtcod.KEY_ESCAPE:
@@ -3302,10 +3355,10 @@ def enter_text_menu(header, width, max_length):
 			break
 		elif key.c > 0 and len(user_input) < max_length:
 			letter = chr(key.c)
-			libtcod.console_print_ex(window, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, letter)
+			libtcod.console_print_ex(promptwindow, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, letter)
 			user_input += letter  #add to the string
 			char_position += 1
-		libtcod.console_blit(window, 0, 0, width, 2, 0, x, y, 1.0, 0.7)
+		libtcod.console_blit(promptwindow, 0, 0, width, 2, 0, x, y, 1.0, 0.7)
 		libtcod.console_flush()
 	return user_input
 
@@ -3316,11 +3369,8 @@ def new_game():
 		time, hour, day, rentpaid, amorpm, hublevel
 
 	#get player name
-	libtcod.console_clear(con)
-	libtcod.console_flush()
-	name = enter_text_menu('Enter your name: ', 20, 10)
+	name = enter_text_menu('Enter your name: ', 30, 20)
 	playername = name.capitalize()
-
 
 	#create object representing the player
 	fighter_component = Fighter(hp=900, lastx=0, lasty=0, my_path=0, defense=1, dex=4, accuracy=2, firearmdmg=2, vloyalty=0, eloyalty=0,
@@ -3524,12 +3574,13 @@ def initialize_fov():
 
 ## Main loop below:
 def play_game():
-	global key, mouse, game_turn
+	global key, mouse, game_turn, camera_x, camera_y
 
 	player_action = None
 
 	mouse = libtcod.Mouse()
 	key = libtcod.Key()
+	(camera_x, camera_y) = (0, 0)
 	#main loop
 	while not libtcod.console_is_window_closed():
 		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
