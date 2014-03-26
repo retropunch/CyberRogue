@@ -767,6 +767,7 @@ class Equipment:
 		self.is_equipped = False
 		message('Dequipped ' + self.owner.name + ' from ' + self.slot + '.', libtcod.light_yellow)
 
+
 class MonsterDataListener:
 	def new_struct(self, struct, name):
 		global monster_data
@@ -1482,7 +1483,7 @@ def target_tile(max_range=None):
 
   		if mouse.rbutton_pressed or key.vk == libtcod.KEY_ESCAPE:
   			message('Cancelled')
-			
+
 
 
 
@@ -1871,7 +1872,7 @@ def place_objects(room):
 			if choice == 'heal':
 				#create a healing potion
 				item_component = Item(use_function=cast_heal)
-				item = Object(x, y, 173, 'a medikit', libtcod.magenta, desc='a basic Erma medikit', value=50, item=item_component)
+				item = Object(x, y, 173, 'a medikit', libtcod.magenta, desc='a basic' + worldgen.corptwo + 'medikit', value=50, item=item_component)
 
 			elif choice == 'food':
 				item_component = Item(use_function=eat)
@@ -1885,7 +1886,7 @@ def place_objects(room):
 			elif choice == 'overload':
 				#create a lightning bolt scroll
 				item_component = Item(use_function=cast_overload)
-				item = Object(x, y, 15, 'an overload pack', libtcod.light_yellow, desc='a standard Erma overload pack, used for short circuiting faulty stock', value=80, item=item_component)
+				item = Object(x, y, 15, 'an overload pack', libtcod.light_yellow, desc='a standard' + worldgen.corptwo + 'overload pack, used for short circuiting faulty stock', value=80, item=item_component)
 
 			#elif choice == 'fireball':
 			#	#create a fireball scroll
@@ -1914,13 +1915,13 @@ def place_objects(room):
 				#create a dagger
 				equipment_component = Equipment(slot='Right hand', power_bonus=4)
 				item = Object(x, y, '/', 'a nano-steel blade', libtcod.dark_sky, make='Erma',
-							  desc='an Erma Nano-Steel Blade', equipment=equipment_component)
+							  desc='an ' + worldgen.corptwo + ' Nano-Steel Blade', equipment=equipment_component)
 
 			elif choice == 'combatblade':
 				#create a dagger
 				equipment_component = Equipment(slot='Right hand', power_bonus=6, dex_bonus=-1)
 				item = Object(x, y, '/', 'a combat blade', libtcod.darker_sky, make='Vorikov',
-							  desc='a Vorikov Combat Blade, Deadly but bulky', equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' Combat Blade, Deadly but bulky', equipment=equipment_component)
 
 			elif choice == 'Katana':
 				#create a dagger
@@ -1932,63 +1933,63 @@ def place_objects(room):
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=3)
 				item = Object(x, y, 'f', 'a revolver', libtcod.sky, make='Vorikov',
-							  desc='a Vorikov revolver', equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' revolver', equipment=equipment_component)
 
 			elif choice == 'vk19':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=4, firearm_acc_bonus=1)
 				item = Object(x, y, 'f', 'VK-19', libtcod.dark_sky, make='Vorikov',
-							  desc='a Vorikov VK-19 rifle. Accurate and moderately powerful.',  value=150, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-19 rifle. Accurate and moderately powerful.',  value=150, equipment=equipment_component)
 
 			elif choice == 'vkp5':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=6, firearm_acc_bonus=-2)
 				item = Object(x, y, 'f', 'VK-P5', libtcod.darker_sky, make='Vorikov',
-							  desc='a Vorikov VK-P5. A powerful but innacurate peppergun.', value=150, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-P5. A powerful but innacurate peppergun.', value=150, equipment=equipment_component)
 
 			elif choice == 'vk180':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=9, dex_bonus=-3)
 				item = Object(x, y, 'f', 'VK-180', libtcod.darkest_sky, make='Vorikov',
-							  desc='a Vorikov VK-180, an immensely powerful heavy rifle which completely cripples your dexterity', value=300, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-180, an immensely powerful heavy rifle which completely cripples your dexterity', value=300, equipment=equipment_component)
 
 			## Armour:
 
 			elif choice == 'Type1':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=1)
-				item = Object(x, y, 2, 'a Type 1 vest', libtcod.yellow, make='Erma', desc='an Erma Type 1 armoured vest', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 1 vest', libtcod.yellow, make='Erma', desc='an ' + worldgen.corptwo + ' Type 1 armoured vest', equipment=equipment_component)
 
 			elif choice == 'Type2':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=2)
-				item = Object(x, y, 2, 'a Type 2 vest', libtcod.orange, make='Erma', desc='an Erma Type 2 armoured vest', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 2 vest', libtcod.orange, make='Erma', desc='an ' + worldgen.corptwo + ' Type 2 armoured vest', equipment=equipment_component)
 
 			elif choice == 'Type3':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=3, dex_bonus=-1, eloyalty_bonus=1)
-				item = Object(x, y, 2, 'a Type 3 vest', libtcod.red, make='Erma', desc='an Erma Type 3 armoured vest, quite bulky', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 3 vest', libtcod.red, make='Erma', desc='an ' + worldgen.corptwo + ' Type 3 armoured vest, quite bulky', equipment=equipment_component)
 
 			elif choice == 'meshlegs':
 				#create a shield
 				equipment_component = Equipment(slot='Legs', defense_bonus=1)
-				item = Object(x, y, 22, 'Mesh Leg Armour', libtcod.orange, make='Erma', desc='Erma mesh leg armour', equipment=equipment_component)
+				item = Object(x, y, 22, 'Mesh Leg Armour', libtcod.orange, make='Erma', desc= worldgen.corptwo + ' mesh leg armour', equipment=equipment_component)
 
 			elif choice == 'platedlegs':
 				#create a shield
 				equipment_component = Equipment(slot='Legs', defense_bonus=3, dex_bonus=-1)
-				item = Object(x, y, 22, 'Plated Leg Armour', libtcod.red, make='Erma', desc='Erma plated leg armour, quite bulky', equipment=equipment_component)
+				item = Object(x, y, 22, 'Plated Leg Armour', libtcod.red, make='Erma', desc= worldgen.corptwo +  'plated leg armour, quite bulky', equipment=equipment_component)
 
 			elif choice == 'goggles':
 				#create a shield
 				equipment_component = Equipment(slot='Head', accuracy_bonus=1)
-				item = Object(x, y, 'e', 'a pair of targeting goggles', libtcod.lighter_blue, make='Erma', desc='a pair of Erma targetting goggles', equipment=equipment_component)
+				item = Object(x, y, 'e', 'a pair of targeting goggles', libtcod.lighter_blue, make='Erma', desc='a pair of' + worldgen.corptwo +  'targetting goggles', equipment=equipment_component)
 
 			elif choice == 'visor':
 				#create a shield
 				equipment_component = Equipment(slot='Head', accuracy_bonus=2, firearm_dmg_bonus=1, vloyalty_bonus=1)
 				item = Object(x, y, 'e', 'a sharpshooter visor', libtcod.light_blue,  make='Vorikov',
-							  desc='a Vorikov sharpshooter visor',  value=200, equipment=equipment_component)
+							  desc='a' + worldgen.corpone + 'sharpshooter visor',  value=200, equipment=equipment_component)
 
 			objects.append(item)
 			item.send_to_back()  #items appear below other objects
@@ -1998,12 +1999,12 @@ def place_objects(room):
 def hub():
 	#Shops
 	furniture_component = Furniture(use_function=Ermashopsell)
-	furniture = Object(8, 2, '$', 'Erma Shopping Terminal', libtcod.red, desc='an Erma Shopping Terminal', blocks=True, furniture=furniture_component)
+	furniture = Object(8, 2, '$', worldgen.corptwo + 'Shopping Terminal', libtcod.red, desc=worldgen.corptwo + ' Shopping Terminal', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
 	furniture_component = Furniture(use_function=Vorishopsell)
-	furniture = Object(9, 12, '$', 'Vorikov Shopping Terminal', libtcod.dark_red, desc='a Vorikov Shopping Terminal', blocks=True, furniture=furniture_component)
+	furniture = Object(9, 12, '$', worldgen.corpone + 'Shopping Terminal', libtcod.dark_red, desc=worldgen.corpone + 'Vorikov Shopping Terminal', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
@@ -2090,12 +2091,12 @@ def hub():
 	#some signs
 
 	furniture_component = Furniture(use_function=lookat)
-	furniture = Object(11, 8, '?', 'ErmaCorp Defence', libtcod.red, desc='Erma Corporation defence superstore', blocks=True, furniture=furniture_component)
+	furniture = Object(11, 8, '?', worldgen.corptwo + ' Defence', libtcod.red, desc='Erma Corporation defence superstore', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
 	furniture_component = Furniture(use_function=lookat)
-	furniture = Object(11, 16, '?', 'Vorikov Surplus', libtcod.dark_red, desc='Vorikov Corporation Surplus', blocks=True, furniture=furniture_component)
+	furniture = Object(11, 16, '?', worldgen.corpone + ' Surplus', libtcod.dark_red, desc='Vorikov Corporation Surplus', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
@@ -3230,19 +3231,19 @@ def check_time():
 def show_world():
 	msgbox(
 		'Corporation: ' + str(worldgen.corpone)
-		+ '\nDeals in: ' + str(worldgen.corponeproducts)
+		+ '\nDeals in: Weapons' + str(worldgen.corponeproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corponehistory)
 		+ '\n' +
 
 		'\nCorporation: ' + str(worldgen.corptwo)
-		+ '\nDeals in: ' + str(worldgen.corptwoproducts)
+		+ '\nDeals in: Pharmaceuticals' + str(worldgen.corptwoproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corptwohistory)
 		+ '\n' +
 
 		'\nCorporation: ' + str(worldgen.corpthree)
-		+ '\nDeals in: ' + str(worldgen.corpthreeproducts)
+		+ '\nDeals in: Electronics' + str(worldgen.corpthreeproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corpthreehistory)
 		, 40)

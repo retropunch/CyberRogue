@@ -14,7 +14,8 @@ def setcorps():
 	corpone = libtcod.namegen_generate('corpnames')
 	corponeproducts = libtcod.namegen_generate('corpproducts')
 	corponehistyear = random.randrange(2014, 2019, 1)
-	corponehistory = "in the year " + str(corponehistyear) + " " + corpone + " " + str(libtcod.namegen_generate('corpactions')) + " " + str(libtcod.namegen_generate('corpnames')) + " causing " + corpone + " to gain a monopoly on " + corponeproducts
+	corponehistory = "in the year " + str(corponehistyear) + " " + corpone + " " + str(libtcod.namegen_generate('corpactions'))\
+					 + " " + str(libtcod.namegen_generate('corpnames')) + " causing " + corpone + " to gain a monopoly on " + corponeproducts
 
 	corptwo = libtcod.namegen_generate('corpnames')
 	corptwoproducts = libtcod.namegen_generate('corpproducts')
