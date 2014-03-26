@@ -1178,6 +1178,7 @@ def create_boundaries():
 		map[x][0].block_sight = True
 		map[x][31].blocked = True
 		map[x][31].block_sight = True
+						#kludgy boundary because map is rubbish.
 
 
 def create_circular_room(room):
@@ -1455,7 +1456,7 @@ def closest_monster(max_range):
 	return closest_enemy
 
 
-def target_tile(max_range=None):
+def target_tile(max_range=None,):
 	global key, mouse
 	old_background = [[ Tile(True, False, False, False, False)
 		for dy in range(MAP_HEIGHT) ]
@@ -1475,8 +1476,7 @@ def target_tile(max_range=None):
 			(x, y) = (mouse.cx, mouse.cy)
 			(x, y) = (camera_x + x, camera_y + y)
 			libtcod.line_init(player.x, player.y, x, y)
-			dx = player.x
-			dy = player.y
+			(dx,dy) = to_camera_coordinates(player.x, player.y)
 			while not dx == None and libtcod.map_is_in_fov(fov_map, dx, dy):
 
 				libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
@@ -2701,13 +2701,14 @@ def monster_death(monster):
 	for y in range(1,4):
 		n=random.randint(-1, 2)
 		if n == 1:
-			bloodcolour= libtcod.dark_red
+			bloodcolour = libtcod.dark_red
 		elif n == 2:
-			bloodcolour= libtcod.darker_red
+			bloodcolour = libtcod.darker_red
 		else:
-			bloodcolour= libtcod.darkest_red
-		libtcod.console_set_char_background(con, camera_x+monster.x+n, camera_y+monster.y, bloodcolour)
-		libtcod.console_set_char_background(con, camera_x+monster.x, camera_y+monster.y-n, bloodcolour)
+			bloodcolour = libtcod.darkest_red
+		(x,y) = to_camera_coordinates(monster.x,monster.y)
+		libtcod.console_set_char_background(con, x, y-1, bloodcolour)
+		libtcod.console_set_char_background(con, x +1, y, bloodcolour)
 		y += 1
 
 
@@ -3390,6 +3391,7 @@ def new_game():
 	#generate map (at this point it's not drawn to the screen)
 	worldgen.setcorps()
 	dungeon_level = 1
+
 
 	make_map()
 	initialize_fov()
