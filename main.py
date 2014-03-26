@@ -24,7 +24,7 @@ MAP_WIDTH = 80
 MAP_HEIGHT = 88
 
 #sizes and coordinates relevant for the GUI
-BAR_WIDTH = 20
+BAR_WIDTH = 16
 PANEL_HEIGHT = 11
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
@@ -81,6 +81,7 @@ color_dark_wall = libtcod.Color(22, 22, 22)
 color_light_wall = libtcod.Color(54, 54, 54)
 color_dark_ground = libtcod.Color(48, 38, 38)
 color_light_ground = libtcod.Color(86, 76, 76)
+
 
 
 class Tile:
@@ -1539,11 +1540,13 @@ def menu(header, options, width):
 	height = len(options) + header_height
 
 	#create an off-screen console that represents the menu's window
-	window = libtcod.console_new(width, height)
+	window = libtcod.console_new(width +6, height+6)
+
 
 	#print the header, with auto-wrap
 	libtcod.console_set_default_foreground(window, libtcod.green)
 	libtcod.console_print_rect_ex(window, 0, 0, width, height, libtcod.BKGND_ADD, libtcod.LEFT, header)
+
 
 	#print all the options
 	y = header_height
@@ -1628,7 +1631,7 @@ def flicker_all():
 def render_all():
 	global fov_map, color_dark_wall, color_light_wall
 	global color_dark_ground, color_light_ground
-	global fov_recompute, hour, day, amorpm
+	global fov_recompute, hour, day, amorpm, playername
 	#plyx = player.x + 2
 	#plyy = player.y + 2
 
@@ -1689,6 +1692,7 @@ def render_all():
 
 	libtcod.console_set_default_background(panel, libtcod.black)
 	libtcod.console_clear(panel)
+	libtcod.console_print_frame(panel, 0, 0, 71, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
 
 	#print the game messages, one line at a time
@@ -1704,34 +1708,34 @@ def render_all():
 
 	libtcod.console_set_default_background(sidebar, libtcod.black)
 	libtcod.console_clear(sidebar)
+	libtcod.console_print_frame(sidebar,0, 0, 18,44, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
+	#for line in range(3,33):
+	libtcod.console_print_ex(sidebar, 1, 1, libtcod.BKGND_NONE, libtcod.LEFT, str(playername))
 
-	for line in range(3,33):
-		libtcod.console_set_char_background(sidebar, 0, line, libtcod.darkest_gray, libtcod.BKGND_SET)
-
-	libtcod.console_print_ex(sidebar, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
-
-	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
-	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
-	libtcod.console_print_ex(sidebar, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
-
-
-	libtcod.console_print_ex(sidebar, 11, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
-	libtcod.console_print_ex(sidebar, 1, 12, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
-
-
-	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(sidebar, 9, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
-	libtcod.console_print_ex(sidebar, 1, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
-
-
-
-	render_bar(0, 1, BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp,
+	render_bar(1, 2, BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp,
 			   libtcod.light_red, libtcod.darker_red)
 
-	render_bar(0, 2, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
+	render_bar(1, 3, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
 			   libtcod.light_blue, libtcod.darker_blue)
+
+	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
+
+	libtcod.console_print_ex(sidebar, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
+	libtcod.console_print_ex(sidebar, 1, 8, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
+	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
+
+
+	libtcod.console_print_ex(sidebar, 11, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
+	libtcod.console_print_ex(sidebar, 1, 13, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
+
+
+	libtcod.console_print_ex(sidebar, 1, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
+	libtcod.console_print_ex(sidebar, 9, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
+	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
+
+
 
 	#display names of objects under the mouse
 	libtcod.console_set_default_foreground(panel, libtcod.light_gray)
@@ -2427,7 +2431,7 @@ def handle_keys():
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
-				player.figher.become_paralysed()
+				player.fighter.become_paralysed()
 			else:
 				#pass  #do nothing ie wait for the monster to come to you
 				take_game_turn()
@@ -3308,20 +3312,20 @@ def enter_text_menu(header, width, max_length):
 
 def new_game():
 	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, \
-		cred, pwr, sht, hck, hunger, hunger_stat, \
+		cred, pwr, sht, hck, hunger, hunger_stat,playername, \
 		time, hour, day, rentpaid, amorpm, hublevel
 
 	#get player name
+	libtcod.console_clear(con)
 	libtcod.console_flush()
-
 	name = enter_text_menu('Enter your name: ', 20, 10)
-	name = name.capitalize()
+	playername = name.capitalize()
 
 
 	#create object representing the player
 	fighter_component = Fighter(hp=900, lastx=0, lasty=0, my_path=0, defense=1, dex=4, accuracy=2, firearmdmg=2, vloyalty=0, eloyalty=0,
 								firearmacc=sht, ammo=10, power=pwr, hack=hck, charge=10+(hck * 2), xp=0, move_speed=2, flicker=0, robot=False, paralysis=False, death_function=player_death)
-	player = Object(0, 0, '@', name, libtcod.white, blocks=True, desc=name, fighter=fighter_component)
+	player = Object(0, 0, '@', playername, libtcod.white, blocks=True, desc=name, fighter=fighter_component)
 
 	#add player start variables - pretty much whatever we want really.
 	player.level = 1
@@ -3479,6 +3483,7 @@ def past_level():
 		make_map()  #create a fresh new level!
 		initialize_fov()
 
+
 def load_data():
 	parser = libtcod.parser_new()
 	# load monster data
@@ -3503,7 +3508,6 @@ def load_data():
 	libtcod.parser_run(parser, os.path.join('data', 'monster_data.cfg'), MonsterDataListener())
 
 	libtcod.parser_delete(parser)
-
 
 
 def initialize_fov():
