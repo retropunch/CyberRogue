@@ -1,18 +1,18 @@
 
 name "corpnames" {
-syllablesStart = "Xan, Ix, Wey, Intel, Ming, Yuo, Machine, Xing, Frana, Tactical, Power, Bowen, Dynamic, Avery, Avi, Tech, Shi, Yutani"
+syllablesStart = "Xan, Ix, Wey, Intel, Ming, Yuo, Machine, Xing, Frana, Tactical, Power, Bowen, Dynamic, Avery, Avi, Tech, Shi, Yutani, Vorikov, Erma"
 syllablesMiddle = "/-,_"
 syllablesEnd = "/Corp., Systems, /ltd., Group"
 rules = "%50$s$m%50$s_$20e"
 }
 
 name "corpproducts" {
-syllablesStart = "pharmaceuticals, energy, munitions, logistics, electronics, biotech, intelligence, nanotech, advanced_materials, genetic_modification, software"
-rules = "%50$s_and_%50$s"
+syllablesStart = "energy, munitions, logistics, biotech, intelligence, nanotech, advanced_materials, genetic_modification, software, research, engineering, aerospace, propulsion, chemicals"
+rules = "%50$s"
 }
 
 name "corpactions" {
-syllablesStart = "merged_with, took_over, bought_out, seized, infiltrated"
+syllablesStart = "merged_with, took_over, bought_out, seized, infiltrated, annexed, incorporated, "
 rules = "%50$s"
 }
 

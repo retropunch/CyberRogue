@@ -2,7 +2,6 @@
 #
 # libtcod python tutorial
 #
-# i hate git
 
 
 import libtcodpy as libtcod
@@ -17,16 +16,19 @@ import os
 
 
 #actual size of the window
-SCREEN_WIDTH = 89
-SCREEN_HEIGHT = 44
+SCREEN_WIDTH = 80
+SCREEN_HEIGHT = 46
 
 #size of the map
-MAP_WIDTH = 80
-MAP_HEIGHT = 88
+MAP_WIDTH = 60
+MAP_HEIGHT = 60
+
+CAMERA_WIDTH = 60
+CAMERA_HEIGHT = 30
 
 #sizes and coordinates relevant for the GUI
-BAR_WIDTH = 20
-PANEL_HEIGHT = 11
+BAR_WIDTH = 16
+PANEL_HEIGHT = 10
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
@@ -34,12 +36,12 @@ PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
 SIDEBAR_HEIGHT = 20
 SIDEBAR_WIDTH = 18
 SIDEBAR_Y = 0
-SIDEBAR_X = 81
+SIDEBAR_X = 40
 
 
 MSG_X = BAR_WIDTH + 2
-MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
-MSG_HEIGHT = PANEL_HEIGHT - 1
+MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 3
+MSG_HEIGHT = PANEL_HEIGHT - 2
 INVENTORY_WIDTH = 40
 CHARACTER_SCREEN_WIDTH = 40
 LEVEL_SCREEN_WIDTH = 50
@@ -82,6 +84,7 @@ color_dark_wall = libtcod.Color(22, 22, 22)
 color_light_wall = libtcod.Color(54, 54, 54)
 color_dark_ground = libtcod.Color(48, 38, 38)
 color_light_ground = libtcod.Color(86, 76, 76)
+
 
 
 class Tile:
@@ -222,15 +225,19 @@ class Object:
 
 	def draw(self):
 		#only show if it's visible to the player; or it's set to "always visible" and on an explored tile
-		if (libtcod.map_is_in_fov(fov_map, self.x, self.y) or
-				(self.always_visible and map[self.x][self.y].explored)):
-			#set the color and then draw the character that represents this object at its position
-			libtcod.console_set_default_foreground(con, self.color)
-			libtcod.console_put_char(con, self.x, self.y, self.char, libtcod.BKGND_NONE)
+		if libtcod.map_is_in_fov(fov_map, self.x, self.y):
+			(x, y) = to_camera_coordinates(self.x, self.y)
+
+			if x is not None:
+				#set the color and then draw the character that represents this object at its position
+				libtcod.console_set_default_foreground(con, self.color)
+				libtcod.console_put_char(con, x, y, self.char, libtcod.BKGND_NONE)
 
 	def clear(self):
+		(x, y) = to_camera_coordinates(self.x, self.y)
+		if x is not None:
 		#erase the character that represents this object
-		libtcod.console_put_char(con, self.x, self.y, ' ', libtcod.BKGND_NONE)
+			libtcod.console_put_char(con, x, y, ' ', libtcod.BKGND_NONE)
 
 
 class Fighter:
@@ -768,6 +775,7 @@ class Equipment:
 		self.is_equipped = False
 		message('Dequipped ' + self.owner.name + ' from ' + self.slot + '.', libtcod.light_yellow)
 
+
 class MonsterDataListener:
 	def new_struct(self, struct, name):
 		global monster_data
@@ -1170,6 +1178,7 @@ def create_boundaries():
 		map[x][0].block_sight = True
 		map[x][31].blocked = True
 		map[x][31].block_sight = True
+						#kludgy boundary because map is rubbish.
 
 
 def create_circular_room(room):
@@ -1447,25 +1456,57 @@ def closest_monster(max_range):
 	return closest_enemy
 
 
-def target_tile(max_range=None): 
+def target_tile(max_range=None,):
 	global key, mouse
-	#return the position of a tile left-clicked in player's FOV (optionally in a range), or (None,None) if right-clicked.
+	old_background = [[ Tile(True, False, False, False, False)
+		for dy in range(MAP_HEIGHT) ]
+			for dx in range(MAP_WIDTH) ]
+	for dy in range(MAP_HEIGHT): #loop through map and store old background cell colours to preserve information
+		for dx in range(MAP_WIDTH):
+			old_background[dx][dy] = libtcod.console_get_char_background(con, dx, dy)
+	redraw = True
 	while True:
 		#render the screen. this erases the inventory and shows the names of objects under the mouse.
-		libtcod.console_flush()
+		if redraw:
+			for dy in range(MAP_HEIGHT): #restore all old background cell colours from previously stored information
+				for dx in range(MAP_WIDTH):
+					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
+
+
+			(x, y) = (mouse.cx, mouse.cy)
+			(x, y) = (camera_x + x, camera_y + y)
+			libtcod.line_init(player.x, player.y, x, y)
+			while not dx == None and libtcod.map_is_in_fov(fov_map, dx, dy):
+
+				libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
+				dx, dy = libtcod.line_step()
+                if libtcod.map_is_in_fov(fov_map, x, y):
+				    libtcod.console_set_char_background(con, x, y, libtcod.dark_green, libtcod.BKGND_SET)
+                else:
+                    libtcod.console_set_char_background(con, x, y, libtcod.dark_red, libtcod.BKGND_SET)
+
+
+		#libtcod.console_flush()
 		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+		libtcod.console_flush()
 		render_all()
 
-		(x, y) = (mouse.cx, mouse.cy)
 
 		if mouse.rbutton_pressed or key.vk == libtcod.KEY_ESCAPE:
 			message('Cancelled')
+
+			for dy in range(MAP_HEIGHT): #restore all old background cell colours from previously stored information
+				for dx in range(MAP_WIDTH):
+					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
 			return (None, None)  #cancel if the player right-clicked or pressed Escape
 
 
 		#accept the target if the player clicked in FOV, and in case a range is specified, if it's in that range
 		if (mouse.lbutton_pressed and libtcod.map_is_in_fov(fov_map, x, y) and
 				(max_range is None or player.distance(x, y) <= max_range)):
+			for dy in range(MAP_HEIGHT): #restore all old background cell colours from previously stored information
+				for dx in range(MAP_WIDTH):
+					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
 			return (x, y)
 
 
@@ -1487,7 +1528,7 @@ def target_monster(max_range=None):
 ## Rendering and visuals
 
 
-def msgbox(text, width=50):
+def msgbox(text, width):
 	menu(text, [], width)  #use menu() as a sort of "message box"
 
 
@@ -1511,6 +1552,7 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 
 
 def menu(header, options, width):
+	global acamera_x, camera_y
 	if len(options) > 26: raise ValueError('Cannot have a menu with more than 26 options.')
 
 	#calculate total height for the header (after auto-wrap) and one line per option
@@ -1520,7 +1562,8 @@ def menu(header, options, width):
 	height = len(options) + header_height
 
 	#create an off-screen console that represents the menu's window
-	window = libtcod.console_new(width, height)
+	window = libtcod.console_new(width +6, height+6)
+
 
 	#print the header, with auto-wrap
 	libtcod.console_set_default_foreground(window, libtcod.green)
@@ -1572,13 +1615,41 @@ def get_names_under_mouse():
 	#return a string with the names of all objects under the mouse
 
 	(x, y) = (mouse.cx, mouse.cy)
-
+	(x, y) = (camera_x + x, camera_y + y)  #from screen to map coordinates
 	#create a list with the names of all objects at the mouse's coordinates and in FOV
 	names = [obj.name for obj in objects
 			 if obj.x == x and obj.y == y and libtcod.map_is_in_fov(fov_map, obj.x, obj.y)]
 
 	names = ', '.join(names)  #join the names, separated by commas
 	return names.capitalize()
+
+
+def move_camera(target_x, target_y):
+	global camera_x, camera_y, fov_recompute
+
+	#new camera coordinates (top-left corner of the screen relative to the map)
+	x = target_x - CAMERA_WIDTH / 2  #coordinates so that the target is at the center of the screen
+	y = target_y - CAMERA_HEIGHT / 2
+
+	#make sure the camera doesn't see outside the map
+	if x < 0: x = 0
+	if y < 0: y = 0
+	if x > MAP_WIDTH - CAMERA_WIDTH - 1: x = MAP_WIDTH - CAMERA_WIDTH - 1
+	if y > MAP_HEIGHT - CAMERA_HEIGHT - 1: y = MAP_HEIGHT - CAMERA_HEIGHT - 1
+
+	if x != camera_x or y != camera_y: fov_recompute = True
+
+	(camera_x, camera_y) = (x, y)
+
+
+def to_camera_coordinates(x, y):
+	#convert coordinates on the map to coordinates on the screen
+	(x, y) = (x - camera_x, y - camera_y)
+
+	if (x < 0 or y < 0 or x >= CAMERA_WIDTH or y >= CAMERA_HEIGHT):
+		return (None, None)  #if it's outside the view, return nothing
+
+	return (x, y)
 
 
 def flicker_all():
@@ -1609,27 +1680,32 @@ def flicker_all():
 def render_all():
 	global fov_map, color_dark_wall, color_light_wall
 	global color_dark_ground, color_light_ground
-	global fov_recompute, hour, day, amorpm
+	global fov_recompute, hour, day, amorpm, playername
 	#plyx = player.x + 2
 	#plyy = player.y + 2
+	move_camera(player.x, player.y)
+	#floordirt = 12;
+	#noise2d = libtcod.noise_new(2,h=libtcod.NOISE_DEFAULT_HURST,l=libtcod.NOISE_DEFAULT_LACUNARITY,random=0)
 
 	if fov_recompute:
 		#recompute FOV if needed (the player moved or something)
 		fov_recompute = False
 		libtcod.map_compute_fov(fov_map, player.x, player.y, TORCH_RADIUS, FOV_LIGHT_WALLS, FOV_ALGO)
+		libtcod.console_clear(con)
 
 		#go through all tiles, and set their background color according to the FOV
-		for y in range(MAP_HEIGHT):
-			for x in range(MAP_WIDTH):
-				visible = libtcod.map_is_in_fov(fov_map, x, y)
+		for y in range(CAMERA_HEIGHT):
+			for x in range(CAMERA_WIDTH):
+				(map_x, map_y) = (camera_x + x, camera_y + y)
+				visible = libtcod.map_is_in_fov(fov_map, map_x, map_y)
 
-				wall = map[x][y].block_sight
-				sludge = map[x][y].sludge
-				water = map[x][y].water
+				wall = map[map_x][map_y].block_sight
+				sludge = map[map_x][map_y].sludge
+				water = map[map_x][map_y].water
 
 				if not visible:
 					#if it's not visible right now, the player can only see it if it's explored
-					if map[x][y].explored:
+					if map[map_x][map_y].explored:
 						if wall:
 							libtcod.console_set_char_background(con, x, y, color_dark_wall, libtcod.BKGND_SET)
 						elif sludge:
@@ -1649,8 +1725,9 @@ def render_all():
 						libtcod.console_set_char_background(con, x, y, libtcod.darkest_blue, libtcod.BKGND_SET)
 					else:
 						libtcod.console_set_char_background(con, x, y, color_light_ground, libtcod.BKGND_SET)
+
 						#since it's visible, explore it
-					map[x][y].explored = True
+					map[map_x][map_y].explored = True
 
 
 
@@ -1670,6 +1747,7 @@ def render_all():
 
 	libtcod.console_set_default_background(panel, libtcod.black)
 	libtcod.console_clear(panel)
+	libtcod.console_print_frame(panel, 0, 0, 61, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
 
 	#print the game messages, one line at a time
@@ -1685,34 +1763,34 @@ def render_all():
 
 	libtcod.console_set_default_background(sidebar, libtcod.black)
 	libtcod.console_clear(sidebar)
+	libtcod.console_print_frame(sidebar,0, 0, 18,44, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
+	#for line in range(3,33):
+	libtcod.console_print_ex(sidebar, 1, 1, libtcod.BKGND_NONE, libtcod.LEFT, str(playername))
 
-	for line in range(3,33):
-		libtcod.console_set_char_background(sidebar, 0, line, libtcod.darkest_gray, libtcod.BKGND_SET)
-
-	libtcod.console_print_ex(sidebar, 1, 3, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
-
-	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
-	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
-	libtcod.console_print_ex(sidebar, 1, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
-
-
-	libtcod.console_print_ex(sidebar, 11, 6, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
-	libtcod.console_print_ex(sidebar, 1, 12, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
-
-
-	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(sidebar, 9, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
-	libtcod.console_print_ex(sidebar, 1, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
-
-
-
-	render_bar(0, 1, BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp,
+	render_bar(1, 2, BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp,
 			   libtcod.light_red, libtcod.darker_red)
 
-	render_bar(0, 2, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
+	render_bar(1, 3, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
 			   libtcod.light_blue, libtcod.darker_blue)
+
+	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
+
+	libtcod.console_print_ex(sidebar, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
+	libtcod.console_print_ex(sidebar, 1, 8, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
+	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
+
+
+	libtcod.console_print_ex(sidebar, 11, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
+	libtcod.console_print_ex(sidebar, 1, 13, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
+
+
+	libtcod.console_print_ex(sidebar, 1, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
+	libtcod.console_print_ex(sidebar, 9, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
+	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
+
+
 
 	#display names of objects under the mouse
 	libtcod.console_set_default_foreground(panel, libtcod.light_gray)
@@ -1720,7 +1798,7 @@ def render_all():
 
 	#blit the contents of "panel" to the root console
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
-	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0, 71, SIDEBAR_Y, 0.94, 0.2)
+	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,61, SIDEBAR_Y, 0.94, 0.2)
 
 
 ## Object placement!!!!!!
@@ -1853,7 +1931,7 @@ def place_objects(room):
 			if choice == 'heal':
 				#create a healing potion
 				item_component = Item(use_function=cast_heal)
-				item = Object(x, y, 173, 'a medikit', libtcod.magenta, desc='a basic Erma medikit', value=50, item=item_component)
+				item = Object(x, y, 173, 'a medikit', libtcod.magenta, desc='a basic' + worldgen.corptwo + 'medikit', value=50, item=item_component)
 
 			elif choice == 'food':
 				item_component = Item(use_function=eat)
@@ -1867,7 +1945,7 @@ def place_objects(room):
 			elif choice == 'overload':
 				#create a lightning bolt scroll
 				item_component = Item(use_function=cast_overload)
-				item = Object(x, y, 15, 'an overload pack', libtcod.light_yellow, desc='a standard Erma overload pack, used for short circuiting faulty stock', value=80, item=item_component)
+				item = Object(x, y, 15, 'an overload pack', libtcod.light_yellow, desc='a standard' + worldgen.corptwo + 'overload pack, used for short circuiting faulty stock', value=80, item=item_component)
 
 			#elif choice == 'fireball':
 			#	#create a fireball scroll
@@ -1896,13 +1974,13 @@ def place_objects(room):
 				#create a dagger
 				equipment_component = Equipment(slot='Right hand', power_bonus=4)
 				item = Object(x, y, '/', 'a nano-steel blade', libtcod.dark_sky, make='Erma',
-							  desc='an Erma Nano-Steel Blade', equipment=equipment_component)
+							  desc='an ' + worldgen.corptwo + ' Nano-Steel Blade', equipment=equipment_component)
 
 			elif choice == 'combatblade':
 				#create a dagger
 				equipment_component = Equipment(slot='Right hand', power_bonus=6, dex_bonus=-1)
 				item = Object(x, y, '/', 'a combat blade', libtcod.darker_sky, make='Vorikov',
-							  desc='a Vorikov Combat Blade, Deadly but bulky', equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' Combat Blade, Deadly but bulky', equipment=equipment_component)
 
 			elif choice == 'Katana':
 				#create a dagger
@@ -1914,63 +1992,63 @@ def place_objects(room):
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=3)
 				item = Object(x, y, 'f', 'a revolver', libtcod.sky, make='Vorikov',
-							  desc='a Vorikov revolver', equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' revolver', equipment=equipment_component)
 
 			elif choice == 'vk19':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=4, firearm_acc_bonus=1)
 				item = Object(x, y, 'f', 'VK-19', libtcod.dark_sky, make='Vorikov',
-							  desc='a Vorikov VK-19 rifle. Accurate and moderately powerful.',  value=150, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-19 rifle. Accurate and moderately powerful.',  value=150, equipment=equipment_component)
 
 			elif choice == 'vkp5':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=6, firearm_acc_bonus=-2)
 				item = Object(x, y, 'f', 'VK-P5', libtcod.darker_sky, make='Vorikov',
-							  desc='a Vorikov VK-P5. A powerful but innacurate peppergun.', value=150, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-P5. A powerful but innacurate peppergun.', value=150, equipment=equipment_component)
 
 			elif choice == 'vk180':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=9, dex_bonus=-3)
 				item = Object(x, y, 'f', 'VK-180', libtcod.darkest_sky, make='Vorikov',
-							  desc='a Vorikov VK-180, an immensely powerful heavy rifle which completely cripples your dexterity', value=300, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-180, an immensely powerful heavy rifle which completely cripples your dexterity', value=300, equipment=equipment_component)
 
 			## Armour:
 
 			elif choice == 'Type1':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=1)
-				item = Object(x, y, 2, 'a Type 1 vest', libtcod.yellow, make='Erma', desc='an Erma Type 1 armoured vest', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 1 vest', libtcod.yellow, make='Erma', desc='an ' + worldgen.corptwo + ' Type 1 armoured vest', equipment=equipment_component)
 
 			elif choice == 'Type2':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=2)
-				item = Object(x, y, 2, 'a Type 2 vest', libtcod.orange, make='Erma', desc='an Erma Type 2 armoured vest', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 2 vest', libtcod.orange, make='Erma', desc='an ' + worldgen.corptwo + ' Type 2 armoured vest', equipment=equipment_component)
 
 			elif choice == 'Type3':
 				#create a shield
 				equipment_component = Equipment(slot='Torso', defense_bonus=3, dex_bonus=-1, eloyalty_bonus=1)
-				item = Object(x, y, 2, 'a Type 3 vest', libtcod.red, make='Erma', desc='an Erma Type 3 armoured vest, quite bulky', equipment=equipment_component)
+				item = Object(x, y, 2, 'a Type 3 vest', libtcod.red, make='Erma', desc='an ' + worldgen.corptwo + ' Type 3 armoured vest, quite bulky', equipment=equipment_component)
 
 			elif choice == 'meshlegs':
 				#create a shield
 				equipment_component = Equipment(slot='Legs', defense_bonus=1)
-				item = Object(x, y, 22, 'Mesh Leg Armour', libtcod.orange, make='Erma', desc='Erma mesh leg armour', equipment=equipment_component)
+				item = Object(x, y, 22, 'Mesh Leg Armour', libtcod.orange, make='Erma', desc= worldgen.corptwo + ' mesh leg armour', equipment=equipment_component)
 
 			elif choice == 'platedlegs':
 				#create a shield
 				equipment_component = Equipment(slot='Legs', defense_bonus=3, dex_bonus=-1)
-				item = Object(x, y, 22, 'Plated Leg Armour', libtcod.red, make='Erma', desc='Erma plated leg armour, quite bulky', equipment=equipment_component)
+				item = Object(x, y, 22, 'Plated Leg Armour', libtcod.red, make='Erma', desc= worldgen.corptwo +  'plated leg armour, quite bulky', equipment=equipment_component)
 
 			elif choice == 'goggles':
 				#create a shield
 				equipment_component = Equipment(slot='Head', accuracy_bonus=1)
-				item = Object(x, y, 'e', 'a pair of targeting goggles', libtcod.lighter_blue, make='Erma', desc='a pair of Erma targetting goggles', equipment=equipment_component)
+				item = Object(x, y, 'e', 'a pair of targeting goggles', libtcod.lighter_blue, make='Erma', desc='a pair of' + worldgen.corptwo +  'targetting goggles', equipment=equipment_component)
 
 			elif choice == 'visor':
 				#create a shield
 				equipment_component = Equipment(slot='Head', accuracy_bonus=2, firearm_dmg_bonus=1, vloyalty_bonus=1)
 				item = Object(x, y, 'e', 'a sharpshooter visor', libtcod.light_blue,  make='Vorikov',
-							  desc='a Vorikov sharpshooter visor',  value=200, equipment=equipment_component)
+							  desc='a' + worldgen.corpone + 'sharpshooter visor',  value=200, equipment=equipment_component)
 
 			objects.append(item)
 			item.send_to_back()  #items appear below other objects
@@ -1980,12 +2058,12 @@ def place_objects(room):
 def hub():
 	#Shops
 	furniture_component = Furniture(use_function=Ermashopsell)
-	furniture = Object(8, 2, '$', 'Erma Shopping Terminal', libtcod.red, desc='an Erma Shopping Terminal', blocks=True, furniture=furniture_component)
+	furniture = Object(8, 2, '$', worldgen.corptwo + 'Shopping Terminal', libtcod.red, desc=worldgen.corptwo + ' Shopping Terminal', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
 	furniture_component = Furniture(use_function=Vorishopsell)
-	furniture = Object(9, 12, '$', 'Vorikov Shopping Terminal', libtcod.dark_red, desc='a Vorikov Shopping Terminal', blocks=True, furniture=furniture_component)
+	furniture = Object(9, 12, '$', worldgen.corpone + 'Shopping Terminal', libtcod.dark_red, desc=worldgen.corpone + 'Vorikov Shopping Terminal', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
@@ -2072,12 +2150,12 @@ def hub():
 	#some signs
 
 	furniture_component = Furniture(use_function=lookat)
-	furniture = Object(11, 8, '?', 'ErmaCorp Defence', libtcod.red, desc='Erma Corporation defence superstore', blocks=True, furniture=furniture_component)
+	furniture = Object(11, 8, '?', worldgen.corptwo + ' Defence', libtcod.red, desc='Erma Corporation defence superstore', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
 	furniture_component = Furniture(use_function=lookat)
-	furniture = Object(11, 16, '?', 'Vorikov Surplus', libtcod.dark_red, desc='Vorikov Corporation Surplus', blocks=True, furniture=furniture_component)
+	furniture = Object(11, 16, '?', worldgen.corpone + ' Surplus', libtcod.dark_red, desc='Vorikov Corporation Surplus', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
@@ -2408,7 +2486,7 @@ def handle_keys():
 			if player.fighter.paralysis:
 				take_game_turn()
 				message('You are paralysed', libtcod.red)
-				player.figher.become_paralysed()
+				player.fighter.become_paralysed()
 			else:
 				#pass  #do nothing ie wait for the monster to come to you
 				take_game_turn()
@@ -2606,7 +2684,7 @@ def player_death(player):
 
 
 def monster_death(monster):
-	global cred
+	global cred, camera_x,camera_y
 	#transform it into a nasty corpse! it doesn't block, can't be
 	#attacked and doesn't move
 	addcred = 0
@@ -2626,13 +2704,14 @@ def monster_death(monster):
 	for y in range(1,4):
 		n=random.randint(-1, 2)
 		if n == 1:
-			bloodcolour= libtcod.dark_red
+			bloodcolour = libtcod.dark_red
 		elif n == 2:
-			bloodcolour= libtcod.darker_red
+			bloodcolour = libtcod.darker_red
 		else:
-			bloodcolour= libtcod.darkest_red
-		libtcod.console_set_char_background(con, monster.x+n, monster.y, bloodcolour)
-		libtcod.console_set_char_background(con, monster.x, monster.y-n, bloodcolour)
+			bloodcolour = libtcod.darkest_red
+		(x,y) = to_camera_coordinates(monster.x,monster.y)
+		libtcod.console_set_char_background(con, x, y-1, bloodcolour)
+		libtcod.console_set_char_background(con, x +1, y, bloodcolour)
 		y += 1
 
 
@@ -2714,7 +2793,7 @@ def open_box(obj):
 
 
 def convo(obj):
-	talk = ['Go away', 'Why are you talking to me?', 'Who are you?', 'Get lost.']
+	talk = ['Go away', 'Why are you talking to me?', 'Who are you?', 'Get lost.', 'Stay away from the hotel.']
 	from random import choice
 	message(choice(talk))
 
@@ -2970,7 +3049,7 @@ def door(obj):
 
 
 def playerdoor(obj):
-	global rentpaid
+	global time
 	if rentpaid == True:
 		message('you open the door')
 		obj.char = '_'
@@ -3068,7 +3147,7 @@ def reload_ammo():
 ## Overarching stuff
 
 def main_menu():
-	global pwr, sht, hck
+	global pwr, sht, hck, playername
 	img = libtcod.image_load('menubackground.png')
 
 	while not libtcod.console_is_window_closed():
@@ -3076,7 +3155,7 @@ def main_menu():
 		libtcod.image_blit_2x(img, 0, 0, 0,)
 
 		#show the game's title, and some credits!
-		libtcod.console_set_default_foreground(0, libtcod.light_yellow)
+		libtcod.console_set_default_foreground(0, libtcod.black)
 		libtcod.console_print_ex(0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 4, libtcod.BKGND_NONE, libtcod.CENTER,
 								 'CyberRogue')
 		libtcod.console_print_ex(0, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 2, libtcod.BKGND_NONE, libtcod.CENTER, ' ')
@@ -3086,11 +3165,13 @@ def main_menu():
 
 		if choice == 0:  #new game
 			#while not libtcod.console_is_window_closed():
+			libtcod.image_blit_2x(img, 0, 0, 0,)
 			choice = menu('Choose a class:', ['Brawler', 'Marksman', 'Hacker', 'Quit'],34)
 			if choice == 0:  #new game
 					pwr = 5
 					sht = 1
 					hck = 1
+					libtcod.image_blit_2x(img, 0, 0, 0,)
 					new_game()
 					play_game()
 			if choice == 1:  #new game
@@ -3212,19 +3293,19 @@ def check_time():
 def show_world():
 	msgbox(
 		'Corporation: ' + str(worldgen.corpone)
-		+ '\nDeals in: ' + str(worldgen.corponeproducts)
+		+ '\nDeals in: Weapons and ' + str(worldgen.corponeproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corponehistory)
 		+ '\n' +
 
 		'\nCorporation: ' + str(worldgen.corptwo)
-		+ '\nDeals in: ' + str(worldgen.corptwoproducts)
+		+ '\nDeals in: Pharmaceuticals and ' + str(worldgen.corptwoproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corptwohistory)
 		+ '\n' +
 
 		'\nCorporation: ' + str(worldgen.corpthree)
-		+ '\nDeals in: ' + str(worldgen.corpthreeproducts)
+		+ '\nDeals in: Electronics and ' + str(worldgen.corpthreeproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corpthreehistory)
 		, 40)
@@ -3239,8 +3320,6 @@ def evening():
 	initialize_fov()
 
 
-
-
 def morning():
 	global color_light_ground, color_light_wall
 	color_light_wall = libtcod.Color(54, 54, 54)
@@ -3253,25 +3332,26 @@ def morning():
 def enter_text_menu(header, width, max_length):
 
 	#create an off-screen console that represents the menu's window
-	window = libtcod.console_new(width,4)
+	promptwindow = libtcod.console_new(60,60)
 
 	#print the header, with auto-wrap
-	libtcod.console_set_default_foreground(window, libtcod.green)
-	libtcod.console_print_rect(window, 0, 0, width, 30, header)
+	libtcod.console_set_default_background(0,libtcod.black)
+	libtcod.console_set_default_foreground(promptwindow, libtcod.green)
+	libtcod.console_print_rect(promptwindow, 0, 0, 40, 60, header)
 
 
 	user_input = ''
 	char_position = 0
 	x = SCREEN_WIDTH/2 - width/2
 	y = SCREEN_HEIGHT/2 - 1
-	libtcod.console_set_default_foreground(window, libtcod.white)
+	libtcod.console_set_default_foreground(promptwindow, libtcod.white)
 	while True:
 		key = libtcod.console_check_for_keypress(libtcod.KEY_PRESSED)
 
 		if key.vk == libtcod.KEY_BACKSPACE and char_position >= 0:
 			user_input = user_input[:-1]
 			char_position -= 1
-			libtcod.console_print_ex(window, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, ' ')
+			libtcod.console_print_ex(promptwindow, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, ' ')
 		elif key.vk == libtcod.KEY_ENTER:
 			break
 		elif key.vk == libtcod.KEY_ESCAPE:
@@ -3279,30 +3359,27 @@ def enter_text_menu(header, width, max_length):
 			break
 		elif key.c > 0 and len(user_input) < max_length:
 			letter = chr(key.c)
-			libtcod.console_print_ex(window, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, letter)
+			libtcod.console_print_ex(promptwindow, char_position, 1, libtcod.BKGND_NONE, libtcod.LEFT, letter)
 			user_input += letter  #add to the string
 			char_position += 1
-		libtcod.console_blit(window, 0, 0, width, 2, 0, x, y, 1.0, 0.7)
+		libtcod.console_blit(promptwindow, 0, 0, width, 2, 0, x, y, 1.0, 0.7)
 		libtcod.console_flush()
 	return user_input
 
 
 def new_game():
 	global player, inventory, game_msgs, game_state, dungeon_level, game_turn, \
-		cred, pwr, sht, hck, hunger, hunger_stat, \
+		cred, pwr, sht, hck, hunger, hunger_stat,playername, \
 		time, hour, day, rentpaid, amorpm, hublevel
 
 	#get player name
-	libtcod.console_flush()
-
-	name = enter_text_menu('Enter your name: ', 20, 10)
-	name = name.capitalize()
-
+	name = enter_text_menu('Enter your name: ', 30, 20)
+	playername = name.capitalize()
 
 	#create object representing the player
 	fighter_component = Fighter(hp=900, lastx=0, lasty=0, my_path=0, defense=1, dex=4, accuracy=2, firearmdmg=2, vloyalty=0, eloyalty=0,
 								firearmacc=sht, ammo=10, power=pwr, hack=hck, charge=10+(hck * 2), xp=0, move_speed=2, flicker=0, robot=False, paralysis=False, death_function=player_death)
-	player = Object(0, 0, '@', name, libtcod.white, blocks=True, desc=name, fighter=fighter_component)
+	player = Object(0, 0, '@', playername, libtcod.white, blocks=True, desc=name, fighter=fighter_component)
 
 	#add player start variables - pretty much whatever we want really.
 	player.level = 1
@@ -3317,6 +3394,7 @@ def new_game():
 	#generate map (at this point it's not drawn to the screen)
 	worldgen.setcorps()
 	dungeon_level = 1
+
 
 	make_map()
 	initialize_fov()
@@ -3460,13 +3538,14 @@ def past_level():
 		make_map()  #create a fresh new level!
 		initialize_fov()
 
+
 def load_data():
 	parser = libtcod.parser_new()
 	# load monster data
 	monsterStruct = libtcod.parser_new_struct(parser, 'monster')
 	libtcod.struct_add_property(monsterStruct, 'name', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'character', libtcod.TYPE_CHAR, True)
-	libtcod.struct_add_property(monsterStruct, 'character_color', libtcod.TYPE_COLOR, True)
+	libtcod.struct_add_property(monsterStruct, 'character_color', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'desc', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'hp', libtcod.TYPE_INT, True)
 	libtcod.struct_add_property(monsterStruct, 'defense', libtcod.TYPE_INT, True)
@@ -3486,7 +3565,6 @@ def load_data():
 	libtcod.parser_delete(parser)
 
 
-
 def initialize_fov():
 	global fov_recompute, fov_map
 	fov_recompute = True
@@ -3501,12 +3579,13 @@ def initialize_fov():
 
 ## Main loop below:
 def play_game():
-	global key, mouse, game_turn
+	global key, mouse, game_turn, camera_x, camera_y
 
 	player_action = None
 
 	mouse = libtcod.Mouse()
 	key = libtcod.Key()
+	(camera_x, camera_y) = (0, 0)
 	#main loop
 	while not libtcod.console_is_window_closed():
 		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
