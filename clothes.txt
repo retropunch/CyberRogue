@@ -1,0 +1,4 @@
+name "clothes" {
+syllablesStart = " jacket, coat, tank_top, shirt, t-shirt, hat, headband, mask, pair_of_glasses, bracelet"
+rules = "%50$s"
+}
