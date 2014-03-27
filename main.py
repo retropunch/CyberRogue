@@ -16,19 +16,19 @@ import os
 
 
 #actual size of the window
-SCREEN_WIDTH = 79
-SCREEN_HEIGHT = 44
+SCREEN_WIDTH = 80
+SCREEN_HEIGHT = 46
 
 #size of the map
 MAP_WIDTH = 60
-MAP_HEIGHT = 32
+MAP_HEIGHT = 60
 
 CAMERA_WIDTH = 60
-CAMERA_HEIGHT = 31
+CAMERA_HEIGHT = 30
 
 #sizes and coordinates relevant for the GUI
 BAR_WIDTH = 16
-PANEL_HEIGHT = 11
+PANEL_HEIGHT = 10
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
@@ -40,7 +40,7 @@ SIDEBAR_X = 40
 
 
 MSG_X = BAR_WIDTH + 2
-MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 2
+MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 3
 MSG_HEIGHT = PANEL_HEIGHT - 2
 INVENTORY_WIDTH = 40
 CHARACTER_SCREEN_WIDTH = 40
@@ -1476,7 +1476,6 @@ def target_tile(max_range=None,):
 			(x, y) = (mouse.cx, mouse.cy)
 			(x, y) = (camera_x + x, camera_y + y)
 			libtcod.line_init(player.x, player.y, x, y)
-			(dx,dy) = to_camera_coordinates(player.x, player.y)
 			while not dx == None and libtcod.map_is_in_fov(fov_map, dx, dy):
 
 				libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
@@ -1487,8 +1486,9 @@ def target_tile(max_range=None,):
                     libtcod.console_set_char_background(con, x, y, libtcod.dark_red, libtcod.BKGND_SET)
 
 
-		libtcod.console_flush()
+		#libtcod.console_flush()
 		libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS | libtcod.EVENT_MOUSE, key, mouse)
+		libtcod.console_flush()
 		render_all()
 
 
@@ -1528,7 +1528,7 @@ def target_monster(max_range=None):
 ## Rendering and visuals
 
 
-def msgbox(text, width=50):
+def msgbox(text, width=48):
 	menu(text, [], width)  #use menu() as a sort of "message box"
 
 
@@ -3290,19 +3290,19 @@ def check_time():
 def show_world():
 	msgbox(
 		'Corporation: ' + str(worldgen.corpone)
-		+ '\nDeals in: Weapons' + str(worldgen.corponeproducts)
+		+ '\nDeals in: Weapons and ' + str(worldgen.corponeproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corponehistory)
 		+ '\n' +
 
 		'\nCorporation: ' + str(worldgen.corptwo)
-		+ '\nDeals in: Pharmaceuticals' + str(worldgen.corptwoproducts)
+		+ '\nDeals in: Pharmaceuticals and ' + str(worldgen.corptwoproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corptwohistory)
 		+ '\n' +
 
 		'\nCorporation: ' + str(worldgen.corpthree)
-		+ '\nDeals in: Electronics' + str(worldgen.corpthreeproducts)
+		+ '\nDeals in: Electronics and ' + str(worldgen.corpthreeproducts)
 		+ '\n' +
 		'\n History: ' + str(worldgen.corpthreehistory)
 		, 40)
