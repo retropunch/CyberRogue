@@ -1818,13 +1818,13 @@ def place_monsters(room):
 	monster_chances['thug'] = from_dungeon_level([[80, 2], [40, 5], [10,9], [0, 12]])   #thug always shows up, even if all other monsters have 0 chance
 	monster_chances['thugboss'] = from_dungeon_level([[10, 3], [15, 5], [10, 7], [0,12]])
 	##monster_chances['hologram'] = from_dungeon_level([[0, 1], [10, 4]])
-	#monster_chances['mutant'] = from_dungeon_level([[15, 4], [30, 6], [40, 9]])
-	#monster_chances['fastmutant'] = from_dungeon_level([[5, 5], [10, 8], [20, 11]])
-	#monster_chances['dog'] = from_dungeon_level([[80, 2], [0, 3]])
+	monster_chances['mutant'] = from_dungeon_level([[15, 4], [30, 6], [40, 9]])
+	monster_chances['fastmutant'] = from_dungeon_level([[5, 5], [10, 8], [20, 11]])
+	monster_chances['dog'] = from_dungeon_level([[80, 2], [0, 3]])
 	##robots:
-	#monster_chances['manhack'] = from_dungeon_level([[20, 4], [25, 6], [30, 8]])
-	#monster_chances['vturret'] = from_dungeon_level([[15, 5], [30, 7]])
-	#monster_chances['replicant'] = from_dungeon_level([[5, 5], [10, 7], [20, 9]])
+	monster_chances['manhack'] = from_dungeon_level([[20, 4], [25, 6], [30, 8]])
+	monster_chances['vturret'] = from_dungeon_level([[15, 5], [30, 7]])
+	monster_chances['replicant'] = from_dungeon_level([[5, 5], [10, 7], [20, 9]])
 
 
 	#choose random number of monsters
