@@ -2,16 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d029bfd0-1889-484b-ae2e-3ef664c6157d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/diff" />
-      <change type="DELETED" beforePath="C:\Users\Kirstie\Documents\GitHub\CyberRogue\monsters.py" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Kirstie\Documents\GitHub\CyberRogue\.idea\.name" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Kirstie\Documents\GitHub\CyberRogue\.idea\CyberRogue.iml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Kirstie\Documents\GitHub\CyberRogue\.idea\encodings.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Kirstie\Documents\GitHub\CyberRogue\.idea\misc.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Kirstie\Documents\GitHub\CyberRogue\.idea\modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Kirstie\Documents\GitHub\CyberRogue\.idea\vcs.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hub" afterPath="$PROJECT_DIR$/hub" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/corpgen.txt" afterPath="$PROJECT_DIR$/corpgen.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/maps.py" afterPath="$PROJECT_DIR$/maps.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/monster_data.cfg" afterPath="$PROJECT_DIR$/data/monster_data.cfg" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worldgen.py" afterPath="$PROJECT_DIR$/worldgen.py" />
     </list>
     <ignored path="CyberRogue.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,31 +34,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="main.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1826" column="4" selection-start="63802" selection-end="63802" vertical-scroll-proportion="-8.038462" vertical-offset="30714" max-vertical-offset="61863">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="monster_data.cfg" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="monster_data.cfg" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/monster_data.cfg">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="143" column="40" selection-start="2224" selection-end="2224" vertical-scroll-proportion="0.35849056" vertical-offset="2279" max-vertical-offset="2805">
+            <state line="150" column="16" selection-start="2334" selection-end="2334" vertical-scroll-proportion="0.0" vertical-offset="2306" max-vertical-offset="2805">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Desktop/firstrl/main.py">
+      <file leaf-file-name="main.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1802" column="89" selection-start="65514" selection-end="65514" vertical-scroll-proportion="-9.923077" vertical-offset="30376" max-vertical-offset="60588">
-              <folding>
-                <element signature="e#50#77#0" expanded="true" />
-              </folding>
+            <state line="1832" column="44" selection-start="64045" selection-end="64045" vertical-scroll-proportion="0.60097325" vertical-offset="30778" max-vertical-offset="61846">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -81,8 +70,9 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$USER_HOME$/Desktop/firstrl/main.py" />
         <option value="$PROJECT_DIR$/data/monster_data.cfg" />
+        <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
   </component>
@@ -348,12 +338,18 @@
       <created>1395945809240</created>
       <updated>1395945809240</updated>
     </task>
+    <task id="LOCAL-00001" summary="Merge branch 'master' of https://github.com/retropunch/CyberRogue into why-aren't-you-work&#10;&#10;Conflicts:&#10;&#9;main.py&#10;">
+      <created>1395960195613</created>
+      <updated>1395960195613</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="-4" width="1374" height="732" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -380,6 +376,8 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
+    <MESSAGE value="Merge branch 'master' of https://github.com/retropunch/CyberRogue into why-aren't-you-work&#10;&#10;Conflicts:&#10;&#9;main.py&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'master' of https://github.com/retropunch/CyberRogue into why-aren't-you-work&#10;&#10;Conflicts:&#10;&#9;main.py&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -446,23 +444,23 @@
     </entry>
     <entry file="file://$USER_HOME$/Desktop/firstrl/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1802" column="89" selection-start="65514" selection-end="65514" vertical-scroll-proportion="-9.923077" vertical-offset="30376" max-vertical-offset="60588">
+        <state line="1791" column="0" selection-start="64770" selection-end="64770" vertical-scroll-proportion="-2.7307692" vertical-offset="30376" max-vertical-offset="60588">
           <folding>
             <element signature="e#50#77#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
+    <entry file="file://$PROJECT_DIR$/data/monster_data.cfg">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1826" column="4" selection-start="63802" selection-end="63802" vertical-scroll-proportion="-8.038462" vertical-offset="30714" max-vertical-offset="61863">
+        <state line="150" column="16" selection-start="2334" selection-end="2334" vertical-scroll-proportion="0.0" vertical-offset="2306" max-vertical-offset="2805">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/monster_data.cfg">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="143" column="40" selection-start="2224" selection-end="2224" vertical-scroll-proportion="0.35849056" vertical-offset="2279" max-vertical-offset="2805">
+        <state line="1832" column="44" selection-start="64045" selection-end="64045" vertical-scroll-proportion="0.60097325" vertical-offset="30778" max-vertical-offset="61846">
           <folding />
         </state>
       </provider>
