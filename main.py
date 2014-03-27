@@ -1528,7 +1528,7 @@ def target_monster(max_range=None):
 ## Rendering and visuals
 
 
-def msgbox(text, width=48):
+def msgbox(text, width):
 	menu(text, [], width)  #use menu() as a sort of "message box"
 
 
@@ -1552,6 +1552,7 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 
 
 def menu(header, options, width):
+	global acamera_x, camera_y
 	if len(options) > 26: raise ValueError('Cannot have a menu with more than 26 options.')
 
 	#calculate total height for the header (after auto-wrap) and one line per option
@@ -1567,7 +1568,6 @@ def menu(header, options, width):
 	#print the header, with auto-wrap
 	libtcod.console_set_default_foreground(window, libtcod.green)
 	libtcod.console_print_rect_ex(window, 0, 0, width, height, libtcod.BKGND_ADD, libtcod.LEFT, header)
-
 
 	#print all the options
 	y = header_height
@@ -1623,6 +1623,7 @@ def get_names_under_mouse():
 	names = ', '.join(names)  #join the names, separated by commas
 	return names.capitalize()
 
+
 def move_camera(target_x, target_y):
 	global camera_x, camera_y, fov_recompute
 
@@ -1640,6 +1641,7 @@ def move_camera(target_x, target_y):
 
 	(camera_x, camera_y) = (x, y)
 
+
 def to_camera_coordinates(x, y):
 	#convert coordinates on the map to coordinates on the screen
 	(x, y) = (x - camera_x, y - camera_y)
@@ -1648,6 +1650,7 @@ def to_camera_coordinates(x, y):
 		return (None, None)  #if it's outside the view, return nothing
 
 	return (x, y)
+
 
 def flicker_all():
 	global fov_recompute
@@ -3046,7 +3049,7 @@ def door(obj):
 
 
 def playerdoor(obj):
-	global rentpaid
+	global time
 	if rentpaid == True:
 		message('you open the door')
 		obj.char = '_'
