@@ -33,7 +33,7 @@ PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
 
-SIDEBAR_HEIGHT = 20
+SIDEBAR_HEIGHT = 46
 SIDEBAR_WIDTH = 18
 SIDEBAR_Y = 0
 SIDEBAR_X = 40
@@ -1763,7 +1763,7 @@ def render_all():
 
 	libtcod.console_set_default_background(sidebar, libtcod.black)
 	libtcod.console_clear(sidebar)
-	libtcod.console_print_frame(sidebar,0, 0, 18,44, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
+	libtcod.console_print_frame(sidebar,0, 0, SIDEBAR_WIDTH,SIDEBAR_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
 	#for line in range(3,33):
 	libtcod.console_print_ex(sidebar, 1, 1, libtcod.BKGND_NONE, libtcod.LEFT, str(playername))
@@ -1784,12 +1784,19 @@ def render_all():
 	libtcod.console_print_ex(sidebar, 11, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
 	libtcod.console_print_ex(sidebar, 1, 13, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
 
+	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
+	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
+	libtcod.console_print_frame(sidebar,0,16,SIDEBAR_WIDTH,10,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
+	libtcod.console_print_ex(sidebar, 9, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
+	libtcod.console_print_ex(sidebar, 1, 19, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
 
-	libtcod.console_print_ex(sidebar, 1, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(sidebar, 9, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
-	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
-
+	libtcod.console_print_ex(sidebar, 1, 30, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
+	libtcod.console_set_default_foreground(sidebar, libtcod.green)
+	libtcod.console_print_frame(sidebar,0,31,SIDEBAR_WIDTH,10,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 32, libtcod.BKGND_NONE, libtcod.LEFT, '1:' + str(get_equipped_in_slot('Right Hand')))
+	libtcod.console_set_default_foreground(sidebar, libtcod.light_grey)
 
 
 	#display names of objects under the mouse
@@ -1817,14 +1824,14 @@ def place_monsters(room):
 	monster_chances ={}
 	monster_chances['thug'] = from_dungeon_level([[80, 2], [40, 5], [10,9], [0, 12]])   #thug always shows up, even if all other monsters have 0 chance
 	monster_chances['thugboss'] = from_dungeon_level([[10, 3], [15, 5], [10, 7], [0,12]])
-	##monster_chances['hologram'] = from_dungeon_level([[0, 1], [10, 4]])
-	#monster_chances['mutant'] = from_dungeon_level([[15, 4], [30, 6], [40, 9]])
-	#monster_chances['fastmutant'] = from_dungeon_level([[5, 5], [10, 8], [20, 11]])
-	#monster_chances['dog'] = from_dungeon_level([[80, 2], [0, 3]])
+
+	monster_chances['mutant'] = from_dungeon_level([[15, 4], [30, 6], [40, 9]])
+	monster_chances['fastmutant'] = from_dungeon_level([[5, 5], [10, 8], [20, 11]])
+	monster_chances['dog'] = from_dungeon_level([[80, 2], [0, 3]])
 	##robots:
-	#monster_chances['manhack'] = from_dungeon_level([[20, 4], [25, 6], [30, 8]])
-	#monster_chances['vturret'] = from_dungeon_level([[15, 5], [30, 7]])
-	#monster_chances['replicant'] = from_dungeon_level([[5, 5], [10, 7], [20, 9]])
+	monster_chances['manhack'] = from_dungeon_level([[20, 4], [25, 6], [30, 8]])
+	monster_chances['vturret'] = from_dungeon_level([[15, 5], [30, 7]])
+	monster_chances['replicant'] = from_dungeon_level([[5, 5], [10, 7], [20, 9]])
 
 
 	#choose random number of monsters
@@ -1889,7 +1896,7 @@ def place_objects(room):
 	max_items = from_dungeon_level([[1, 3], [2, 8]])
 	#chance of each item (by default they have a chance of 0 at level 1, which then goes up)
 	item_chances = {}
-	item_chances['None'] = 50
+	#item_chances['None'] = 50
 	item_chances['heal'] = 20  #healing potion always shows up, even if all other items have 0 chance
 	item_chances['food'] = 10
 	item_chances['bullets'] = from_dungeon_level([[15, 1], [25, 3]])
@@ -1908,8 +1915,8 @@ def place_objects(room):
 	##Armour:
 	item_chances['meshlegs'] = from_dungeon_level([[5, 3], [8, 5]])
 	item_chances['platedlegs'] = from_dungeon_level([[5, 7], [10, 9]])
-	item_chances['Type1'] = from_dungeon_level([[10, 2], [5, 4], [0, 6]])
-	item_chances['Type2'] = from_dungeon_level([[5, 2], [10, 4], [15, 6], [0, 8]])
+	item_chances['Type1'] = from_dungeon_level([[10, 2], [5, 4], [1, 6]])
+	item_chances['Type2'] = from_dungeon_level([[5, 2], [10, 4], [15, 6], [1, 8]])
 	item_chances['Type3'] = from_dungeon_level([[10, 5], [15, 7]])
 	item_chances['goggles'] = from_dungeon_level([[10, 5], [15, 7]])
 	item_chances['visor'] = from_dungeon_level([[5, 6], [10, 7], [15, 10]])
@@ -1937,30 +1944,15 @@ def place_objects(room):
 				item_component = Item(use_function=eat)
 				item = Object(x, y, 'g', 'Food', libtcod.magenta, desc='a Food Package', value=0, item=item_component)
 
-			elif choice == 'None':
-				#create a healing potion
-				item_component = Item(use_function=None)
-				item = Object(x, y, ' ', ' ', libtcod.magenta, desc=' ', item=item_component)
+			elif choice == 'bullets':
+				#inventory bullets
+				item_component = Item(use_function=reload_ammo)
+				item = Object(x, y, '=', 'bullets', libtcod.light_yellow, desc='a fistful of bullets', item=item_component)
 
 			elif choice == 'overload':
 				#create a lightning bolt scroll
 				item_component = Item(use_function=cast_overload)
 				item = Object(x, y, 15, 'an overload pack', libtcod.light_yellow, desc='a standard' + worldgen.corptwo + 'overload pack, used for short circuiting faulty stock', value=80, item=item_component)
-
-			#elif choice == 'fireball':
-			#	#create a fireball scroll
-			#	item_component = Item(use_function=cast_fireball)
-			#	item = Object(x, y, '#', 'a scroll of fireball', libtcod.light_yellow, item=item_component)
-
-			#elif choice == 'confuse':
-			#	#create a confuse scroll
-			#	item_component = Item(use_function=cast_confuse)
-			#	item = Object(x, y, '#', 'a scroll of confusion', libtcod.light_yellow, item=item_component)
-
-			elif choice == 'bullets':
-				#inventory bullets
-				item_component = Item(use_function=reload_ammo)
-				item = Object(x, y, '=', 'bullets', libtcod.light_yellow, desc='a fistful of bullets', item=item_component)
 
 			## weapons
 
