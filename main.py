@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # libtcod python tutorial
-#
+# 
 
 
 import libtcodpy as libtcod
@@ -36,7 +36,7 @@ PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
 SIDEBAR_HEIGHT = 40
 SIDEBAR_WIDTH = 16
 SIDEBAR_Y = 0
-SIDEBAR_X = 43 
+SIDEBAR_X = 43
 
 
 MSG_X = BAR_WIDTH + 2
