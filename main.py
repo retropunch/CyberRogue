@@ -17,14 +17,14 @@ import os
 
 #actual size of the window
 SCREEN_WIDTH = 59
-SCREEN_HEIGHT = 45
+SCREEN_HEIGHT = 40
 
 #size of the map
 MAP_WIDTH = 43
-MAP_HEIGHT = 50
+MAP_HEIGHT = 30
 
 CAMERA_WIDTH = 43
-CAMERA_HEIGHT = 34
+CAMERA_HEIGHT = 29
 
 #sizes and coordinates relevant for the GUI
 BAR_WIDTH = 14
@@ -33,7 +33,7 @@ PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
 
-SIDEBAR_HEIGHT = 46
+SIDEBAR_HEIGHT = 40
 SIDEBAR_WIDTH = 16
 SIDEBAR_Y = 0
 SIDEBAR_X = 43
@@ -1243,6 +1243,7 @@ def make_map():
 
 				elif maps.hubmap[y][x] == '~':
 					map[x][y] = Tile(False, True, False, False, False)
+					libtcod.console_set_char(con,x,y,172)
 
 				elif maps.hubmap[y][x] == '_':
 					map[x][y] = Tile(False, False, True, False, False)
@@ -1253,13 +1254,13 @@ def make_map():
 				elif maps.hubmap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
-					furniture = Object(x, y, 'X', 'door', libtcod.brass, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
+					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
 				elif maps.hubmap[y][x] == 'W':
 					map[x][y] = Tile(False, False, False, False, True)
-
+					libtcod.console_set_char(con,x,y,171)
 
 
 		#upstairs = Object(2, 3, '>', 'upstairs', libtcod.white, always_visible=True)
@@ -1296,6 +1297,7 @@ def make_map():
 
 				elif maps.factorymap[y][x] == '~':
 					map[x][y] = Tile(False, True, False, False, False)
+					libtcod.console_set_char(con,x,y,172)
 
 				elif maps.factorymap[y][x] == '_':
 					map[x][y] = Tile(False, False, True, False, False)
@@ -1306,12 +1308,13 @@ def make_map():
 				elif maps.factorymap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
-					furniture = Object(x, y, 'X', 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component)
+					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
 				elif maps.factorymap[y][x] == 'W':
 					map[x][y] = Tile(False, False, False, False, True, False)
+					libtcod.console_set_char(con,x,y,171)
 
 
 		#as I can't be bothered to keep defining the stairs global, I've just put in an invisible one:
@@ -1562,8 +1565,8 @@ def menu(header, options, width):
 	height = len(options) + header_height
 
 	#create an off-screen console that represents the menu's window
-	window = libtcod.console_new(width +6, height+6)
-
+	window = libtcod.console_new(width, height+6)
+	libtcod.console_set_alignment(window,libtcod.LEFT)
 
 	#print the header, with auto-wrap
 	libtcod.console_set_default_foreground(window, libtcod.green)
@@ -1582,6 +1585,7 @@ def menu(header, options, width):
 	x = SCREEN_WIDTH / 2 - width / 2
 	y = SCREEN_HEIGHT / 2 - height / 2
 	libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.7)
+
 
 	#present the root console to the player and wait for a key-press
 	libtcod.console_flush()
@@ -1712,6 +1716,7 @@ def render_all():
 							libtcod.console_set_char_background(con, x, y, libtcod.darkest_lime, libtcod.BKGND_SET)
 						elif water:
 							libtcod.console_set_char_background(con, x, y, libtcod.darkest_blue, libtcod.BKGND_SET)
+							libtcod.console_set_char(con,x,y,171)
 						else:
 							libtcod.console_set_char_background(con, x, y, color_dark_ground, libtcod.BKGND_SET)
 
@@ -1720,9 +1725,11 @@ def render_all():
 					if wall:
 						libtcod.console_set_char_background(con, x, y, color_light_wall, libtcod.BKGND_SET)
 					elif sludge:
-						libtcod.console_set_char_background(con, x, y, libtcod.darker_lime, libtcod.BKGND_SET)
+						libtcod.console_set_char_background(con, x, y, libtcod.darkest_lime, libtcod.BKGND_SET)
+						libtcod.console_set_char(con,x,y,172)
 					elif water:
 						libtcod.console_set_char_background(con, x, y, libtcod.darkest_blue, libtcod.BKGND_SET)
+						libtcod.console_set_char(con,x,y,171)
 					else:
 						libtcod.console_set_char_background(con, x, y, color_light_ground, libtcod.BKGND_SET)
 
@@ -1739,8 +1746,7 @@ def render_all():
 	player.draw()
 
 
-	#blit the contents of "con" to the root console
-	libtcod.console_blit(con, 0, 0, MAP_WIDTH, MAP_HEIGHT, 0, 0, 0, 1, 1)
+
 
 
 	#prepare to render the GUI panel
@@ -1792,9 +1798,9 @@ def render_all():
 	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
 	libtcod.console_print_ex(sidebar, 1, 19, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
 
-	libtcod.console_print_ex(sidebar, 1, 30, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
+	libtcod.console_print_ex(sidebar, 1, 29, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
 	libtcod.console_set_default_foreground(sidebar, libtcod.green)
-	libtcod.console_print_frame(sidebar,0,31,SIDEBAR_WIDTH,10,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_frame(sidebar,0,30,SIDEBAR_WIDTH,10,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
 	libtcod.console_print_ex(sidebar, 1, 32, libtcod.BKGND_NONE, libtcod.LEFT, '1:' + str(get_equipped_in_slot('Right Hand')))
 	libtcod.console_set_default_foreground(sidebar, libtcod.light_grey)
 
@@ -1807,6 +1813,8 @@ def render_all():
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
 	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,SIDEBAR_X, SIDEBAR_Y, 0.94, 0.2)
 
+#blit the contents of "con" to the root console
+	libtcod.console_blit(con, 0, 0, MAP_WIDTH, MAP_HEIGHT, 0, 0, 0, 1, 1)
 
 ## Object placement!!!!!!
 
@@ -2118,8 +2126,10 @@ def hub():
 
 	#misc
 	furniture_component = Furniture(use_function=playerdoor)
-	furniture = Object(61, 22, 'X', 'door', libtcod.dark_flame, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
+	furniture = Object(61, 22, 129, 'door', libtcod.dark_flame, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
+	furniture.blocks_sight = True
 	objects.append(furniture)
+
 
 	furniture_component = Furniture(use_function=playerterminal)
 	furniture = Object(60, 21, '&', 'Player Terminal', libtcod.white, desc='Your Terminal', blocks=True, furniture=furniture_component)
@@ -3028,7 +3038,7 @@ def lookat(obj):
 
 def door(obj):
 	message('you open the door')
-	obj.char = '_'
+	obj.char = 130
 	obj.color = libtcod.light_grey
 	obj.blocks = False
 	obj.furniture = None
@@ -3318,7 +3328,6 @@ def morning():
 	color_light_ground = libtcod.Color(86, 76, 75)
 
 	initialize_fov()
-
 
 
 def enter_text_menu(header, width, max_length):
