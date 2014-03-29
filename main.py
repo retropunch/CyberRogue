@@ -1747,10 +1747,7 @@ def render_all():
 
 
 
-
-
 	#prepare to render the GUI panel
-
 	libtcod.console_set_default_background(panel, libtcod.black)
 	libtcod.console_clear(panel)
 	libtcod.console_print_frame(panel, 0, 0, 43, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
