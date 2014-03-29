@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # libtcod python tutorial
-#
+# 
 
 
 import libtcodpy as libtcod
@@ -17,18 +17,18 @@ import os
 
 #actual size of the window
 SCREEN_WIDTH = 59
-SCREEN_HEIGHT = 40
+SCREEN_HEIGHT = 35
 
 #size of the map
 MAP_WIDTH = 43
-MAP_HEIGHT = 30
+MAP_HEIGHT = 26
 
 CAMERA_WIDTH = 43
-CAMERA_HEIGHT = 29
+CAMERA_HEIGHT = 26
 
 #sizes and coordinates relevant for the GUI
 BAR_WIDTH = 14
-PANEL_HEIGHT = 10
+PANEL_HEIGHT = 9
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
