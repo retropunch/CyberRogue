@@ -16,27 +16,27 @@ import os
 
 
 #actual size of the window
-SCREEN_WIDTH = 80
-SCREEN_HEIGHT = 46
+SCREEN_WIDTH = 59
+SCREEN_HEIGHT = 40
 
 #size of the map
-MAP_WIDTH = 60
-MAP_HEIGHT = 60
+MAP_WIDTH = 43
+MAP_HEIGHT = 30
 
-CAMERA_WIDTH = 60
-CAMERA_HEIGHT = 30
+CAMERA_WIDTH = 43
+CAMERA_HEIGHT = 29
 
 #sizes and coordinates relevant for the GUI
-BAR_WIDTH = 16
+BAR_WIDTH = 14
 PANEL_HEIGHT = 10
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
 
-SIDEBAR_HEIGHT = 20
-SIDEBAR_WIDTH = 18
+SIDEBAR_HEIGHT = 40
+SIDEBAR_WIDTH = 16
 SIDEBAR_Y = 0
-SIDEBAR_X = 40
+SIDEBAR_X = 43
 
 
 MSG_X = BAR_WIDTH + 2
@@ -1243,6 +1243,7 @@ def make_map():
 
 				elif maps.hubmap[y][x] == '~':
 					map[x][y] = Tile(False, True, False, False, False)
+					libtcod.console_set_char(con,x,y,172)
 
 				elif maps.hubmap[y][x] == '_':
 					map[x][y] = Tile(False, False, True, False, False)
@@ -1253,13 +1254,13 @@ def make_map():
 				elif maps.hubmap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
-					furniture = Object(x, y, 'X', 'door', libtcod.brass, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
+					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
 				elif maps.hubmap[y][x] == 'W':
 					map[x][y] = Tile(False, False, False, False, True)
-
+					libtcod.console_set_char(con,x,y,171)
 
 
 		#upstairs = Object(2, 3, '>', 'upstairs', libtcod.white, always_visible=True)
@@ -1296,6 +1297,7 @@ def make_map():
 
 				elif maps.factorymap[y][x] == '~':
 					map[x][y] = Tile(False, True, False, False, False)
+					libtcod.console_set_char(con,x,y,172)
 
 				elif maps.factorymap[y][x] == '_':
 					map[x][y] = Tile(False, False, True, False, False)
@@ -1306,12 +1308,13 @@ def make_map():
 				elif maps.factorymap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
-					furniture = Object(x, y, 'X', 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component)
+					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
 				elif maps.factorymap[y][x] == 'W':
 					map[x][y] = Tile(False, False, False, False, True, False)
+					libtcod.console_set_char(con,x,y,171)
 
 
 		#as I can't be bothered to keep defining the stairs global, I've just put in an invisible one:
@@ -1562,8 +1565,8 @@ def menu(header, options, width):
 	height = len(options) + header_height
 
 	#create an off-screen console that represents the menu's window
-	window = libtcod.console_new(width +6, height+6)
-
+	window = libtcod.console_new(width, height+6)
+	libtcod.console_set_alignment(window,libtcod.LEFT)
 
 	#print the header, with auto-wrap
 	libtcod.console_set_default_foreground(window, libtcod.green)
@@ -1582,6 +1585,7 @@ def menu(header, options, width):
 	x = SCREEN_WIDTH / 2 - width / 2
 	y = SCREEN_HEIGHT / 2 - height / 2
 	libtcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.7)
+
 
 	#present the root console to the player and wait for a key-press
 	libtcod.console_flush()
@@ -1712,6 +1716,7 @@ def render_all():
 							libtcod.console_set_char_background(con, x, y, libtcod.darkest_lime, libtcod.BKGND_SET)
 						elif water:
 							libtcod.console_set_char_background(con, x, y, libtcod.darkest_blue, libtcod.BKGND_SET)
+							libtcod.console_set_char(con,x,y,171)
 						else:
 							libtcod.console_set_char_background(con, x, y, color_dark_ground, libtcod.BKGND_SET)
 
@@ -1720,9 +1725,11 @@ def render_all():
 					if wall:
 						libtcod.console_set_char_background(con, x, y, color_light_wall, libtcod.BKGND_SET)
 					elif sludge:
-						libtcod.console_set_char_background(con, x, y, libtcod.darker_lime, libtcod.BKGND_SET)
+						libtcod.console_set_char_background(con, x, y, libtcod.darkest_lime, libtcod.BKGND_SET)
+						libtcod.console_set_char(con,x,y,172)
 					elif water:
 						libtcod.console_set_char_background(con, x, y, libtcod.darkest_blue, libtcod.BKGND_SET)
+						libtcod.console_set_char(con,x,y,171)
 					else:
 						libtcod.console_set_char_background(con, x, y, color_light_ground, libtcod.BKGND_SET)
 
@@ -1739,15 +1746,14 @@ def render_all():
 	player.draw()
 
 
-	#blit the contents of "con" to the root console
-	libtcod.console_blit(con, 0, 0, MAP_WIDTH, MAP_HEIGHT, 0, 0, 0, 1, 1)
+
 
 
 	#prepare to render the GUI panel
 
 	libtcod.console_set_default_background(panel, libtcod.black)
 	libtcod.console_clear(panel)
-	libtcod.console_print_frame(panel, 0, 0, 61, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
+	libtcod.console_print_frame(panel, 0, 0, 43, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
 
 	#print the game messages, one line at a time
@@ -1763,7 +1769,7 @@ def render_all():
 
 	libtcod.console_set_default_background(sidebar, libtcod.black)
 	libtcod.console_clear(sidebar)
-	libtcod.console_print_frame(sidebar,0, 0, 18,44, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
+	libtcod.console_print_frame(sidebar,0, 0, SIDEBAR_WIDTH,SIDEBAR_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
 	#for line in range(3,33):
 	libtcod.console_print_ex(sidebar, 1, 1, libtcod.BKGND_NONE, libtcod.LEFT, str(playername))
@@ -1774,22 +1780,29 @@ def render_all():
 	render_bar(1, 3, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
 			   libtcod.light_blue, libtcod.darker_blue)
 
-	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
+	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth:' + str(dungeon_level))
 
 	libtcod.console_print_ex(sidebar, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
 	libtcod.console_print_ex(sidebar, 1, 8, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
-	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
+	#libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
 
 
-	libtcod.console_print_ex(sidebar, 11, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
+	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day) + ' ' + str(hour) + str(amorpm))
 	libtcod.console_print_ex(sidebar, 1, 13, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
 
+	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
+	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
+	libtcod.console_print_frame(sidebar,0,16,SIDEBAR_WIDTH,10,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
+	libtcod.console_print_ex(sidebar, 9, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
+	libtcod.console_print_ex(sidebar, 1, 19, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
 
-	libtcod.console_print_ex(sidebar, 1, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(sidebar, 9, 16, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
-	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
-
+	libtcod.console_print_ex(sidebar, 1, 29, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
+	libtcod.console_set_default_foreground(sidebar, libtcod.green)
+	libtcod.console_print_frame(sidebar,0,30,SIDEBAR_WIDTH,10,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 32, libtcod.BKGND_NONE, libtcod.LEFT, '1:' + str(get_equipped_in_slot('Right Hand')))
+	libtcod.console_set_default_foreground(sidebar, libtcod.light_grey)
 
 
 	#display names of objects under the mouse
@@ -1798,8 +1811,10 @@ def render_all():
 
 	#blit the contents of "panel" to the root console
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
-	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,61, SIDEBAR_Y, 0.94, 0.2)
+	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,SIDEBAR_X, SIDEBAR_Y, 0.94, 0.2)
 
+#blit the contents of "con" to the root console
+	libtcod.console_blit(con, 0, 0, MAP_WIDTH, MAP_HEIGHT, 0, 0, 0, 1, 1)
 
 ## Object placement!!!!!!
 
@@ -1817,7 +1832,7 @@ def place_monsters(room):
 	monster_chances ={}
 	monster_chances['thug'] = from_dungeon_level([[80, 2], [40, 5], [10,9], [0, 12]])   #thug always shows up, even if all other monsters have 0 chance
 	monster_chances['thugboss'] = from_dungeon_level([[10, 3], [15, 5], [10, 7], [0,12]])
-	##monster_chances['hologram'] = from_dungeon_level([[0, 1], [10, 4]])
+
 	monster_chances['mutant'] = from_dungeon_level([[15, 4], [30, 6], [40, 9]])
 	monster_chances['fastmutant'] = from_dungeon_level([[5, 5], [10, 8], [20, 11]])
 	monster_chances['dog'] = from_dungeon_level([[80, 2], [0, 3]])
@@ -1829,6 +1844,7 @@ def place_monsters(room):
 
 	#choose random number of monsters
 	num_monsters = libtcod.random_get_int(0, 0, max_monsters)
+
 	for i in range(num_monsters):
 		#choose random spot for this monster
 		x = libtcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
@@ -1888,7 +1904,7 @@ def place_objects(room):
 	max_items = from_dungeon_level([[1, 3], [2, 8]])
 	#chance of each item (by default they have a chance of 0 at level 1, which then goes up)
 	item_chances = {}
-	item_chances['None'] = 50
+	#item_chances['None'] = 50
 	item_chances['heal'] = 20  #healing potion always shows up, even if all other items have 0 chance
 	item_chances['food'] = 10
 	item_chances['bullets'] = from_dungeon_level([[15, 1], [25, 3]])
@@ -1907,8 +1923,8 @@ def place_objects(room):
 	##Armour:
 	item_chances['meshlegs'] = from_dungeon_level([[5, 3], [8, 5]])
 	item_chances['platedlegs'] = from_dungeon_level([[5, 7], [10, 9]])
-	item_chances['Type1'] = from_dungeon_level([[10, 2], [5, 4], [0, 6]])
-	item_chances['Type2'] = from_dungeon_level([[5, 2], [10, 4], [15, 6], [0, 8]])
+	item_chances['Type1'] = from_dungeon_level([[10, 2], [5, 4], [1, 6]])
+	item_chances['Type2'] = from_dungeon_level([[5, 2], [10, 4], [15, 6], [1, 8]])
 	item_chances['Type3'] = from_dungeon_level([[10, 5], [15, 7]])
 	item_chances['goggles'] = from_dungeon_level([[10, 5], [15, 7]])
 	item_chances['visor'] = from_dungeon_level([[5, 6], [10, 7], [15, 10]])
@@ -1936,30 +1952,15 @@ def place_objects(room):
 				item_component = Item(use_function=eat)
 				item = Object(x, y, 'g', 'Food', libtcod.magenta, desc='a Food Package', value=0, item=item_component)
 
-			elif choice == 'None':
-				#create a healing potion
-				item_component = Item(use_function=None)
-				item = Object(x, y, ' ', ' ', libtcod.magenta, desc=' ', item=item_component)
+			elif choice == 'bullets':
+				#inventory bullets
+				item_component = Item(use_function=reload_ammo)
+				item = Object(x, y, '=', 'bullets', libtcod.light_yellow, desc='a fistful of bullets', item=item_component)
 
 			elif choice == 'overload':
 				#create a lightning bolt scroll
 				item_component = Item(use_function=cast_overload)
 				item = Object(x, y, 15, 'an overload pack', libtcod.light_yellow, desc='a standard' + worldgen.corptwo + 'overload pack, used for short circuiting faulty stock', value=80, item=item_component)
-
-			#elif choice == 'fireball':
-			#	#create a fireball scroll
-			#	item_component = Item(use_function=cast_fireball)
-			#	item = Object(x, y, '#', 'a scroll of fireball', libtcod.light_yellow, item=item_component)
-
-			#elif choice == 'confuse':
-			#	#create a confuse scroll
-			#	item_component = Item(use_function=cast_confuse)
-			#	item = Object(x, y, '#', 'a scroll of confusion', libtcod.light_yellow, item=item_component)
-
-			elif choice == 'bullets':
-				#inventory bullets
-				item_component = Item(use_function=reload_ammo)
-				item = Object(x, y, '=', 'bullets', libtcod.light_yellow, desc='a fistful of bullets', item=item_component)
 
 			## weapons
 
@@ -2125,8 +2126,10 @@ def hub():
 
 	#misc
 	furniture_component = Furniture(use_function=playerdoor)
-	furniture = Object(61, 22, 'X', 'door', libtcod.dark_flame, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
+	furniture = Object(61, 22, 129, 'door', libtcod.dark_flame, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
+	furniture.blocks_sight = True
 	objects.append(furniture)
+
 
 	furniture_component = Furniture(use_function=playerterminal)
 	furniture = Object(60, 21, '&', 'Player Terminal', libtcod.white, desc='Your Terminal', blocks=True, furniture=furniture_component)
@@ -3035,7 +3038,7 @@ def lookat(obj):
 
 def door(obj):
 	message('you open the door')
-	obj.char = '_'
+	obj.char = 130
 	obj.color = libtcod.light_grey
 	obj.blocks = False
 	obj.furniture = None
@@ -3325,7 +3328,6 @@ def morning():
 	color_light_ground = libtcod.Color(86, 76, 75)
 
 	initialize_fov()
-
 
 
 def enter_text_menu(header, width, max_length):
@@ -3629,7 +3631,7 @@ def play_game():
 
 
 
-libtcod.console_set_custom_font('Bisasam15x15.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+libtcod.console_set_custom_font('Bisasam20x20.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'CyberRogue', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 con = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
