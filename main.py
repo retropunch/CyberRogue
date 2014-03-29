@@ -16,27 +16,27 @@ import os
 
 
 #actual size of the window
-SCREEN_WIDTH = 80
-SCREEN_HEIGHT = 46
+SCREEN_WIDTH = 59
+SCREEN_HEIGHT = 45
 
 #size of the map
-MAP_WIDTH = 60
-MAP_HEIGHT = 60
+MAP_WIDTH = 43
+MAP_HEIGHT = 50
 
-CAMERA_WIDTH = 60
-CAMERA_HEIGHT = 30
+CAMERA_WIDTH = 43
+CAMERA_HEIGHT = 34
 
 #sizes and coordinates relevant for the GUI
-BAR_WIDTH = 16
+BAR_WIDTH = 14
 PANEL_HEIGHT = 10
 PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
 
 SIDEBAR_HEIGHT = 46
-SIDEBAR_WIDTH = 18
+SIDEBAR_WIDTH = 16
 SIDEBAR_Y = 0
-SIDEBAR_X = 40
+SIDEBAR_X = 43
 
 
 MSG_X = BAR_WIDTH + 2
@@ -1747,7 +1747,7 @@ def render_all():
 
 	libtcod.console_set_default_background(panel, libtcod.black)
 	libtcod.console_clear(panel)
-	libtcod.console_print_frame(panel, 0, 0, 61, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
+	libtcod.console_print_frame(panel, 0, 0, 43, PANEL_HEIGHT, clear=False, flag=libtcod.BKGND_ADD, fmt=0)
 
 
 	#print the game messages, one line at a time
@@ -1774,14 +1774,14 @@ def render_all():
 	render_bar(1, 3, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
 			   libtcod.light_blue, libtcod.darker_blue)
 
-	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth: ' + str(dungeon_level))
+	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth:' + str(dungeon_level))
 
 	libtcod.console_print_ex(sidebar, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
 	libtcod.console_print_ex(sidebar, 1, 8, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
-	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
+	#libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
 
 
-	libtcod.console_print_ex(sidebar, 11, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day))
+	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day) + ' ' + str(hour) + str(amorpm))
 	libtcod.console_print_ex(sidebar, 1, 13, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
 
 	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
@@ -1805,7 +1805,7 @@ def render_all():
 
 	#blit the contents of "panel" to the root console
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
-	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,61, SIDEBAR_Y, 0.94, 0.2)
+	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,SIDEBAR_X, SIDEBAR_Y, 0.94, 0.2)
 
 
 ## Object placement!!!!!!
@@ -3622,7 +3622,7 @@ def play_game():
 
 
 
-libtcod.console_set_custom_font('Bisasam15x15.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+libtcod.console_set_custom_font('Bisasam20x20.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
 libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'CyberRogue', False)
 libtcod.sys_set_fps(LIMIT_FPS)
 con = libtcod.console_new(MAP_WIDTH, MAP_HEIGHT)
