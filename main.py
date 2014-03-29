@@ -33,7 +33,7 @@ PANEL_WIDTH = 8
 PANEL_Y = SCREEN_HEIGHT - PANEL_HEIGHT
 PANEL_X = SCREEN_WIDTH - PANEL_WIDTH
 
-SIDEBAR_HEIGHT = 40
+SIDEBAR_HEIGHT = SCREEN_HEIGHT
 SIDEBAR_WIDTH = 16
 SIDEBAR_Y = 0
 SIDEBAR_X = 43
@@ -725,14 +725,15 @@ class Item:
 
 class Furniture:
 	#an item that can be picked up and used.
-	def __init__(self, use_function=None):
+	def __init__(self, use_function=None, opened=False):
 		self.use_function = use_function
-
+		self.opened = opened
 
 	def use(self):
 		#just call the "use_function" if it is defined
 		if self.use_function is None:
 			message('The ' + self.owner.name + ' cannot be used.')
+
 
 
 class Equipment:
@@ -1253,7 +1254,7 @@ def make_map():
 
 				elif maps.hubmap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
-					furniture_component = Furniture(use_function=door)
+					furniture_component = Furniture(use_function=door, opened=False)
 					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, always_visible=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
@@ -1308,7 +1309,7 @@ def make_map():
 				elif maps.factorymap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
-					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component)
+					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component, opened=False)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
@@ -1787,18 +1788,20 @@ def render_all():
 	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day) + ' ' + str(hour) + str(amorpm))
 	libtcod.console_print_ex(sidebar, 1, 13, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
 
+
 	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
 	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
-	libtcod.console_print_frame(sidebar,0,16,SIDEBAR_WIDTH,10,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_frame(sidebar,0,16,SIDEBAR_WIDTH,5,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
 	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
 	libtcod.console_print_ex(sidebar, 9, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
 	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
 	libtcod.console_print_ex(sidebar, 1, 19, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
 
-	libtcod.console_print_ex(sidebar, 1, 29, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
-	libtcod.console_set_default_foreground(sidebar, libtcod.green)
-	libtcod.console_print_frame(sidebar,0,30,SIDEBAR_WIDTH,10,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
-	libtcod.console_print_ex(sidebar, 1, 32, libtcod.BKGND_NONE, libtcod.LEFT, '1:' + str(get_equipped_in_slot('Right Hand')))
+	libtcod.console_set_default_foreground(sidebar, libtcod.white)
+	libtcod.console_print_ex(sidebar, 1, 26, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
+	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
+	libtcod.console_print_frame(sidebar,0,27,SIDEBAR_WIDTH,8,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 28, libtcod.BKGND_NONE, libtcod.LEFT, '1:' + str(get_equipped_in_slot('Right Hand')))
 	libtcod.console_set_default_foreground(sidebar, libtcod.light_grey)
 
 
@@ -2527,7 +2530,7 @@ def handle_keys():
 				(x, y) = target_tile(max_range)
 				for obj in objects:
 					if obj.x == x and obj.y == y and obj.furniture:
-						obj.furniture.use_function(obj)
+						obj.furniture.use_function(obj, False)
 
 					elif obj.x == x and obj.y == y and obj.nonplayerchar:
 						obj.nonplayerchar.use_function(obj)
@@ -3033,17 +3036,23 @@ def lookat(obj):
 	message(str(obj.desc))
 
 
-def door(obj):
-	message('you open the door')
-	obj.char = 130
-	obj.color = libtcod.light_grey
-	obj.blocks = False
-	obj.furniture = None
-	map[obj.x][obj.y].block_sight = False
-	obj.name = 'open door'
-	obj.send_to_back()
+def door(obj, opened):
+	if opened == False:
+		opened = True
+		message("You open the door")
+		obj.char = 130
+		map[obj.x][obj.y].block_sight = False
+		obj.blocks = False
+
+	else:
+		opened = False
+		message("You close the door")
+		obj.char = chr(129)
+		map[obj.x][obj.y].block_sight = True
+		obj.blocks = True
+	#obj.send_to_back()
 	#door.opened = 1
-	libtcod.map_set_properties(fov_map, obj.x, obj.y, True, True)
+	#libtcod.map_set_properties(fov_map, obj.x, obj.y, True, True)
 	initialize_fov()
 
 
