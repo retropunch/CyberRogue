@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="d029bfd0-1889-484b-ae2e-3ef664c6157d" name="Default" comment="Merge branch 'master' of https://github.com/retropunch/CyberRogue into monsters_cfg&#10;&#10;Conflicts:&#10;&#9;data/monster_data.cfg&#10;&#9;main.py&#10;">
-      <change type="DELETED" beforePath="C:\Users\Kirstie\Documents\GitHub\CyberRogue\Bisasam15x15.png" afterPath="" />
+    <list default="true" id="1dc8e2d7-d373-4a9f-95fc-ffa0aaa97ee4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/corpgen.txt" afterPath="$PROJECT_DIR$/corpgen.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hub" afterPath="$PROJECT_DIR$/hub" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/maps.py" afterPath="$PROJECT_DIR$/maps.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/monster_data.cfg" afterPath="$PROJECT_DIR$/data/monster_data.cfg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
-    <list id="8b77b6de-6daa-4820-8960-47f7a1b62264" name="Failed commit: Default" comment="Merge branch 'master' of https://github.com/retropunch/CyberRogue into monsters_cfg&#10;&#10;Conflicts:&#10;&#9;data/monster_data.cfg&#10;&#9;main.py&#10;">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="CyberRogue.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path="hub" />
+    <ignored path="savegame" />
+    <ignored path=".idea/CyberRogue.iml" />
+    <ignored path=".idea/.name" />
+    <ignored path="Monsters.xlsx" />
+    <ignored path="nientiles.png" />
+    <ignored path="Bisasam18x18.png" />
+    <ignored path=".idea/scopes/scope_settings.xml" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,11 +27,21 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/CyberRogue$lotd.coverage" NAME="lotd Coverage Results" MODIFIED="1395851119047" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/AppData/Local/Temp/Rar$DIa0.881" />
+    <SUITE FILE_PATH="coverage/CyberRogue$main.coverage" NAME="main Coverage Results" MODIFIED="1396139476318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/CyberRogue$samples_py.coverage" NAME="samples_py Coverage Results" MODIFIED="1395837796995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_HOME_DIR$/Python" />
+  </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
   <component name="DaemonCodeAnalyzer">
     <disable_hints />
+  </component>
+  <component name="DatabaseView">
+    <flatten value="false" />
+    <groupTables value="false" />
+    <sortChildren value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
@@ -33,13 +49,181 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="main.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="main.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="18" selection-start="325" selection-end="325" vertical-scroll-proportion="0.6637681" vertical-offset="213" max-vertical-offset="61999">
+            <state line="1735" column="24" selection-start="60040" selection-end="60040" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="26146">
               <folding>
-                <element signature="e#50#77#0" expanded="true" />
+                <element signature="e#1498#1910#0" expanded="false" />
+                <element signature="e#1612#1910#0" expanded="false" />
+                <element signature="e#1926#2399#0" expanded="false" />
+                <element signature="e#2015#2076#0" expanded="false" />
+                <element signature="e#2099#2200#0" expanded="false" />
+                <element signature="e#2233#2399#0" expanded="false" />
+                <element signature="e#2759#3737#0" expanded="false" />
+                <element signature="e#3768#3910#0" expanded="false" />
+                <element signature="e#4824#4948#0" expanded="false" />
+                <element signature="e#4979#5077#0" expanded="false" />
+                <element signature="e#5106#5264#0" expanded="false" />
+                <element signature="e#5294#5454#0" expanded="false" />
+                <element signature="e#5941#6122#0" expanded="false" />
+                <element signature="e#6440#7207#0" expanded="false" />
+                <element signature="e#7315#7428#0" expanded="false" />
+                <element signature="e#7538#7655#0" expanded="false" />
+                <element signature="e#7762#7873#0" expanded="false" />
+                <element signature="e#7984#8103#0" expanded="false" />
+                <element signature="e#8214#8333#0" expanded="false" />
+                <element signature="e#8364#8473#0" expanded="false" />
+                <element signature="e#8509#8628#0" expanded="false" />
+                <element signature="e#8666#8693#0" expanded="false" />
+                <element signature="e#8801#8916#0" expanded="false" />
+                <element signature="e#8966#10264#0" expanded="false" />
+                <element signature="e#10310#11620#0" expanded="false" />
+                <element signature="e#11650#12316#0" expanded="false" />
+                <element signature="e#12348#12987#0" expanded="false" />
+                <element signature="e#13023#13685#0" expanded="false" />
+                <element signature="e#13721#14185#0" expanded="false" />
+                <element signature="e#14214#14344#0" expanded="false" />
+                <element signature="e#14377#14478#0" expanded="false" />
+                <element signature="e#14511#14706#0" expanded="false" />
+                <element signature="e#14731#21946#0" expanded="false" />
+                <element signature="e#15010#15513#0" expanded="false" />
+                <element signature="e#15619#15732#0" expanded="false" />
+                <element signature="e#15842#15959#0" expanded="false" />
+                <element signature="e#16066#16177#0" expanded="false" />
+                <element signature="e#16288#16407#0" expanded="false" />
+                <element signature="e#16518#16637#0" expanded="false" />
+                <element signature="e#16668#16777#0" expanded="false" />
+                <element signature="e#16813#16932#0" expanded="false" />
+                <element signature="e#16970#16997#0" expanded="false" />
+                <element signature="e#17105#17220#0" expanded="false" />
+                <element signature="e#17270#18568#0" expanded="false" />
+                <element signature="e#18614#19924#0" expanded="false" />
+                <element signature="e#19954#20620#0" expanded="false" />
+                <element signature="e#20640#20776#0" expanded="false" />
+                <element signature="e#20807#21446#0" expanded="false" />
+                <element signature="e#21482#21946#0" expanded="false" />
+                <element signature="e#22046#22078#0" expanded="false" />
+                <element signature="e#23936#24244#0" expanded="false" />
+                <element signature="e#24033#24088#0" expanded="false" />
+                <element signature="e#24108#24244#0" expanded="false" />
+                <element signature="e#24266#25665#0" expanded="false" />
+                <element signature="e#24556#24973#0" expanded="false" />
+                <element signature="e#25031#25092#0" expanded="false" />
+                <element signature="e#25114#25446#0" expanded="false" />
+                <element signature="e#25469#25665#0" expanded="false" />
+                <element signature="e#25696#26346#0" expanded="false" />
+                <element signature="e#25734#25820#0" expanded="false" />
+                <element signature="e#25851#25931#0" expanded="false" />
+                <element signature="e#25977#26058#0" expanded="false" />
+                <element signature="e#26099#26137#0" expanded="false" />
+                <element signature="e#26163#26343#0" expanded="false" />
+                <element signature="e#26372#28021#0" expanded="false" />
+                <element signature="e#26395#28021#0" expanded="false" />
+                <element signature="e#28046#30657#0" expanded="false" />
+                <element signature="e#28069#30657#0" expanded="false" />
+                <element signature="e#30677#32450#0" expanded="false" />
+                <element signature="e#30700#32450#0" expanded="false" />
+                <element signature="e#32475#33375#0" expanded="false" />
+                <element signature="e#32498#33375#0" expanded="false" />
+                <element signature="e#33395#33670#0" expanded="false" />
+                <element signature="e#33431#33670#0" expanded="false" />
+                <element signature="e#33695#35917#0" expanded="false" />
+                <element signature="e#33744#35917#0" expanded="false" />
+                <element signature="e#35940#37577#0" expanded="false" />
+                <element signature="e#36003#37577#0" expanded="false" />
+                <element signature="e#37687#37736#0" expanded="false" />
+                <element signature="e#38834#39486#0" expanded="false" />
+                <element signature="e#38973#39022#0" expanded="false" />
+                <element signature="e#39048#39486#0" expanded="false" />
+                <element signature="e#39526#39735#0" expanded="false" />
+                <element signature="e#39764#39792#0" expanded="false" />
+                <element signature="e#39819#40033#0" expanded="false" />
+                <element signature="e#40062#40400#0" expanded="false" />
+                <element signature="e#40439#41070#0" expanded="false" />
+                <element signature="e#41106#41283#0" expanded="false" />
+                <element signature="e#41319#41454#0" expanded="false" />
+                <element signature="e#48333#48596#0" expanded="false" />
+                <element signature="e#48696#49063#0" expanded="false" />
+                <element signature="e#49100#49275#0" expanded="false" />
+                <element signature="e#49311#49829#0" expanded="false" />
+                <element signature="e#52295#52643#0" expanded="false" />
+                <element signature="e#52696#52757#0" expanded="false" />
+                <element signature="e#53631#55337#0" expanded="false" />
+                <element signature="e#55384#55744#0" expanded="false" />
+                <element signature="e#55777#56254#0" expanded="false" />
+                <element signature="e#56295#56866#0" expanded="false" />
+                <element signature="e#56903#57149#0" expanded="false" />
+                <element signature="e#64405#64609#0" expanded="false" />
+                <element signature="e#64639#66590#0" expanded="false" />
+                <element signature="e#66621#67933#0" expanded="false" />
+                <element signature="e#81785#83013#0" expanded="false" />
+                <element signature="e#83646#84186#0" expanded="false" />
+                <element signature="e#84205#86256#0" expanded="false" />
+                <element signature="e#87379#94736#0" expanded="false" />
+                <element signature="e#94760#95278#0" expanded="false" />
+                <element signature="e#95304#95572#0" expanded="false" />
+                <element signature="e#95593#96470#0" expanded="false" />
+                <element signature="e#96506#96706#0" expanded="false" />
+                <element signature="e#96738#97740#0" expanded="false" />
+                <element signature="e#97770#98237#0" expanded="false" />
+                <element signature="e#98297#98644#0" expanded="false" />
+                <element signature="e#98673#99019#0" expanded="false" />
+                <element signature="e#99042#99891#0" expanded="false" />
+                <element signature="e#99911#100067#0" expanded="false" />
+                <element signature="e#100088#100162#0" expanded="false" />
+                <element signature="e#100180#100325#0" expanded="false" />
+                <element signature="e#100348#100614#0" expanded="false" />
+                <element signature="e#100641#102531#0" expanded="false" />
+                <element signature="e#102559#104458#0" expanded="false" />
+                <element signature="e#104482#104650#0" expanded="false" />
+                <element signature="e#104674#105686#0" expanded="false" />
+                <element signature="e#105712#106212#0" expanded="false" />
+                <element signature="e#106242#106792#0" expanded="false" />
+                <element signature="e#106813#106835#0" expanded="false" />
+                <element signature="e#106862#107265#0" expanded="false" />
+                <element signature="e#107290#107691#0" expanded="false" />
+                <element signature="e#107711#107758#0" expanded="false" />
+                <element signature="e#107806#108052#0" expanded="false" />
+                <element signature="e#108067#108094#0" expanded="false" />
+                <element signature="e#108113#108140#0" expanded="false" />
+                <element signature="e#108165#108646#0" expanded="false" />
+                <element signature="e#108671#109287#0" expanded="false" />
+                <element signature="e#109311#109928#0" expanded="false" />
+                <element signature="e#109951#110044#0" expanded="false" />
+                <element signature="e#111911#112444#0" expanded="false" />
+                <element signature="e#112465#113066#0" expanded="false" />
+                <element signature="e#113092#113204#0" expanded="false" />
+                <element signature="e#113226#113948#0" expanded="false" />
+                <element signature="e#113970#114523#0" expanded="false" />
+                <element signature="e#114542#114729#0" expanded="false" />
+                <element signature="e#114748#114904#0" expanded="false" />
+                <element signature="e#114957#116212#0" expanded="false" />
+                <element signature="e#118347#119043#0" expanded="false" />
+                <element signature="e#119066#119760#0" expanded="false" />
+                <element signature="e#119782#120616#0" expanded="false" />
+                <element signature="e#120638#121531#0" expanded="false" />
+                <element signature="e#121552#123147#0" expanded="false" />
+                <element signature="e#123173#123581#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="corpgen.txt" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/corpgen.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="79" column="0" selection-start="2986" selection-end="2986" vertical-scroll-proportion="1.0590278" vertical-offset="428" max-vertical-offset="1445">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="worldgen.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/worldgen.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="0" selection-start="19" selection-end="19" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -52,28 +236,46 @@
     </FindUsagesManager>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="SYNC_SETTING" value="DONT" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitLogSettings">
+    <option name="myStructureFilterPaths" />
     <option name="myDateState">
       <MyDateState />
     </option>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/main.py" root0="SKIP_INSPECTION" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$USER_HOME$/Desktop/firstrl/main.py" />
-        <option value="$USER_HOME$/Desktop/7trials/SevenTrials-master/main.py" />
+        <option value="$PROJECT_DIR$/template.css.html" />
+        <option value="$PROJECT_DIR$/clothes.txt" />
+        <option value="$PROJECT_DIR$/colours.txt" />
+        <option value="$PROJECT_DIR$/names.txt" />
+        <option value="$PROJECT_DIR$/todo.txt" />
+        <option value="$USER_HOME$/AppData/Local/Temp/Rar$DRa0.856/Rasatala - 1.1c/src/main.py" />
+        <option value="$PROJECT_DIR$/worldgen" />
+        <option value="$PROJECT_DIR$/__init__.py" />
+        <option value="$PROJECT_DIR$/corpgen" />
+        <option value="$PROJECT_DIR$/npcattrib.txt" />
+        <option value="$PROJECT_DIR$/worldgen.py" />
         <option value="$PROJECT_DIR$/data/monster_data.cfg" />
+        <option value="$PROJECT_DIR$/maps.py" />
+        <option value="$PROJECT_DIR$/diff" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/corpgen.txt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-4" />
-    <option name="y" value="-4" />
-    <option name="width" value="1374" />
-    <option name="height" value="732" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -82,7 +284,7 @@
     <OptionsSetting value="true" id="Update" />
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="2" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectReloadState">
@@ -101,12 +303,17 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="CyberRogue" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -119,23 +326,62 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CyberRogue" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CyberRogue" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="data" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="289" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="289" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="293" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
+    <property name="last_opened_file_path" value="$APPLICATION_HOME_DIR$/Games/scrolldemo" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="289" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="964" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="968" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="288" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="282" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder2" value="2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder3" value="3" />
     <property name="FullScreen" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder0" value="0" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
+    <property name="options.lastSelected" value="vcs.Git" />
+    <property name="DefaultHtmlFileTemplate" value="Html5" />
+    <property name="TODO_SCOPE" value="Project Files" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
-      <console-settings />
+      <PyConsoleSettings />
     </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Bim\Documents\GitHub\CyberRogue" />
+      <recent name="C:\Users\Bim\Documents\GitHub\CyberRogue\data" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.main">
     <configuration default="false" name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -150,12 +396,71 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="samples_py" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_HOME_DIR$/Python" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_HOME_DIR$/Python/samples_py.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="lotd" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/AppData/Local/Temp/Rar$DIa0.881" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/AppData/Local/Temp/Rar$DIa0.881/lotd.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="TARGET" value="" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="py.test">
@@ -168,6 +473,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
       <option name="CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
@@ -192,6 +498,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
       <option name="CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
@@ -215,8 +522,12 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
@@ -229,6 +540,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
       <option name="CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
@@ -251,6 +563,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
       <option name="CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
@@ -270,6 +583,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="CyberRogue" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
       <option name="CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
@@ -279,12 +593,16 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <list size="1">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Python.main" />
+      <item index="1" class="java.lang.String" itemvalue="Python.samples_py" />
+      <item index="2" class="java.lang.String" itemvalue="Python.lotd" />
     </list>
     <recent_temporary>
-      <list size="1">
+      <list size="3">
         <item index="0" class="java.lang.String" itemvalue="Python.main" />
+        <item index="1" class="java.lang.String" itemvalue="Python.lotd" />
+        <item index="2" class="java.lang.String" itemvalue="Python.samples_py" />
       </list>
     </recent_temporary>
   </component>
@@ -308,39 +626,280 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="d029bfd0-1889-484b-ae2e-3ef664c6157d" name="Default" comment="" />
-      <created>1395945809240</created>
-      <updated>1395945809240</updated>
+      <changelist id="1dc8e2d7-d373-4a9f-95fc-ffa0aaa97ee4" name="Default" comment="" />
+      <created>1391773849133</created>
+      <updated>1391773849133</updated>
     </task>
-    <task id="LOCAL-00001" summary="Merge branch 'master' of https://github.com/retropunch/CyberRogue into why-aren't-you-work&#10;&#10;Conflicts:&#10;&#9;main.py&#10;">
-      <created>1395960195613</created>
-      <updated>1395960195613</updated>
+    <task id="LOCAL-00001" summary="Changed ifs to elifs in makemap()">
+      <created>1391776915638</created>
+      <updated>1391776915638</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Changed ifs to elifs in makemap()&#10;and fixed tilses being water">
+      <created>1391777576806</created>
+      <updated>1391777576806</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Changed ifs to elifs in makemap()&#10;and fixed tilses being water">
+      <created>1391778731171</created>
+      <updated>1391778731171</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Add healing/repair to hack menu">
+      <created>1391778910387</created>
+      <updated>1391778910387</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fixup repair">
+      <created>1391779400892</created>
+      <updated>1391779400892</updated>
+    </task>
+    <task id="LOCAL-00006" summary="fixup repair">
+      <created>1391779527502</created>
+      <updated>1391779527502</updated>
+    </task>
+    <task id="LOCAL-00007" summary="fixup repair">
+      <created>1391779776748</created>
+      <updated>1391779776748</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Added Clevermonster entry&#10;removed holograms for testing&#10;fixed some bits">
+      <created>1391796238214</created>
+      <updated>1391796238214</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added doges and fixed chances">
+      <created>1391957876008</created>
+      <updated>1391957876008</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Made hacking loads better.&#10;New 'hack' attribute which you level up and gives more hacking skills on each level up!">
+      <created>1391962420186</created>
+      <updated>1391962420186</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Much better NPCs">
+      <created>1392239729751</created>
+      <updated>1392239729751</updated>
+    </task>
+    <task id="LOCAL-00012" summary="quick attacks (accurate but lower damage) and reduced dog xp">
+      <created>1392243524947</created>
+      <updated>1392243524947</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Added new Factory/hotel monster">
+      <created>1394021882660</created>
+      <updated>1394021882660</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Time and sleeping">
+      <created>1394554152181</created>
+      <updated>1394554152181</updated>
+    </task>
+    <task id="LOCAL-00015" summary="MUCH BETTER GUI!">
+      <created>1394570721918</created>
+      <updated>1394570721918</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Resize screen">
+      <created>1394572971813</created>
+      <updated>1394572971813</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Day/Night">
+      <created>1394642269593</created>
+      <updated>1394642269593</updated>
+    </task>
+    <task id="LOCAL-00018" summary="NPC attributes">
+      <created>1394649416628</created>
+      <updated>1394649416628</updated>
+    </task>
+    <task id="LOCAL-00019" summary="NPC attributes">
+      <created>1394654063100</created>
+      <updated>1394654063100</updated>
+    </task>
+    <task id="LOCAL-00020" summary="days and rent">
+      <created>1394654181092</created>
+      <updated>1394654181092</updated>
+    </task>
+    <task id="LOCAL-00021" summary="todo list">
+      <created>1394655628853</created>
+      <updated>1394655628853</updated>
+    </task>
+    <task id="LOCAL-00022" summary="newtiles">
+      <created>1394656575311</created>
+      <updated>1394656575311</updated>
+    </task>
+    <task id="LOCAL-00023" summary="newtiles">
+      <created>1394656619609</created>
+      <updated>1394656619609</updated>
+    </task>
+    <task id="LOCAL-00024" summary="worldgen start">
+      <created>1395005305922</created>
+      <updated>1395005305922</updated>
+    </task>
+    <task id="LOCAL-00025" summary="worldgen start">
+      <created>1395005411611</created>
+      <updated>1395005411611</updated>
+    </task>
+    <task id="LOCAL-00026" summary="worldgen start">
+      <created>1395006312232</created>
+      <updated>1395006312232</updated>
+    </task>
+    <task id="LOCAL-00027" summary="worldgen start">
+      <created>1395014990161</created>
+      <updated>1395014990161</updated>
+    </task>
+    <task id="LOCAL-00028" summary="circular-ish rooms">
+      <created>1395073102981</created>
+      <updated>1395073102981</updated>
+    </task>
+    <task id="LOCAL-00029" summary="made boundaries to make sure there are always walls around the outside of the map.">
+      <created>1395074151758</created>
+      <updated>1395074151758</updated>
+    </task>
+    <task id="LOCAL-00030" summary="made boundaries to make sure there are always walls around the outside of the map.">
+      <created>1395087742966</created>
+      <updated>1395087742966</updated>
+    </task>
+    <task id="LOCAL-00031" summary="made boundaries to make sure there are always walls around the outside of the map.">
+      <created>1395156832141</created>
+      <updated>1395156832142</updated>
+    </task>
+    <task id="LOCAL-00032" summary="NPC stuff!">
+      <created>1395157000463</created>
+      <updated>1395157000463</updated>
+    </task>
+    <task id="LOCAL-00033" summary="NPC stuff!">
+      <created>1395157645957</created>
+      <updated>1395157645957</updated>
+    </task>
+    <task id="LOCAL-00034" summary="NPC stuff!">
+      <created>1395157721050</created>
+      <updated>1395157721050</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Namestuff">
+      <created>1395158441455</created>
+      <updated>1395158441455</updated>
+    </task>
+    <task id="LOCAL-00036" summary="moved all npc timing stuff to BasicNPC">
+      <created>1395252255439</created>
+      <updated>1395252255439</updated>
+    </task>
+    <task id="LOCAL-00037" summary="bitmoremapstuff">
+      <created>1395252999333</created>
+      <updated>1395252999333</updated>
+    </task>
+    <task id="LOCAL-00038" summary="not quite working monster data thing">
+      <created>1395271087355</created>
+      <updated>1395271087355</updated>
+    </task>
+    <task id="LOCAL-00039" summary="monster data data-fied">
+      <created>1395271933729</created>
+      <updated>1395271933729</updated>
+    </task>
+    <task id="LOCAL-00040" summary="monster data data-fied">
+      <created>1395770651551</created>
+      <updated>1395770651551</updated>
+    </task>
+    <task id="LOCAL-00041" summary="monster data data-fied">
+      <created>1395796743465</created>
+      <updated>1395796743465</updated>
+    </task>
+    <task id="LOCAL-00042" summary="borders on panels">
+      <created>1395835707177</created>
+      <updated>1395835707177</updated>
+    </task>
+    <task id="LOCAL-00043" summary="scrolling map!">
+      <created>1395851469365</created>
+      <updated>1395851469365</updated>
+    </task>
+    <task id="LOCAL-00044" summary="scrolling map!">
+      <created>1395853954874</created>
+      <updated>1395853954874</updated>
+    </task>
+    <task id="LOCAL-00045" summary="scrolling map!">
+      <created>1395854061219</created>
+      <updated>1395854061219</updated>
+    </task>
+    <task id="LOCAL-00046" summary="scrolling map kludged fixes">
+      <created>1395856722083</created>
+      <updated>1395856722083</updated>
+    </task>
+    <task id="LOCAL-00047" summary="scrolling map kludged fixes">
+      <created>1395931298768</created>
+      <updated>1395931298768</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Updated Maps">
+      <created>1395939887047</created>
+      <updated>1395939887047</updated>
+    </task>
+    <task id="LOCAL-00049" summary="fancied stuff up a bit">
+      <created>1396032805039</created>
+      <updated>1396032805039</updated>
+    </task>
+    <task id="LOCAL-00050" summary="resize">
+      <created>1396101173456</created>
+      <updated>1396101173456</updated>
+    </task>
+    <task id="LOCAL-00051" summary="resize">
+      <created>1396110996521</created>
+      <updated>1396110996521</updated>
+    </task>
+    <task id="LOCAL-00052" summary="resize">
+      <created>1396115109678</created>
+      <updated>1396115109678</updated>
+    </task>
+    <task id="LOCAL-00053" summary="resize">
+      <created>1396118154011</created>
+      <updated>1396118154011</updated>
+    </task>
+    <task id="LOCAL-00054" summary="hortsder">
+      <created>1396119473756</created>
+      <updated>1396119473756</updated>
+    </task>
+    <task id="LOCAL-00055" summary="bad door changes">
+      <created>1396130325832</created>
+      <updated>1396130325832</updated>
+    </task>
+    <task id="LOCAL-00056" summary="game title">
+      <created>1396137791425</created>
+      <updated>1396137791425</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1374" height="732" extended-state="6" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289689" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32963374" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24963397" sideWeight="0.6710311" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39934534" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289689" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26350245" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3289689" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32963374" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.13874066" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2497332" sideWeight="0.33407325" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1638207" sideWeight="0.6703663" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25416204" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15581644" sideWeight="0.33518314" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39955604" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32963374" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32963374" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32963374" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39955604" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -350,35 +909,433 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Merge branch 'master' of https://github.com/retropunch/CyberRogue into why-aren't-you-work&#10;&#10;Conflicts:&#10;&#9;main.py&#10;" />
-    <MESSAGE value="Merge branch 'master' of https://github.com/retropunch/CyberRogue into monsters_cfg&#10;&#10;Conflicts:&#10;&#9;data/monster_data.cfg&#10;&#9;main.py&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'master' of https://github.com/retropunch/CyberRogue into monsters_cfg&#10;&#10;Conflicts:&#10;&#9;data/monster_data.cfg&#10;&#9;main.py&#10;" />
+    <MESSAGE value="MUCH BETTER GUI!" />
+    <MESSAGE value="Resize screen" />
+    <MESSAGE value="Day/Night" />
+    <MESSAGE value="NPC attributes" />
+    <MESSAGE value="days and rent" />
+    <MESSAGE value="todo list" />
+    <MESSAGE value="newtiles" />
+    <MESSAGE value="worldgen start" />
+    <MESSAGE value="circular-ish rooms" />
+    <MESSAGE value="made boundaries to make sure there are always walls around the outside of the map." />
+    <MESSAGE value="NPC stuff!" />
+    <MESSAGE value="Namestuff" />
+    <MESSAGE value="moved all npc timing stuff to BasicNPC" />
+    <MESSAGE value="bitmoremapstuff" />
+    <MESSAGE value="not quite working monster data thing" />
+    <MESSAGE value="monster data data-fied" />
+    <MESSAGE value="borders on panels" />
+    <MESSAGE value="scrolling map!" />
+    <MESSAGE value="scrolling map kludged fixes" />
+    <MESSAGE value="Updated Maps" />
+    <MESSAGE value="fancied stuff up a bit" />
+    <MESSAGE value="resize" />
+    <MESSAGE value="hortsder" />
+    <MESSAGE value="bad door changes" />
+    <MESSAGE value="game title" />
+    <option name="LAST_COMMIT_MESSAGE" value="game title" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="16" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/Desktop/firstrl/main.py">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1791" column="0" selection-start="64770" selection-end="64770" vertical-scroll-proportion="-2.7307692" vertical-offset="30376" max-vertical-offset="60588" />
+        <state line="1210" column="0" selection-start="41237" selection-end="41237" vertical-scroll-proportion="0.0" vertical-offset="7327" max-vertical-offset="7327">
+          <folding>
+            <element signature="e#1498#1910#0" expanded="false" />
+            <element signature="e#1612#1910#0" expanded="false" />
+            <element signature="e#1926#2399#0" expanded="false" />
+            <element signature="e#2015#2076#0" expanded="false" />
+            <element signature="e#2099#2200#0" expanded="false" />
+            <element signature="e#2233#2399#0" expanded="false" />
+            <element signature="e#2759#3737#0" expanded="false" />
+            <element signature="e#3768#3910#0" expanded="false" />
+            <element signature="e#4824#4948#0" expanded="false" />
+            <element signature="e#4979#5077#0" expanded="false" />
+            <element signature="e#5106#5264#0" expanded="false" />
+            <element signature="e#5294#5454#0" expanded="false" />
+            <element signature="e#5941#6122#0" expanded="false" />
+            <element signature="e#6440#7207#0" expanded="false" />
+            <element signature="e#7315#7428#0" expanded="false" />
+            <element signature="e#7538#7655#0" expanded="false" />
+            <element signature="e#7762#7873#0" expanded="false" />
+            <element signature="e#7984#8103#0" expanded="false" />
+            <element signature="e#8214#8333#0" expanded="false" />
+            <element signature="e#8364#8473#0" expanded="false" />
+            <element signature="e#8509#8628#0" expanded="false" />
+            <element signature="e#8666#8693#0" expanded="false" />
+            <element signature="e#8801#8916#0" expanded="false" />
+            <element signature="e#8966#10264#0" expanded="false" />
+            <element signature="e#10310#11620#0" expanded="false" />
+            <element signature="e#11650#12316#0" expanded="false" />
+            <element signature="e#12348#12987#0" expanded="false" />
+            <element signature="e#13023#13685#0" expanded="false" />
+            <element signature="e#13721#14185#0" expanded="false" />
+            <element signature="e#14214#14344#0" expanded="false" />
+            <element signature="e#14377#14478#0" expanded="false" />
+            <element signature="e#14511#14706#0" expanded="false" />
+            <element signature="e#14731#21946#0" expanded="false" />
+            <element signature="e#15010#15513#0" expanded="false" />
+            <element signature="e#15619#15732#0" expanded="false" />
+            <element signature="e#15842#15959#0" expanded="false" />
+            <element signature="e#16066#16177#0" expanded="false" />
+            <element signature="e#16288#16407#0" expanded="false" />
+            <element signature="e#16518#16637#0" expanded="false" />
+            <element signature="e#16668#16777#0" expanded="false" />
+            <element signature="e#16813#16932#0" expanded="false" />
+            <element signature="e#16970#16997#0" expanded="false" />
+            <element signature="e#17105#17220#0" expanded="false" />
+            <element signature="e#17270#18568#0" expanded="false" />
+            <element signature="e#18614#19924#0" expanded="false" />
+            <element signature="e#19954#20620#0" expanded="false" />
+            <element signature="e#20640#20776#0" expanded="false" />
+            <element signature="e#20807#21446#0" expanded="false" />
+            <element signature="e#21482#21946#0" expanded="false" />
+            <element signature="e#22046#22078#0" expanded="false" />
+            <element signature="e#23936#24244#0" expanded="false" />
+            <element signature="e#24033#24088#0" expanded="false" />
+            <element signature="e#24108#24244#0" expanded="false" />
+            <element signature="e#24266#25665#0" expanded="false" />
+            <element signature="e#24556#24973#0" expanded="false" />
+            <element signature="e#25031#25092#0" expanded="false" />
+            <element signature="e#25114#25446#0" expanded="false" />
+            <element signature="e#25469#25665#0" expanded="false" />
+            <element signature="e#25696#26346#0" expanded="false" />
+            <element signature="e#25734#25820#0" expanded="false" />
+            <element signature="e#25851#25931#0" expanded="false" />
+            <element signature="e#25977#26058#0" expanded="false" />
+            <element signature="e#26099#26137#0" expanded="false" />
+            <element signature="e#26163#26343#0" expanded="false" />
+            <element signature="e#26372#28021#0" expanded="false" />
+            <element signature="e#26395#28021#0" expanded="false" />
+            <element signature="e#28046#30657#0" expanded="false" />
+            <element signature="e#28069#30657#0" expanded="false" />
+            <element signature="e#30677#32450#0" expanded="false" />
+            <element signature="e#30700#32450#0" expanded="false" />
+            <element signature="e#32475#33375#0" expanded="false" />
+            <element signature="e#32498#33375#0" expanded="false" />
+            <element signature="e#33395#33670#0" expanded="false" />
+            <element signature="e#33431#33670#0" expanded="false" />
+            <element signature="e#33695#35917#0" expanded="false" />
+            <element signature="e#33744#35917#0" expanded="false" />
+            <element signature="e#35940#37577#0" expanded="false" />
+            <element signature="e#36003#37577#0" expanded="false" />
+            <element signature="e#37687#37736#0" expanded="false" />
+            <element signature="e#38834#39486#0" expanded="false" />
+            <element signature="e#38973#39022#0" expanded="false" />
+            <element signature="e#39048#39486#0" expanded="false" />
+            <element signature="e#39526#39735#0" expanded="false" />
+            <element signature="e#39764#39792#0" expanded="false" />
+            <element signature="e#39819#40033#0" expanded="false" />
+            <element signature="e#40062#40400#0" expanded="false" />
+            <element signature="e#40439#41070#0" expanded="false" />
+            <element signature="e#41106#41283#0" expanded="false" />
+            <element signature="e#41319#41454#0" expanded="false" />
+            <element signature="e#48333#48596#0" expanded="false" />
+            <element signature="e#48696#49063#0" expanded="false" />
+            <element signature="e#49100#49275#0" expanded="false" />
+            <element signature="e#49311#49829#0" expanded="false" />
+            <element signature="e#52295#52643#0" expanded="false" />
+            <element signature="e#52696#52757#0" expanded="false" />
+            <element signature="e#53631#55337#0" expanded="false" />
+            <element signature="e#55384#55744#0" expanded="false" />
+            <element signature="e#55777#56254#0" expanded="false" />
+            <element signature="e#56295#56866#0" expanded="false" />
+            <element signature="e#56903#57149#0" expanded="false" />
+            <element signature="e#64405#64609#0" expanded="false" />
+            <element signature="e#64639#66590#0" expanded="false" />
+            <element signature="e#66621#67933#0" expanded="false" />
+            <element signature="e#81785#83013#0" expanded="false" />
+            <element signature="e#83646#84186#0" expanded="false" />
+            <element signature="e#84205#86256#0" expanded="false" />
+            <element signature="e#87379#94736#0" expanded="false" />
+            <element signature="e#94760#95278#0" expanded="false" />
+            <element signature="e#95304#95572#0" expanded="false" />
+            <element signature="e#95593#96470#0" expanded="false" />
+            <element signature="e#96506#96706#0" expanded="false" />
+            <element signature="e#96738#97740#0" expanded="false" />
+            <element signature="e#97770#98237#0" expanded="false" />
+            <element signature="e#98297#98644#0" expanded="false" />
+            <element signature="e#98673#99019#0" expanded="false" />
+            <element signature="e#99042#99891#0" expanded="false" />
+            <element signature="e#99911#100067#0" expanded="false" />
+            <element signature="e#100088#100162#0" expanded="false" />
+            <element signature="e#100180#100325#0" expanded="false" />
+            <element signature="e#100348#100614#0" expanded="false" />
+            <element signature="e#100641#102531#0" expanded="false" />
+            <element signature="e#102559#104458#0" expanded="false" />
+            <element signature="e#104482#104650#0" expanded="false" />
+            <element signature="e#104674#105686#0" expanded="false" />
+            <element signature="e#105712#106212#0" expanded="false" />
+            <element signature="e#106242#106792#0" expanded="false" />
+            <element signature="e#106813#106835#0" expanded="false" />
+            <element signature="e#106862#107265#0" expanded="false" />
+            <element signature="e#107290#107691#0" expanded="false" />
+            <element signature="e#107711#107758#0" expanded="false" />
+            <element signature="e#107806#108052#0" expanded="false" />
+            <element signature="e#108067#108094#0" expanded="false" />
+            <element signature="e#108113#108140#0" expanded="false" />
+            <element signature="e#108165#108646#0" expanded="false" />
+            <element signature="e#108671#109287#0" expanded="false" />
+            <element signature="e#109311#109928#0" expanded="false" />
+            <element signature="e#109951#110044#0" expanded="false" />
+            <element signature="e#111911#112444#0" expanded="false" />
+            <element signature="e#112465#113066#0" expanded="false" />
+            <element signature="e#113092#113204#0" expanded="false" />
+            <element signature="e#113226#113948#0" expanded="false" />
+            <element signature="e#113970#114523#0" expanded="false" />
+            <element signature="e#114542#114729#0" expanded="false" />
+            <element signature="e#114748#114904#0" expanded="false" />
+            <element signature="e#114957#116212#0" expanded="false" />
+            <element signature="e#118347#119043#0" expanded="false" />
+            <element signature="e#119066#119760#0" expanded="false" />
+            <element signature="e#119782#120616#0" expanded="false" />
+            <element signature="e#120638#121531#0" expanded="false" />
+            <element signature="e#121552#123147#0" expanded="false" />
+            <element signature="e#123173#123581#0" expanded="false" />
+          </folding>
+        </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/7trials/SevenTrials-master/main.py">
+    <entry file="file://$PROJECT_DIR$/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="700" column="78" selection-start="19866" selection-end="19869" vertical-scroll-proportion="30.90909" vertical-offset="0" max-vertical-offset="38828" />
+        <state line="1" column="0" selection-start="19" selection-end="19" vertical-scroll-proportion="0.029462738" vertical-offset="0" max-vertical-offset="577" />
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/7trials/SevenTrials-master/data/monster_data.cfg">
+    <entry file="file://$APPLICATION_HOME_DIR$/Python/Lib/random.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="442" />
+        <state line="215" column="0" selection-start="8091" selection-end="8091" vertical-scroll-proportion="0.33275563" vertical-offset="3344" max-vertical-offset="15368" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/npcattrib.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="0" selection-start="608" selection-end="608" vertical-scroll-proportion="0.39045936" vertical-offset="0" max-vertical-offset="566" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libtcodpy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1331" column="0" selection-start="40606" selection-end="40606" vertical-scroll-proportion="0.3478261" vertical-offset="22384" max-vertical-offset="33320" />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Downloads/140320 - Target Tile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1463" column="0" selection-start="48657" selection-end="51013" vertical-scroll-proportion="-11.92" vertical-offset="24471" max-vertical-offset="60384" />
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/Python/samples_py.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="464" column="12" selection-start="21250" selection-end="21397" vertical-scroll-proportion="-0.03876853" vertical-offset="7888" max-vertical-offset="27421" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Bisasam18x18.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/maps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="20" selection-start="1253" selection-end="1253" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1343" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nientiles.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hub">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="893877" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="18" selection-start="325" selection-end="325" vertical-scroll-proportion="0.6637681" vertical-offset="213" max-vertical-offset="61999">
+        <state line="1735" column="24" selection-start="60040" selection-end="60040" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="26146">
           <folding>
-            <element signature="e#50#77#0" expanded="true" />
+            <element signature="e#1498#1910#0" expanded="false" />
+            <element signature="e#1612#1910#0" expanded="false" />
+            <element signature="e#1926#2399#0" expanded="false" />
+            <element signature="e#2015#2076#0" expanded="false" />
+            <element signature="e#2099#2200#0" expanded="false" />
+            <element signature="e#2233#2399#0" expanded="false" />
+            <element signature="e#2759#3737#0" expanded="false" />
+            <element signature="e#3768#3910#0" expanded="false" />
+            <element signature="e#4824#4948#0" expanded="false" />
+            <element signature="e#4979#5077#0" expanded="false" />
+            <element signature="e#5106#5264#0" expanded="false" />
+            <element signature="e#5294#5454#0" expanded="false" />
+            <element signature="e#5941#6122#0" expanded="false" />
+            <element signature="e#6440#7207#0" expanded="false" />
+            <element signature="e#7315#7428#0" expanded="false" />
+            <element signature="e#7538#7655#0" expanded="false" />
+            <element signature="e#7762#7873#0" expanded="false" />
+            <element signature="e#7984#8103#0" expanded="false" />
+            <element signature="e#8214#8333#0" expanded="false" />
+            <element signature="e#8364#8473#0" expanded="false" />
+            <element signature="e#8509#8628#0" expanded="false" />
+            <element signature="e#8666#8693#0" expanded="false" />
+            <element signature="e#8801#8916#0" expanded="false" />
+            <element signature="e#8966#10264#0" expanded="false" />
+            <element signature="e#10310#11620#0" expanded="false" />
+            <element signature="e#11650#12316#0" expanded="false" />
+            <element signature="e#12348#12987#0" expanded="false" />
+            <element signature="e#13023#13685#0" expanded="false" />
+            <element signature="e#13721#14185#0" expanded="false" />
+            <element signature="e#14214#14344#0" expanded="false" />
+            <element signature="e#14377#14478#0" expanded="false" />
+            <element signature="e#14511#14706#0" expanded="false" />
+            <element signature="e#14731#21946#0" expanded="false" />
+            <element signature="e#15010#15513#0" expanded="false" />
+            <element signature="e#15619#15732#0" expanded="false" />
+            <element signature="e#15842#15959#0" expanded="false" />
+            <element signature="e#16066#16177#0" expanded="false" />
+            <element signature="e#16288#16407#0" expanded="false" />
+            <element signature="e#16518#16637#0" expanded="false" />
+            <element signature="e#16668#16777#0" expanded="false" />
+            <element signature="e#16813#16932#0" expanded="false" />
+            <element signature="e#16970#16997#0" expanded="false" />
+            <element signature="e#17105#17220#0" expanded="false" />
+            <element signature="e#17270#18568#0" expanded="false" />
+            <element signature="e#18614#19924#0" expanded="false" />
+            <element signature="e#19954#20620#0" expanded="false" />
+            <element signature="e#20640#20776#0" expanded="false" />
+            <element signature="e#20807#21446#0" expanded="false" />
+            <element signature="e#21482#21946#0" expanded="false" />
+            <element signature="e#22046#22078#0" expanded="false" />
+            <element signature="e#23936#24244#0" expanded="false" />
+            <element signature="e#24033#24088#0" expanded="false" />
+            <element signature="e#24108#24244#0" expanded="false" />
+            <element signature="e#24266#25665#0" expanded="false" />
+            <element signature="e#24556#24973#0" expanded="false" />
+            <element signature="e#25031#25092#0" expanded="false" />
+            <element signature="e#25114#25446#0" expanded="false" />
+            <element signature="e#25469#25665#0" expanded="false" />
+            <element signature="e#25696#26346#0" expanded="false" />
+            <element signature="e#25734#25820#0" expanded="false" />
+            <element signature="e#25851#25931#0" expanded="false" />
+            <element signature="e#25977#26058#0" expanded="false" />
+            <element signature="e#26099#26137#0" expanded="false" />
+            <element signature="e#26163#26343#0" expanded="false" />
+            <element signature="e#26372#28021#0" expanded="false" />
+            <element signature="e#26395#28021#0" expanded="false" />
+            <element signature="e#28046#30657#0" expanded="false" />
+            <element signature="e#28069#30657#0" expanded="false" />
+            <element signature="e#30677#32450#0" expanded="false" />
+            <element signature="e#30700#32450#0" expanded="false" />
+            <element signature="e#32475#33375#0" expanded="false" />
+            <element signature="e#32498#33375#0" expanded="false" />
+            <element signature="e#33395#33670#0" expanded="false" />
+            <element signature="e#33431#33670#0" expanded="false" />
+            <element signature="e#33695#35917#0" expanded="false" />
+            <element signature="e#33744#35917#0" expanded="false" />
+            <element signature="e#35940#37577#0" expanded="false" />
+            <element signature="e#36003#37577#0" expanded="false" />
+            <element signature="e#37687#37736#0" expanded="false" />
+            <element signature="e#38834#39486#0" expanded="false" />
+            <element signature="e#38973#39022#0" expanded="false" />
+            <element signature="e#39048#39486#0" expanded="false" />
+            <element signature="e#39526#39735#0" expanded="false" />
+            <element signature="e#39764#39792#0" expanded="false" />
+            <element signature="e#39819#40033#0" expanded="false" />
+            <element signature="e#40062#40400#0" expanded="false" />
+            <element signature="e#40439#41070#0" expanded="false" />
+            <element signature="e#41106#41283#0" expanded="false" />
+            <element signature="e#41319#41454#0" expanded="false" />
+            <element signature="e#48333#48596#0" expanded="false" />
+            <element signature="e#48696#49063#0" expanded="false" />
+            <element signature="e#49100#49275#0" expanded="false" />
+            <element signature="e#49311#49829#0" expanded="false" />
+            <element signature="e#52295#52643#0" expanded="false" />
+            <element signature="e#52696#52757#0" expanded="false" />
+            <element signature="e#53631#55337#0" expanded="false" />
+            <element signature="e#55384#55744#0" expanded="false" />
+            <element signature="e#55777#56254#0" expanded="false" />
+            <element signature="e#56295#56866#0" expanded="false" />
+            <element signature="e#56903#57149#0" expanded="false" />
+            <element signature="e#64405#64609#0" expanded="false" />
+            <element signature="e#64639#66590#0" expanded="false" />
+            <element signature="e#66621#67933#0" expanded="false" />
+            <element signature="e#81785#83013#0" expanded="false" />
+            <element signature="e#83646#84186#0" expanded="false" />
+            <element signature="e#84205#86256#0" expanded="false" />
+            <element signature="e#87379#94736#0" expanded="false" />
+            <element signature="e#94760#95278#0" expanded="false" />
+            <element signature="e#95304#95572#0" expanded="false" />
+            <element signature="e#95593#96470#0" expanded="false" />
+            <element signature="e#96506#96706#0" expanded="false" />
+            <element signature="e#96738#97740#0" expanded="false" />
+            <element signature="e#97770#98237#0" expanded="false" />
+            <element signature="e#98297#98644#0" expanded="false" />
+            <element signature="e#98673#99019#0" expanded="false" />
+            <element signature="e#99042#99891#0" expanded="false" />
+            <element signature="e#99911#100067#0" expanded="false" />
+            <element signature="e#100088#100162#0" expanded="false" />
+            <element signature="e#100180#100325#0" expanded="false" />
+            <element signature="e#100348#100614#0" expanded="false" />
+            <element signature="e#100641#102531#0" expanded="false" />
+            <element signature="e#102559#104458#0" expanded="false" />
+            <element signature="e#104482#104650#0" expanded="false" />
+            <element signature="e#104674#105686#0" expanded="false" />
+            <element signature="e#105712#106212#0" expanded="false" />
+            <element signature="e#106242#106792#0" expanded="false" />
+            <element signature="e#106813#106835#0" expanded="false" />
+            <element signature="e#106862#107265#0" expanded="false" />
+            <element signature="e#107290#107691#0" expanded="false" />
+            <element signature="e#107711#107758#0" expanded="false" />
+            <element signature="e#107806#108052#0" expanded="false" />
+            <element signature="e#108067#108094#0" expanded="false" />
+            <element signature="e#108113#108140#0" expanded="false" />
+            <element signature="e#108165#108646#0" expanded="false" />
+            <element signature="e#108671#109287#0" expanded="false" />
+            <element signature="e#109311#109928#0" expanded="false" />
+            <element signature="e#109951#110044#0" expanded="false" />
+            <element signature="e#111911#112444#0" expanded="false" />
+            <element signature="e#112465#113066#0" expanded="false" />
+            <element signature="e#113092#113204#0" expanded="false" />
+            <element signature="e#113226#113948#0" expanded="false" />
+            <element signature="e#113970#114523#0" expanded="false" />
+            <element signature="e#114542#114729#0" expanded="false" />
+            <element signature="e#114748#114904#0" expanded="false" />
+            <element signature="e#114957#116212#0" expanded="false" />
+            <element signature="e#118347#119043#0" expanded="false" />
+            <element signature="e#119066#119760#0" expanded="false" />
+            <element signature="e#119782#120616#0" expanded="false" />
+            <element signature="e#120638#121531#0" expanded="false" />
+            <element signature="e#121552#123147#0" expanded="false" />
+            <element signature="e#123173#123581#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/monster_data.cfg">
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="150" column="16" selection-start="2334" selection-end="2334" vertical-scroll-proportion="1.9671361" vertical-offset="874" max-vertical-offset="2805">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Bisasam20x20.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/worldgen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="0" selection-start="19" selection-end="19" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/corpgen.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="79" column="0" selection-start="2986" selection-end="2986" vertical-scroll-proportion="1.0590278" vertical-offset="428" max-vertical-offset="1445">
+          <folding />
         </state>
       </provider>
     </entry>

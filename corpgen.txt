@@ -1,5 +1,5 @@
 
-name "corpnames" {
+name_"corpnames" {
 syllablesStart = "Xan, Ix, Wey, Intel, Ming, Yuo, Machine, Xing, Frana, Tactical, Power, Bowen, Dynamic, Avery, Avi, Tech, Shi, Yutani, Vorikov, Erma"
 syllablesMiddle = "/-,_"
 syllablesEnd = "/Corp., Systems, /ltd., Group"
@@ -16,3 +16,64 @@ syllablesStart = "merged_with, took_over, bought_out, seized, infiltrated, annex
 rules = "%50$s"
 }
 
+name "corpstrength" {
+syllablesStart = "good_public_relations,excellent_leadership,brilliant_lobbyists,focus_on_quality_instead_of_quantity,respect_for_the_environment
+,generous_paychecks_and_employee_benefits,elite_military_training,technological_advancement,strict_code_of_honor"
+rules = "%50$s"
+}
+
+name "corpweakness" {
+syllablesStart = "it_suffers_from_low_employee_morale,rumors_persists_of_skeletons_in_the_closet,the_leadership_focuses_on_short-terms_gains_instead_of_long-term_survival,factional_disputes_paralyzes_the_company
+,its_corporate_culture_stifles_creativity,the_corporate_leadership_is_too_hidebound_to_tradition,the_corporation_relies_on_nepotism_instead_of_merit_in_hiring_decisions,its_fanatical_nature_serves_to_alienate_it_from_other_corporations
+,its_sociopathic_nature_serves_to_alienate_it_from_the_general_public,the_corporate_bureaucracy_is_horribly_inefficient"
+rules = "%50$s"
+}
+
+name "corpmarketshare" {
+syllablesStart = "competitive_pricing,cutting-edge_advertising,strategic_use_of_assassinations"
+rules = "%50$s"
+}
+
+name "corpespionage"{
+syllablesStart = "stealing_blueprints,leaking_confidential_memos,poaching_their_employees,killing_their_employees,blackmailing_their_employees,blowing_up_their_Corporate_HQ,economic_sabotage"
+rules = "%50$s"
+}
+
+name "corphacking"{
+syllablesStart = "credits,blueprints,technology,blackmail_material"
+rules = "%50$s"
+}
+
+
+name "corpleader"{
+syllablesStart = "CEO,President,Administrator,Chairman,Managing_Director"
+rules = "%50$s"
+}
+
+name "corpcountry"{
+syllablesStart = "a_Russian,an_American,a_Chinese,a_European,an_Indian,a_Brazilian,a_South_African,a_Japanese"
+rules = "%50$s"
+}
+
+name "corpideology"{
+syllablesStart = "fascist,communist,anarchist,libertarian,liberal,conservative"
+rules = "%50$s"
+}
+
+
+name "corpnonprofitaction"{
+syllablesStart = "disseminating,administrating,coordinating,providing_access_to,optimizing,producticizing,promoting,recontextualizing,revolutionizing,simplifying,synergizing,synthesizing,supplying,utilizing"
+rules = "%50$s"
+}
+
+
+name "corpreligiousaction"{
+syllablesStart = "faith,piety,social_justice,equality,morality,prayer,God,the_Eschaton"
+rules = "%50$s"
+}
+
+
+name "corpcrime"{
+syllablesStart = "insider_trading,bribing_government_officials,assassinating_government_officials,tax_evasion,violating_labor_laws,fraud"
+rules = "%50$s"
+}

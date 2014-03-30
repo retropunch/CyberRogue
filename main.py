@@ -40,7 +40,7 @@ SIDEBAR_X = 43
 
 
 MSG_X = BAR_WIDTH + 2
-MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 3
+MSG_WIDTH = SCREEN_WIDTH - BAR_WIDTH - 4
 MSG_HEIGHT = PANEL_HEIGHT - 2
 INVENTORY_WIDTH = 40
 CHARACTER_SCREEN_WIDTH = 40
@@ -1231,20 +1231,6 @@ def make_map():
 		#use custom map from samples
 		maps.hubmap
 
-		#noise2d = libtcod.noise_new(2)
-		#noise_octaves = 8.0
-		#noise_zoom = 20.0
-		#floorBGColorMapIndexes = [0, 64]
-		#floorBGColorMapColors = [libtcod.Color(48, 38, 38), libtcod.Color(38, 28, 28)]
-		#floorBGColorMap = libtcod.color_gen_map(floorBGColorMapColors, floorBGColorMapIndexes)
-		#
-		##tile renderer
-		#f = [noise_zoom * 20 / (2*MAP_WIDTH),
-		#noise_zoom * 30 / (2*MAP_HEIGHT)]
-		#value = libtcod.noise_get_turbulence(noise2d, f, noise_octaves, libtcod.NOISE_WAVELET)
-		#background_color = floorBGColorMap[int(64 * value)]
-		#libtcod.console_set_default_background(con, background_color)
-
 		#NOTE: height and width should really be lower-cased, since we are not treating them as constants anymore
 		MAP_HEIGHT = len(maps.hubmap)
 		MAP_WIDTH = len(maps.hubmap[0])
@@ -1324,7 +1310,7 @@ def make_map():
 				elif maps.factorymap[y][x] == 'X':
 					map[x][y] = Tile(False, False, False, True, False)
 					furniture_component = Furniture(use_function=door)
-					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component, opened=False)
+					furniture = Object(x, y, 129, 'door', libtcod.brass, desc='a door', blocks=True, furniture=furniture_component)
 					objects.append(furniture)
 					map[x][y].block_sight = True
 
@@ -1748,6 +1734,8 @@ def render_all():
 						libtcod.console_set_char(con,x,y,171)
 					else:
 						libtcod.console_set_char_background(con, x, y, color_light_ground, libtcod.BKGND_SET)
+
+
 						#since it's visible, explore it
 					map[map_x][map_y].explored = True
 
