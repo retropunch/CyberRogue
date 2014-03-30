@@ -1463,7 +1463,6 @@ def closest_monster(max_range):
 
 def target_tile(max_range=None,):
 	global key, mouse
-
 	old_background = [[ Tile(True, False, False, False, False)
 		for dy in range(MAP_HEIGHT) ]
 			for dx in range(MAP_WIDTH) ]
@@ -1471,7 +1470,6 @@ def target_tile(max_range=None,):
 		for dx in range(MAP_WIDTH):
 			old_background[dx][dy] = libtcod.console_get_char_background(con, dx, dy)
 	redraw = True
-
 	while True:
 		#render the screen. this erases the inventory and shows the names of objects under the mouse.
 		if redraw:
