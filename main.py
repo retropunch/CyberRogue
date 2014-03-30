@@ -1231,6 +1231,20 @@ def make_map():
 		#use custom map from samples
 		maps.hubmap
 
+		#noise2d = libtcod.noise_new(2)
+		#noise_octaves = 8.0
+		#noise_zoom = 20.0
+		#floorBGColorMapIndexes = [0, 64]
+		#floorBGColorMapColors = [libtcod.Color(48, 38, 38), libtcod.Color(38, 28, 28)]
+		#floorBGColorMap = libtcod.color_gen_map(floorBGColorMapColors, floorBGColorMapIndexes)
+		#
+		##tile renderer
+		#f = [noise_zoom * 20 / (2*MAP_WIDTH),
+		#noise_zoom * 30 / (2*MAP_HEIGHT)]
+		#value = libtcod.noise_get_turbulence(noise2d, f, noise_octaves, libtcod.NOISE_WAVELET)
+		#background_color = floorBGColorMap[int(64 * value)]
+		#libtcod.console_set_default_background(con, background_color)
+
 		#NOTE: height and width should really be lower-cased, since we are not treating them as constants anymore
 		MAP_HEIGHT = len(maps.hubmap)
 		MAP_WIDTH = len(maps.hubmap[0])
@@ -1241,6 +1255,7 @@ def make_map():
 			for x in range(MAP_WIDTH):
 				if maps.hubmap[y][x] == ' ':
 					map[x][y] = Tile(False, False, False, False, False)
+
 
 				elif maps.hubmap[y][x] == '~':
 					map[x][y] = Tile(False, True, False, False, False)
@@ -1685,7 +1700,7 @@ def flicker_all():
 def render_all():
 	global fov_map, color_dark_wall, color_light_wall
 	global color_dark_ground, color_light_ground
-	global fov_recompute, hour, day, amorpm, playername
+	global fov_recompute, hour, day, amorpm, playername, inventory
 	#plyx = player.x + 2
 	#plyy = player.y + 2
 	move_camera(player.x, player.y)
@@ -1733,7 +1748,6 @@ def render_all():
 						libtcod.console_set_char(con,x,y,171)
 					else:
 						libtcod.console_set_char_background(con, x, y, color_light_ground, libtcod.BKGND_SET)
-
 						#since it's visible, explore it
 					map[map_x][map_y].explored = True
 
@@ -1786,22 +1800,25 @@ def render_all():
 
 
 	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day) + ' ' + str(hour) + str(amorpm))
-	libtcod.console_print_ex(sidebar, 1, 13, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
+	libtcod.console_print_ex(sidebar, 1, 10, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
 
 
-	libtcod.console_print_ex(sidebar, 1, 15, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
+	libtcod.console_print_ex(sidebar, 1, 21, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
 	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
-	libtcod.console_print_frame(sidebar,0,16,SIDEBAR_WIDTH,5,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
-	libtcod.console_print_ex(sidebar, 1, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(sidebar, 9, 17, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
-	libtcod.console_print_ex(sidebar, 1, 18, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-	libtcod.console_print_ex(sidebar, 1, 19, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
+	libtcod.console_print_frame(sidebar,0,22,SIDEBAR_WIDTH,5,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 23, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
+	libtcod.console_print_ex(sidebar, 9, 23, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(sidebar, 1, 24, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
+	libtcod.console_print_ex(sidebar, 1, 25, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
 
 	libtcod.console_set_default_foreground(sidebar, libtcod.white)
-	libtcod.console_print_ex(sidebar, 1, 26, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
+	libtcod.console_print_ex(sidebar, 1, 28, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
 	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
-	libtcod.console_print_frame(sidebar,0,27,SIDEBAR_WIDTH,8,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
-	libtcod.console_print_ex(sidebar, 1, 28, libtcod.BKGND_NONE, libtcod.LEFT, '1:' + str(get_equipped_in_slot('Right Hand')))
+	libtcod.console_print_frame(sidebar,0,29,SIDEBAR_WIDTH,6,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 30, libtcod.BKGND_NONE, libtcod.LEFT, '1:' + str(get_equipped_in_slot('Insert 1')))
+	libtcod.console_print_ex(sidebar, 1, 31, libtcod.BKGND_NONE, libtcod.LEFT, '2:' + str(get_equipped_in_slot('Left hand')))
+	libtcod.console_print_ex(sidebar, 1, 32, libtcod.BKGND_NONE, libtcod.LEFT, '3:' + str(get_equipped_in_slot('Right Hand')))
+	libtcod.console_print_ex(sidebar, 1, 33, libtcod.BKGND_NONE, libtcod.LEFT, '4:' + str(get_equipped_in_slot('Right Hand')))
 	libtcod.console_set_default_foreground(sidebar, libtcod.light_grey)
 
 
@@ -2073,7 +2090,7 @@ def hub():
 	furniture.always_visible = True
 
 	furniture_component = Furniture(use_function=fenceshop)
-	furniture = Object(62, 2, '$', 'Manual Jack, the fence', libtcod.black, desc='Manual Jack, the fence.', blocks=True, furniture=furniture_component)
+	furniture = Object(62, 2, '$', 'Manual Jack, the fence', libtcod.black, desc='Manual Jack, the fence', blocks=True, furniture=furniture_component)
 	objects.append(furniture)
 	furniture.always_visible = True
 
@@ -3154,6 +3171,7 @@ def reload_ammo():
 
 ## Overarching stuff
 
+
 def main_menu():
 	global pwr, sht, hck, playername
 	img = libtcod.image_load('menubackground.png')
@@ -3164,8 +3182,8 @@ def main_menu():
 
 		#show the game's title, and some credits!
 		libtcod.console_set_default_foreground(0, libtcod.black)
-		libtcod.console_print_ex(0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 4, libtcod.BKGND_NONE, libtcod.CENTER,
-								 'CyberRogue')
+		libtcod.console_set_color_control(libtcod.COLCTRL_1, libtcod.green, libtcod.black)
+		libtcod.console_print_ex(0,SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 4, libtcod.BKGND_SET, libtcod.CENTER, "%cCyberRogue%c"%(libtcod.COLCTRL_1,libtcod.COLCTRL_STOP))
 		libtcod.console_print_ex(0, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 2, libtcod.BKGND_NONE, libtcod.CENTER, ' ')
 
 		#show options and wait for the player's choice
@@ -3505,6 +3523,8 @@ def next_level():
 		color_light_wall = libtcod.Color(54, 54, 54)
 		color_dark_ground = libtcod.Color(48, 38, 38)
 		color_light_ground = libtcod.Color(86, 76, 76)
+
+
 
 		dungeon_level += 1
 		make_map()  #create a fresh new level!
