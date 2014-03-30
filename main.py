@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # libtcod python tutorial
-# 
+# herpderp
 
 
 import libtcodpy as libtcod
