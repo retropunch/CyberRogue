@@ -2,6 +2,7 @@
 #
 # libtcod python tutorial
 # horsey
+# horse
 
 
 import libtcodpy as libtcod
