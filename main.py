@@ -1484,14 +1484,12 @@ def target_tile(max_range=None,):
 			libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
 			libtcod.line_init(player.x - camera_x, player.y - camera_y, x - camera_x, y - camera_y)
 			while not dx == None:
-				libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
-				dx, dy = libtcod.line_step()
-				#if libtcod.map_is_in_fov(fov_map, dx, dy):
-					#libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
-					#dx, dy = libtcod.line_step()
-				#else:
-				#	libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
-				#	dx, dy = libtcod.line_step()
+				if libtcod.map_is_in_fov(fov_map, dx + camera_x, dy + camera_y):
+					libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
+					dx, dy = libtcod.line_step()
+				else:
+					libtcod.console_set_char_background(con, dx, dy, libtcod.light_red, libtcod.BKGND_SET)
+					dx, dy = libtcod.line_step()
 				if libtcod.map_is_in_fov(fov_map, x, y):
 					libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
 				else:
