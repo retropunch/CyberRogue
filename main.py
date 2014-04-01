@@ -736,7 +736,6 @@ class Furniture:
 			message('The ' + self.owner.name + ' cannot be used.')
 
 
-
 class Equipment:
 	#an object that can be equipped, yielding bonuses. automatically adds the Item component.
 	def __init__(self, slot, power_bonus=0, defense_bonus=0, hack_bonus=0, dex_bonus=0, accuracy_bonus=0, max_hp_bonus=0, firearm_dmg_bonus=0, eloyalty_bonus=0, vloyalty_bonus=0, firearm_acc_bonus=0):
@@ -807,6 +806,113 @@ class MonsterDataListener:
 			self.current_name = None
 		return True
 
+class SkillPrompt:
+	def __init__(self, width=80, height=40, header_text="Select A Skill", con=None):
+		self.width = width
+		self.height = height
+		self.header_text = header_text
+		self.highlight_index = 0
+		self.con = con
+		#self.skill_obj = skill_data.get(skill_data.keys()[self.highlight_index])
+		#self.rank_obj = self.skill_obj['ranks'][1]
+
+	def update(self):
+		global key, mouse
+
+		if key.vk == libtcod.KEY_UP:
+			self.highlight_index -= 1
+			if self.highlight_index < 0:
+				self.highlight_index = len(skill_data) - 1
+			self.skill_obj = skill_data.get(skill_data.keys()[self.highlight_index])
+			self.rank_obj = self.skill_obj['ranks'][1]
+			self.render()
+		elif key.vk == libtcod.KEY_DOWN:
+			self.highlight_index += 1
+			if self.highlight_index >= len(skill_data):
+				self.highlight_index = 0
+			self.skill_obj = skill_data.get(skill_data.keys()[self.highlight_index])
+			self.rank_obj = self.skill_obj['ranks'][1]
+			self.render()
+
+	def get_highlighted(self):
+		list_index = 0
+		for skill_name in skill_data:
+			if self.highlight_index == list_index:
+				return self.skill_obj
+			list_index += 1
+
+	def render(self):
+		(draw_x, draw_y) = draw_menu_panel(self.con, self.width, self.height, self.header_text)
+
+		# render list of skills
+		list_width = 20
+		list_x = draw_x
+		list_y = draw_y
+		list_index = 0
+		libtcod.console_set_alignment(self.con, libtcod.LEFT)
+		libtcod.console_set_default_foreground(self.con, MENU_TEXT_COLOR)
+		for skill_name in skill_data:
+			if self.highlight_index == list_index:
+				libtcod.console_set_default_background(self.con, MENU_SELECTED_BACKGROUND_COLOR)
+				libtcod.console_rect(self.con, list_x, list_y, list_width, 1, True, libtcod.BKGND_SET)
+				libtcod.console_set_default_foreground(self.con, MENU_SELECTED_COLOR)
+				libtcod.console_print(self.con, list_x, list_y, skill_name.capitalize())
+				libtcod.console_set_default_foreground(self.con, MENU_TEXT_COLOR)
+			else:
+				libtcod.console_print(self.con, list_x, list_y, skill_name.capitalize())
+			list_y += 1
+			list_index += 1
+
+		# render next rank of highlighted skill
+		info_x = draw_x + list_width + 2
+		info_w = self.width - 3 - list_width
+		info_y = draw_y
+		libtcod.console_set_default_foreground(self.con, MENU_TEXT_COLOR)
+		libtcod.console_print(self.con, info_x, info_y, "Skill: " + self.skill_obj.get('name', '(Missing skill name!)'))
+		info_y += 2
+		libtcod.console_print(self.con, info_x, info_y, "Next Rank: Level 1 - " + self.rank_obj['name'])
+		info_y += 2
+
+		# output description
+		rank_desc = self.rank_obj.get('description', None)
+		if rank_desc is not None:
+			desc_height = libtcod.console_get_height_rect(self.con, info_x, info_y, info_w, self.height-3-info_y, rank_desc)
+			libtcod.console_print_rect(self.con, info_x, info_y, info_w, self.height-3-info_y, rank_desc)
+			info_y += desc_height + 1
+
+		# output rating bonuses
+		rating_bonuses = self.rank_obj.get('rating_bonuses', None)
+		if rating_bonuses is not None and len(rating_bonuses) > 0:
+			libtcod.console_print(self.con, info_x, info_y, "Rating Bonuses:")
+			info_y += 1
+			for rating in rating_bonuses:
+				bonus_str = ""
+				str_color = MENU_TEXT_COLOR
+				if rating['bonus'] > 0:
+					str_color = POSITIVE_BONUS_TEXT_COLOR
+					bonus_str += "+"
+				elif rating['bonus'] < 0:
+					str_color = NEGATIVE_BONUS_TEXT_COLOR
+					bonus_str += "-"
+				bonus_str += str(rating['bonus']) + " " + rating['rating'].capitalize()
+				libtcod.console_set_default_foreground(self.con, str_color)
+				libtcod.console_print(self.con, info_x + 4, info_y, bonus_str)
+				info_y += 1
+
+		# output new abilities
+		gives_abilities = self.rank_obj.get("gives_abilities", None)
+		if gives_abilities is not None and len(gives_abilities) > 0:
+			info_y += 1
+			libtcod.console_set_default_foreground(self.con, MENU_TEXT_COLOR)
+			if len(gives_abilities) > 1:
+				libtcod.console_print(self.con, info_x, info_y, "New Ability:")
+			else:
+				libtcod.console_print(self.con, info_x, info_y, "New Abilities:")
+			info_y += 1
+			for ability in gives_abilities:
+				libtcod.console_set_default_foreground(self.con, libtcod.yellow)
+				libtcod.console_print(self.con, info_x + 4, info_y, string.capwords(ability['name']))
+				info_y += 1
 
 #AI:
 class BasicMonster:
@@ -960,14 +1066,29 @@ class BasicHologram:
 
 class BasicNpc:
 	global hour
+	def __init__(self, destset=False, destinationreached=False):
+		self.destset = destset
+		self.destinationreached = destinationreached
+
+
 	def take_turn(self):
 		monster = self.owner
 		if hour == 18:
 			monster.nonplayerchar.move_towards(12,26)
-		else:
-			if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
-					self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
+		#elif libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+		else:
+			if self.destset == False:
+				(x,y) = random_unblocked_tile_on_map()
+				destset = True
+			if self.destinationreached == False:
+				monster.nonplayerchar.move_towards(x,y)
+				if monster.x and monster.y == (x,y):
+					self.destinationreached = True
+			elif self.destinationreached == True:
+				(x,y) = random_unblocked_fartile_on_map()
+				self.destinationreached = False
+				self.destset = False
 
 
 class BasicShooter:
@@ -1414,11 +1535,21 @@ def make_map():
 
 
 def random_unblocked_tile_on_map():
-	tries = 1000
+	tries = 500
 	#1000 tries, and we'll punt - most probably producing an error in the calling code
 	for i in range(tries):
 		x = libtcod.random_get_int(0, 0, MAP_WIDTH - 1)
 		y = libtcod.random_get_int(0, 0, MAP_HEIGHT - 1)
+		if not is_blocked(x, y):
+			return x, y
+
+
+def random_unblocked_fartile_on_map():
+	tries = 500
+	#1000 tries, and we'll punt - most probably producing an error in the calling code
+	for i in range(tries):
+		x = libtcod.random_get_int(0, 0, MAP_WIDTH - 1)
+		y = math.sqrt(20^2 - x^2)
 		if not is_blocked(x, y):
 			return x, y
 
@@ -2099,7 +2230,7 @@ def hub():
 		libtcod.namegen_parse('colours.txt')
 		colours = libtcod.namegen_generate('colours')
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
-											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
+											eloyalty=0, vloyalty=0, xp=0, move_speed=3, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
@@ -2114,7 +2245,7 @@ def hub():
 		colours = libtcod.namegen_generate('colours')
 
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
-											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
+											eloyalty=0, vloyalty=0, xp=0, move_speed=3, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
@@ -3187,6 +3318,7 @@ def main_menu():
 					sht = 1
 					hck = 1
 					libtcod.image_blit_2x(img, 0, 0, 0,)
+					#create_player()
 					new_game()
 					play_game()
 			if choice == 1:  #new game
@@ -3448,6 +3580,52 @@ def new_game():
 
 
 	obj.always_visible = True
+
+
+def create_player():
+	global player, key, mouse
+
+	noise2d = libtcod.noise_new(2)
+	noise_octaves = 8.0
+	noise_zoom = 7.5
+	noise_zoom2 = 10.0
+	bg_color = libtcod.Color(23, 28, 36)
+	noise_color = libtcod.Color(102, 108, 163)
+	noise_dx = 0.0
+	noise_dy = 0.0
+
+	skill_prompt_con = libtcod.console_new(80, 40)
+	skillPrompt = SkillPrompt(con=skill_prompt_con)
+
+	while True:
+		libtcod.console_set_default_background(panel, bg_color)
+		libtcod.console_clear(panel)
+
+		noise_dy += 0.01
+
+		for y in range(SCREEN_HEIGHT):
+			for x in range(SCREEN_WIDTH):
+				f = [(noise_zoom * x / (2*SCREEN_WIDTH) + noise_dx), (noise_zoom * (y+(y*(y/(SCREEN_WIDTH/2)))) / (2*SCREEN_HEIGHT) + noise_dy)]
+				value = libtcod.noise_get_fbm(noise2d, f, noise_octaves, libtcod.NOISE_PERLIN)
+				color_index = (value + 1.0) / 2.0
+				color_index = color_index * float(y) / (SCREEN_HEIGHT / 2)
+				col = libtcod.color_lerp(bg_color, noise_color, color_index)
+
+				libtcod.console_set_char_background(panel, x, y, col, libtcod.BKGND_SET)
+
+		libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0)
+
+		libtcod.console_blit(skillPrompt.con, 0, 0, 80, 40, 0, (SCREEN_WIDTH/2)-(80/2), (SCREEN_HEIGHT/2)-(40/2), 1.0, 0.7)
+		libtcod.console_flush()
+
+		#libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE, key, mouse)
+
+		skillPrompt.update()
+
+		if key.vk == libtcod.KEY_ESCAPE:
+			break
+		elif key.vk == libtcod.KEY_ENTER:
+				return
 
 
 def enterfactory():
