@@ -2,7 +2,6 @@
 #
 # libtcod python tutorial
 # horsey
-# horse 
 
 
 import libtcodpy as libtcod
@@ -1305,23 +1304,23 @@ def create_boundaries():
 
 
 def create_circular_room(room):
-    global map
-    #center of circle
-    cx = (room.x1 + room.x2) / 2
-    cy = (room.y1 + room.y2) / 2
+	global map
+	#center of circle
+	cx = (room.x1 + room.x2) / 2
+	cy = (room.y1 + room.y2) / 2
 
-    #radius of circle: make it fit nicely inside the room, by making the
-    #radius be half the width or height (whichever is smaller)
-    width = room.x2 - room.x1
-    height = room.y2 - room.y1
-    r = min(width, height) / 1.8
+	#radius of circle: make it fit nicely inside the room, by making the
+	#radius be half the width or height (whichever is smaller)
+	width = room.x2 - room.x1
+	height = room.y2 - room.y1
+	r = min(width, height) / 1.8
 
-    #go through the tiles in the circle and make them passable
-    for x in range(room.x1, room.x2 + 1):
-        for y in range(room.y1, room.y2 + 1):
-            if math.sqrt((x - cx) ** 2 + (y - cy) ** 2) <= r:
-                map[x][y].blocked = False
-                map[x][y].block_sight = False
+	#go through the tiles in the circle and make them passable
+	for x in range(room.x1, room.x2 + 1):
+		for y in range(room.y1, room.y2 + 1):
+			if math.sqrt((x - cx) ** 2 + (y - cy) ** 2) <= r:
+				map[x][y].blocked = False
+				map[x][y].block_sight = False
 
 
 def create_h_tunnel(x1, x2, y):
@@ -1612,15 +1611,20 @@ def target_tile(max_range=None,):
 
 			(x, y) = (mouse.cx, mouse.cy)
 			(x, y) = (camera_x + x, camera_y + y)
-			libtcod.line_init(player.x, player.y, x, y)
-			while not dx == None and libtcod.map_is_in_fov(fov_map, dx, dy):
 
-				libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
-				dx, dy = libtcod.line_step()
-                if libtcod.map_is_in_fov(fov_map, x, y):
-				    libtcod.console_set_char_background(con, x, y, libtcod.dark_green, libtcod.BKGND_SET)
-                else:
-                    libtcod.console_set_char_background(con, x, y, libtcod.dark_red, libtcod.BKGND_SET)
+			libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
+			libtcod.line_init(player.x - camera_x, player.y - camera_y, x - camera_x, y - camera_y)
+			while not dx == None:
+				if libtcod.map_is_in_fov(fov_map, dx + camera_x, dy + camera_y):
+					libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
+					dx, dy = libtcod.line_step()
+				else:
+					libtcod.console_set_char_background(con, dx, dy, libtcod.light_red, libtcod.BKGND_SET)
+					dx, dy = libtcod.line_step()
+				if libtcod.map_is_in_fov(fov_map, x, y):
+					libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
+				else:
+					libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_red, libtcod.BKGND_SET)
 
 
 		#libtcod.console_flush()
@@ -1950,8 +1954,12 @@ def render_all():
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
 	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,SIDEBAR_X, SIDEBAR_Y, 0.94, 0.2)
 
+
+
 #blit the contents of "con" to the root console
 	libtcod.console_blit(con, 0, 0, MAP_WIDTH, MAP_HEIGHT, 0, 0, 0, 1, 1)
+
+
 
 ## Object placement!!!!!!
 
