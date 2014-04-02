@@ -84,6 +84,7 @@ color_dark_wall = libtcod.Color(22, 22, 22)
 color_light_wall = libtcod.Color(54, 54, 54)
 color_dark_ground = libtcod.Color(48, 38, 38)
 color_light_ground = libtcod.Color(86, 76, 76)
+color_light_ground2 = libtcod.Color(89, 79, 79)
 
 
 
@@ -1024,14 +1025,30 @@ class BasicHologram:
 
 class BasicNpc:
 	global hour
+
+	def __init__(self, destset=False, destinationreached=False):
+ 		self.destset = destset
+ 		self.destinationreached = destinationreached
+
 	def take_turn(self):
 		monster = self.owner
 		if hour == 18:
 			monster.nonplayerchar.move_towards(12,26)
-		else:
-			if libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
-					self.owner.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1))
 
+		#elif libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
+  		else:
+ 			if self.destset == False:
+				(x,y) = random_unblocked_fartile_on_map()
+				destset = True
+ 			if self.destinationreached == False:
+				#random movement
+				(x,y) = random_unblocked_tile_on_map()
+ 				monster.nonplayerchar.move_towards(x,y)
+ 			if monster.x and monster.y == (x,y):
+ 				self.destinationreached = True
+ 			elif self.destinationreached == True:
+ 				self.destinationreached = False
+ 				self.destset = False
 
 
 class BasicShooter:
@@ -1487,6 +1504,17 @@ def random_unblocked_tile_on_map():
 			return x, y
 
 
+def random_unblocked_fartile_on_map():
+ 	tries = 500
+ 	#1000 tries, and we'll punt - most probably producing an error in the calling code
+ 	for i in range(tries):
+ 		x = libtcod.random_get_int(0, 0, MAP_WIDTH - 1)
+		n = math.sqrt(20)
+		r = math.sqrt(x)
+		y = int(n - r)
+ 		if not is_blocked(x, y):
+ 			return x, y
+
 def random_choice_index(chances):  #choose one option from list of chances, returning its index
 	#the dice will land on some number between 1 and the sum of the chances
 	dice = libtcod.random_get_int(0, 1, sum(chances))
@@ -1786,6 +1814,7 @@ def render_all():
 							libtcod.console_set_char_background(con, x, y, color_dark_wall, libtcod.BKGND_SET)
 						elif sludge:
 							libtcod.console_set_char_background(con, x, y, libtcod.darkest_lime, libtcod.BKGND_SET)
+
 						elif water:
 							libtcod.console_set_char_background(con, x, y, libtcod.darkest_blue, libtcod.BKGND_SET)
 							libtcod.console_set_char(con,x,y,171)
@@ -2614,6 +2643,7 @@ def handle_keys():
 					elif obj.x == x and obj.y == y and obj.nonplayerchar:
 						obj.nonplayerchar.use_function(obj)
 
+
 			#! make this message only show if not able to use, or if no object is in range!
 
 			if key_char == 'x':
@@ -2841,7 +2871,7 @@ def object_destroy(obj):
 	libtcod.map_set_properties(fov_map, obj.x, obj.y, True, True)
 
 
-def open_box(obj):
+def open_box(obj, opened):
 	global game_turn, cred
 	message('you have opened the box!')
 	x = 0
