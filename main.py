@@ -394,12 +394,23 @@ class Fighter:
 		if tohit >= target.fighter.dex:
 			if damage > 0:
 				#make the target take some damage
-				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' for ' + str(damage) + ' hit points.')
-				target.fighter.take_damage(damage)
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' shoots the ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
+				else:
+					message('The ' + self.owner.name.capitalize() + ' shoots ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
 			else:
-				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' but it has no effect!')
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' shoots the ' + target.name + ' but it has no effect!')
+				else:
+					message('The ' + self.owner.name.capitalize() + ' shoots ' + target.name + ' but it has no effect!')
+
 		else:
-			message('The ' + self.owner.name.capitalize() + ' misses!')
+			if self.owner == player:
+				message(self.owner.name.capitalize() + ' misses!')
+			else:
+				message('The ' + self.owner.name.capitalize() + ' misses!')
 
 
 	def attack(self, target):
@@ -409,13 +420,24 @@ class Fighter:
 		if tohit >= target.fighter.dex:
 			if damage > 0:
 				#make the target take some damage
-				message('The ' + self.owner.name.capitalize() + ' attacks the ' + target.name + ' for ' + str(damage) + ' hit points.')
-				target.fighter.take_damage(damage)
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' attacks the ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
+				else:
+					message('The ' + self.owner.name.capitalize() + ' attacks ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
 
 			else:
-				message('The ' + self.owner.name.capitalize() + ' attacks the ' + target.name + ' but it has no effect!')
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' attacks the ' + target.name + ' but it has no effect!')
+				else:
+					message('The ' + self.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!')
 		else:
-			message('The ' + self.owner.name.capitalize() + ' misses!')
+			if self.owner == player:
+				message(self.owner.name.capitalize() + ' misses!')
+			else:
+				message('The ' + self.owner.name.capitalize() + ' misses!')
+
 
 	def lightattack(self, target):
 		#a simple formula for attack damage
@@ -424,13 +446,24 @@ class Fighter:
 		if tohit >= target.fighter.dex:
 			if damage > 0:
 				#make the target take some damage
-				message('The ' + self.owner.name.capitalize() + ' quickly hits the ' + target.name + ' for ' + str(damage) + ' hit points.')
-				target.fighter.take_damage(damage)
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' quickly hits the ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
+				else:
+					message('The ' + self.owner.name.capitalize() + ' quickly hits ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
 
 			else:
-				message('The ' + self.owner.name.capitalize() + ' quickly attacks the ' + target.name + ' but it has no effect!')
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' quickly attacks the ' + target.name + ' but it has no effect!')
+				else:
+					message('The ' + self.owner.name.capitalize() + ' quickly attacks ' + target.name + ' but it has no effect!')
+
 		else:
-			message('The ' + self.owner.name.capitalize() + ' misses!')
+			if self.owner == player:
+				message(self.owner.name.capitalize() + ' misses!')
+			else:
+				message('The ' + self.owner.name.capitalize() + ' misses!')
 
 	def take_damage(self, damage):
 		#apply damage if possible
@@ -439,7 +472,10 @@ class Fighter:
 			self.flicker = 1
 
 			if self.hp <= 4 and self.hp > 0 :
-				message('The ' + self.owner.name.capitalize() + ' looks badly wounded!')
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' looks badly wounded!')
+				else:
+					message('The ' + self.owner.name.capitalize() + ' looks badly wounded!')
 
 
 			#check for death. if there's a death function, call it
@@ -616,13 +652,26 @@ class NonplayerChar:
 		tohit = ((self.dex / 4) + self.firearmacc + 2) - libtcod.random_get_int(0, 0, 4)
 		if tohit >= target.fighter.dex:
 			if damage > 0:
+				if self.owner == player:
 				#make the target take some damage
-				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' for ' + str(damage) + ' hit points.')
-				target.fighter.take_damage(damage)
+					message(self.owner.name.capitalize() + ' shoots the ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
+				else:
+					message('The ' + self.owner.name.capitalize() + ' shoots ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
+
 			else:
-				message('The ' + self.owner.name.capitalize() + ' shoots the ' + target.name + ' but it has no effect!')
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' shoots the ' + target.name + ' but it has no effect!')
+				else:
+					message('The ' + self.owner.name.capitalize() + ' shoots ' + target.name + ' but it has no effect!')
+
 		else:
-			message('The ' + self.owner.name.capitalize() + ' misses!')
+			if self.owner == player:
+				message(self.owner.name.capitalize() + ' misses!')
+			else:
+				message('The ' + self.owner.name.capitalize() + ' misses!')
+
 
 	def use(self):
 		#just call the "use_function" if it is defined
@@ -635,14 +684,26 @@ class NonplayerChar:
 		tohit = ((self.dex / 2) + self.accuracy) - libtcod.random_get_int(0, 0, 3)
 		if tohit >= target.fighter.dex:
 			if damage > 0:
-				#make the target take some damage
-				message('The ' + self.owner.name.capitalize() + ' attacks the ' + target.name + ' for ' + str(damage) + ' hit points.')
-				target.fighter.take_damage(damage)
+				if self.owner == player:
+					#make the target take some damage
+					message(self.owner.name.capitalize() + ' attacks the ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
+				else:
+					message('The ' + self.owner.name.capitalize() + ' attacks ' + target.name + ' for ' + str(damage) + ' hit points.')
+					target.fighter.take_damage(damage)
+
 
 			else:
-				message('The ' + self.owner.name.capitalize() + ' attacks the ' + target.name + ' but it has no effect!')
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' attacks the ' + target.name + ' but it has no effect!')
+				else:
+					message('The ' + self.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!')
+
 		else:
-			message('The ' + self.owner.name.capitalize() + ' misses!')
+			if self.owner == player:
+				message(self.owner.name.capitalize() + ' misses!')
+			else:
+				message('The ' + self.owner.name.capitalize() + ' misses!')
 
 	def take_damage(self, damage):
 		#apply damage if possible
@@ -651,7 +712,11 @@ class NonplayerChar:
 			self.flicker = 1
 
 			if self.hp <= 4 and self.hp > 0 :
-				message('The ' + self.owner.name.capitalize() + ' looks badly wounded!')
+				if self.owner == player:
+					message(self.owner.name.capitalize() + ' looks badly wounded!')
+				else:
+					message('The ' + self.owner.name.capitalize() + ' looks badly wounded!')
+
 
 			#check for death. if there's a death function, call it
 			if self.hp <= 0:
@@ -3432,7 +3497,7 @@ def new_game():
 	hublevel = True
 
 	#a warm welcoming message!
-	message('Greetings ' + name + '. Welcome to CyberRogue!', libtcod.red)
+	message('Greetings ' + name.capitalize() + '. Welcome to CyberRogue!', libtcod.red)
 
 
 	#initial equipment: a knife, pistol
