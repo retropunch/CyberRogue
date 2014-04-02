@@ -1515,6 +1515,7 @@ def random_unblocked_fartile_on_map():
  		if not is_blocked(x, y):
  			return x, y
 
+
 def random_choice_index(chances):  #choose one option from list of chances, returning its index
 	#the dice will land on some number between 1 and the sum of the chances
 	dice = libtcod.random_get_int(0, 1, sum(chances))
@@ -1666,7 +1667,7 @@ def menu(header, options, width):
 
 	#create an off-screen console that represents the menu's window
 	window = libtcod.console_new(width, height+6)
-	libtcod.console_set_alignment(window,libtcod.LEFT)
+	libtcod.console_set_alignment(window, libtcod.RIGHT)
 
 	#print the header, with auto-wrap
 	libtcod.console_set_default_foreground(window, libtcod.green)
@@ -1698,6 +1699,47 @@ def menu(header, options, width):
 	#convert the ASCII code to an index; if it corresponds to an option, return it
 	index = key.c - ord('a')
 	if index >= 0 and index < len(options): return index
+	return None
+
+
+def informationscreen(header, text):
+	global camera_x, camera_y
+
+	width = 58
+	height = 34
+
+	#create an off-screen console that represents the menu's window
+	info = libtcod.console_new(width, height)
+	libtcod.console_set_custom_font('Bisasam18x18.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+	libtcod.console_set_alignment(info, libtcod.LEFT)
+
+	#print the header, with auto-wrap
+	libtcod.console_set_default_foreground(info, libtcod.green)
+	libtcod.console_print_frame(info, 0,0, width, height, False, libtcod.BKGND_NONE,0)
+	libtcod.console_print_rect_ex(info,0, 0, width, height, libtcod.BKGND_NONE, libtcod.LEFT, header)
+
+	#print all the options
+	y = 0
+	#for text in text:
+	libtcod.console_print_rect_ex(info, 1, 1, width -5, height, libtcod.BKGND_NONE, libtcod.LEFT, text)
+		#y += 1
+
+	#blit the contents of "window" to the root console
+	x = 1
+		#SCREEN_WIDTH / 2 - 20 / 2
+	y = 1
+		#SCREEN_HEIGHT / 2 - 30 / 2
+	libtcod.console_blit(info, 0, 0, width, height, 0, x, y, 1.0, 0.7)
+
+
+	#present the root console to the player and wait for a key-press
+	libtcod.console_flush()
+	key = libtcod.console_wait_for_keypress(True)
+	key = libtcod.console_wait_for_keypress(True)
+
+	if key.vk == libtcod.KEY_ENTER and key.lalt:  #(special case) Alt+Enter: toggle fullscreen
+		libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen)
+
 	return None
 
 
@@ -2364,11 +2406,10 @@ def player_move_or_lightattack(dx, dy):
 
 
 def hacking():
-	message('Choose a hack to launch, your charge level is ' + str(player.fighter.charge) + '!', libtcod.yellow)
 	choice = None
 	if player.fighter.hack == 1:
 		while choice == None:  #keep asking until a choice is made
-				choice = menu('Choose a hack:\n',
+				choice = menu('Hacking:\n',
 							['Confusion (-5 charge)',
 							'Cancel'], LEVEL_SCREEN_WIDTH)
 
@@ -2440,6 +2481,7 @@ def hacking():
 
 def inventory_menu(header):
 	#show a menu with each item of the inventory as an option
+	header = 'Inventory'
 	if len(inventory) == 0:
 		options = ['Inventory is empty.']
 	else:
@@ -2708,6 +2750,7 @@ def handle_keys():
 			if key_char == 'h':
 				#ask the player for a target tile to hack it
 				if player.fighter.charge >= 0:
+					message('Choose a hack to launch, your charge level is ' + str(player.fighter.charge) + '!', libtcod.yellow)
 					hacking()
 				else:
 					message('you have run out of charge! ')
@@ -3409,24 +3452,24 @@ def check_time():
 
 
 def show_world():
-	msgbox(
+	informationscreen('Corporations',
+		'\n'+
 		'Corporation: ' + str(worldgen.corpone)
 		+ '\nDeals in: Weapons and ' + str(worldgen.corponeproducts)
 		+ '\n' +
-		'\n History: ' + str(worldgen.corponehistory)
-		+ '\n' +
-
+		'\nHistory: ' + str(worldgen.corponehistory)
+		+ '\n' + '\n' +
 		'\nCorporation: ' + str(worldgen.corptwo)
 		+ '\nDeals in: Pharmaceuticals and ' + str(worldgen.corptwoproducts)
 		+ '\n' +
-		'\n History: ' + str(worldgen.corptwohistory)
-		+ '\n' +
+		'\nHistory: ' + str(worldgen.corptwohistory)
+		+ '\n' +  '\n' +
 
 		'\nCorporation: ' + str(worldgen.corpthree)
 		+ '\nDeals in: Electronics and ' + str(worldgen.corpthreeproducts)
 		+ '\n' +
-		'\n History: ' + str(worldgen.corpthreehistory)
-		, 40)
+		'\nHistory: ' + str(worldgen.corpthreehistory)
+		)
 
 
 def evening():
