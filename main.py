@@ -1026,29 +1026,40 @@ class BasicHologram:
 class BasicNpc:
 	global hour
 
-	def __init__(self, destset=False, destinationreached=False):
+	def __init__(self, destset=False):
  		self.destset = destset
- 		self.destinationreached = destinationreached
+
 
 	def take_turn(self):
 		monster = self.owner
+		x = 0
+		y = 0
 		if hour == 18:
 			monster.nonplayerchar.move_towards(12,26)
 
-		#elif libtcod.map_is_in_fov(fov_map, monster.x, monster.y):
   		else:
  			if self.destset == False:
-				(x,y) = random_unblocked_fartile_on_map()
-				destset = True
- 			if self.destinationreached == False:
-				#random movement
-				(x,y) = random_unblocked_tile_on_map()
- 				monster.nonplayerchar.move_towards(x,y)
- 			if monster.x and monster.y == (x,y):
- 				self.destinationreached = True
- 			elif self.destinationreached == True:
- 				self.destinationreached = False
- 				self.destset = False
+				locations = ['shop','bar','wander']
+				n = random.choice(locations)
+				if n == 'wander':
+					(x,y) = random_unblocked_tile_on_map()
+					self.destset = True
+				if n ==  'shop':
+					x = 6
+					y = 4
+					self.destset = True
+				if n == 'bar':
+					x = 12
+					y = 26
+					self.destset = True
+
+			if monster.x != x and monster.y != y:
+				monster.nonplayerchar.move_towards(x,y)
+
+		   	if monster.x == x and monster.y == y:
+				self.destset = False
+
+
 
 
 class BasicShooter:
@@ -1612,6 +1623,23 @@ def target_tile(max_range=None):
 				for dx in range(MAP_WIDTH):
 					libtcod.console_set_char_background(con, dx, dy, old_background[dx][dy], libtcod.BKGND_SET)
 			return (x, y)
+
+		if key.vk == libtcod.KEY_UP or key.vk == libtcod.KEY_KP8:
+			(x, y) = (player.x, player.y-1)
+			return (x, y)
+
+		if key.vk == libtcod.KEY_DOWN or key.vk == libtcod.KEY_KP2:
+			(x, y) = (player.x, player.y+1)
+			return (x, y)
+
+		if key.vk == libtcod.KEY_LEFT or key.vk == libtcod.KEY_KP4:
+			(x, y) = (player.x-1, player.y)
+			return (x, y)
+
+		if key.vk == libtcod.KEY_RIGHT or key.vk == libtcod.KEY_KP6:
+			(x, y) = (player.x+1, player.y)
+			return (x, y)
+
 
 
 def target_monster(max_range=None):
@@ -2887,7 +2915,7 @@ def robot_death(monster):
 
 ## Furniture stuff
 
-def target_furniture(max_range=4):
+def target_furniture(max_range=3):
 	#returns a clicked monster inside FOV up to a range, or None if right-clicked
 	while True:
 		(x, y) = target_tile(max_range)
@@ -2900,7 +2928,7 @@ def target_furniture(max_range=4):
 				obj.furniture.use_function()
 
 
-def object_destroy(obj):
+def object_destroy(obj, opened):
 	#transform it into a nasty corpse! it doesn't block, can't be
 	#attacked and doesn't move
 	message('It has broken! ',
@@ -2950,6 +2978,7 @@ def convo(obj):
 	talk = ['Go away', 'Why are you talking to me?', 'Who are you?', 'Get lost.', 'Stay away from the hotel.']
 	from random import choice
 	message(choice(talk))
+	initialize_fov()
 
 
 def rubble(obj):
@@ -2958,7 +2987,7 @@ def rubble(obj):
 	object_destroy(obj)
 
 
-def bed(obj):
+def bed(obj, opened):
 	global hour
 	hour += 8
 	player.fighter.hp = player.fighter.max_hp
@@ -2966,7 +2995,7 @@ def bed(obj):
 	message('you feel rested')
 
 
-def recharge(obj):
+def recharge(obj, opened):
 	global game_turn
 	if player.fighter.charge == player.fighter.base_charge:
 		message('You are already fully charged.', libtcod.red)
@@ -2978,7 +3007,7 @@ def recharge(obj):
 	return True
 
 
-def Ermashopsell(obj):
+def Ermashopsell(obj, opened):
 	global cred
 	x=0
 	y=0
@@ -3033,7 +3062,7 @@ def Ermashopsell(obj):
 		message('The Erma Corporation only recognises loyal customers', libtcod.yellow)
 
 
-def Vorishopsell(obj):
+def Vorishopsell(obj, opened):
 
 	global cred
 	x=0
@@ -3089,7 +3118,7 @@ def Vorishopsell(obj):
 		message('The Vorikov Corporation only recognises loyal customers', libtcod.yellow)
 
 
-def fenceshop(obj):
+def fenceshop(obj, opened):
 	chosen_item = inventory_menu('Press the key next to an item to sell it, or any other to cancel.\n')
 	if chosen_item is not None:
 		chosen_item.sell(obj)
@@ -3097,7 +3126,7 @@ def fenceshop(obj):
 		return
 
 
-def foodshop(obj):
+def foodshop(obj, opened):
 
 	global cred
 	x=0
@@ -3132,7 +3161,7 @@ def foodshop(obj):
 				return
 
 
-def potionshop(obj):
+def potionshop(obj, opened):
 
 	global cred
 	x=0
@@ -3155,7 +3184,7 @@ def potionshop(obj):
 			return
 
 
-def playerterminal(obj):
+def playerterminal(obj, opened):
 
 	global cred
 	x=0
@@ -3184,8 +3213,9 @@ def playerterminal(obj):
 			message('have a pleasant day')
 
 
-def lookat(obj):
+def lookat(obj, opened):
 	message(str(obj.desc))
+	initialize_fov()
 
 
 def door(obj, opened):
