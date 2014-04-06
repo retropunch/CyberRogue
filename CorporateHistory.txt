@@ -1,0 +1,164 @@
+﻿History
++Foundation+ +Rivarlies+ +Allies+ +Government+ +Traits+ 
+
+
+Foundation: 
+1) In +year+, +corpname+ and +corpname+ agreed to a mutual “merger of equals”, ending their long-running rivalry in pursuit of a common goal. The new entity, CORPORATION, would start off with a complete monopoly over +industry+.
+2) In +year+, +corpname+ declared bankruptcy. Their assets were forcibly seized by a shadowy cabal of investors known informally as CORPORATION. CORPORATION would later use those assets to engineer the destruction of several other minor competitors to secure a monopoly over +industry+.
+3) In +year+, CORPORATION (+country+ special operations division), refused to follow orders from their mother country and instead went rogue. CORPORATION specialized in +industry+.
+4) In +year+, wealthy philanthropists formed a “nonprofit corporation” called CORPORATION, dedicated towards +nonprofitaction+ +industry+.
+5) In +year+, CORPORATION (+country+ government agency) was formally privatized to help raise money for the mother country. CORPORATION specialized in +industry+.
+6) In +year+, the religious organization CORPORATION was established, dedicated towards +nonprofitaction+ +religiousactivity+. To secure funding for its nonprofit activities, CORPORATION opened up a business front that specialized in +industry+.
+7) In +year+, +corpname+ successfully infiltrated +corpname+, ending the long-running rivalry between the two companies. The newly merged entity, CORPORATION, would start off with a complete monopoly over +industry+.
+8) In +year+, vulture capitalists established CORPORATION to fund innovative +industry+ start-ups so as to later take them over and seize their considerable profits.
+9) In +year+, the +ideology+ terrorist organization CORPORATION “went legit” in return for legal immunity for their crimes. CORPORATION abandoned their political activism to instead focus on maintaining their massive +industry holdings.
+10) In +year+, the criminal organization CORPORATION “went legit” in return for legal immunity for their crimes. CORPORATION abandoned their criminal activities to instead focus on maintaining their massive +industry+ holdings.
+11) In +year+, +ideology+ activists established a nonprofit corporation known as CORPORATION to help coordinate their political campaigns. To secure funding for its nonprofit activities, CORPORATION opened up a business front that specialized in +industry+.
+12) In +year+, a rich entrepreneur formed CORPORATION, a +industry+ startup, after being inspired by dreams about +religiousactivity+.
+
+
+Government
+1) CORPORATION is entirely controlled by one person, the +leader+, and the Board of Directors is staffed with their lackeys.
+2) CORPORATION is officially led by a puppet +leader+ but real power rests in the hands of the Board of Directors.
+3) CORPORATION is a decentralized entity with each branch of the corporation acting autonomously.The +leader+ serves as a neutral arbitrator who settle disputes within the corporation.
+4) CORPORATION is officially led by a strong +leader+ who shares power with the Board of Directors.
+
+
+Rivalries:
+1) In +year+, +corpname+ declared bankruptcy. Both +randcorp+ and CORPORATION claimed control over their assets, leading to a short skirmish between the two sides. CORPORATION won the skirmish, but tensions still persists.
+2) In +year+, CORPORATION accused +randcorp+ of +espionage and has released evidence proving that charge.
+3) In +year+, +randcorp+ started expanding their operations in +industry+, antagonizing CORPORATION who already owns a monopoly3) Both CORPORATION and +randcorp+ .
+4) In +year+, +randcorp+ hacked into the computer systems of CORPORATION, stealing +hacking+.
+5) In +year+, CORPORATION refused to pay for a shipment of goods from +randcorp+, claiming that the goods were shoddy.
+6) In +year+, CORPORATION lost +industry+ market share to +randcorp+ due to the latter's use of +marketshare+.
+7) In +year+, law enforcement raided the offices of CORPORATION and arrested some of their directors for +crime+. CORPORATION claimed that they were framed by +randcorp+.
+8) In +year+, antiglobalization protesters raided the offices of CORPORATION, stealing +hacking+. CORPORATION blamed +randcorp+ for funding and training the protesters.
+
+
+Allies
+1) In +year+, +randcorp+ and CORPORATION worked together to destroy a common enemy, +corpname+. Both corporations became close friends as a result of this cooperation.
+2) In +year+, +randcorp+ and CORPORATION agreed to share their intellectual property with each other.
+3) In +year+, +randcorp+ and CORPORATION agreed to a cross-promotional advertising campaign designed to boost profits for both companies.
+4) In +year+, +randcorp+ successfully blackmailed the +leader+ of CORPORATION.
+5) In +year+, +randcorp+ and CORPORATION established a joint venture and agreed to share any revenue made by this project.
+6) In +year+, CORPORATION agreed to sell some of its +industry+ assets to +randcorp+.
+7) In +year+, CORPORATION and +randcorp+ worked together to convince the federal government to give them subsides. Both corporations became close friends as a result of this cooperation.
+8) In +year+, CORPORATION signed an agreement with +randcorp+ to exclusively use their products and services instead of their competitors’.
+
+
+Traits:
+CORPORATION is famed for its +strength but +weakness+.
+
+
+Strength:
+1) good public relations
+2) excellent leadership
+3) brilliant lobbyists
+4) magnificent customer service
+5) focus on quality instead of quantity
+6) respect for the environment
+7) generous paychecks and employee benefits
+8) elite military training
+9) technological advancement
+10) strict "code of honor"
+
+
+Weakness:
+1) it suffers from low employee morale
+2) rumors persists of "skeletons in the closet"
+3) the leadership focuses on short-terms gains instead of long-term survival
+4) factional disputes paralyzes the company
+5) its corporate culture stifles creativity
+6) the corporate leadership is too hidebound to tradition
+7) the corporation relies on nepotism instead of merit in hiring decisions
+8) its fanatical nature serves to alienate it from other corporations
+9) its sociopathic nature serves to alienate it from the general public
+10) the corporate bureaucracy is horribly inefficient
+
+
+Marketshare:
+1) competitive pricing
+2) cutting-edge advertising 
+3) strategic use of assassinations
+
+
+Espionage:
+stealing blueprints
+leaking confidential memos
+poaching their employees
+killing their employees
+blackmailing their employees
+blowing up their Corporate HQ
+economic sabotage
+
+
+Hacking:
+credits
+blueprints
+technology
+blackmail material
+
+
+leader:
+CEO
+President
+Administrator
+Chairman
+Managing Director 
+
+
+country:
+a Russian
+an American
+a Chinese
+a European
+an Indian
+a Brazilian
+a South African
+a Japanese
+
+
+ideology:
+fascist
+communist
+anarchist
+libertarian
+liberal
+conservative
+
+
+nonprofitaction:
+disseminating
+administrating
+coordinating
+providing access to
+optimizing
+producticizing
+promoting
+recontextualizing
+revolutionizing
+simplifying
+synergizing
+synthesizing
+supplying
+utilizing
+
+
+religiousaction:
+faith
+piety
+social justice
+equality
+morality
+prayer
+God
+the Eschaton
+
+
+crime:
+insider trading
+bribing government officials
+assassinating government officials
+tax evasion
+violating labor laws
+fraud
