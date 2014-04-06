@@ -1950,7 +1950,7 @@ def render_all():
 	render_bar(1, 3, BAR_WIDTH, 'Charge', player.fighter.charge, player.fighter.base_charge,
 			   libtcod.light_blue, libtcod.darker_blue)
 
-	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth:' + str(dungeon_level))
+	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Depth:' + str(dungeon_level))
 
 	libtcod.console_print_ex(sidebar, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger:' + str(hunger_stat))
 	libtcod.console_print_ex(sidebar, 1, 8, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
@@ -2982,10 +2982,10 @@ def convo(obj):
 	initialize_fov()
 
 
-def rubble(obj):
+def rubble(obj, opened):
 	global game_turn
 	message('you break up the rubble!')
-	object_destroy(obj)
+	object_destroy(obj, opened)
 
 
 def bed(obj, opened):
@@ -3257,7 +3257,7 @@ def playerdoor(obj, opened):
 		message('it has been locked by the landlord')
 
 
-def nouse(obj):
+def nouse(obj, opened):
 	message('Nothing useful can be done with this')
 
 
