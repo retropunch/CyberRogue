@@ -1029,7 +1029,7 @@ class BasicNpc:
 	global hour
 
 	def __init__(self, destset=False):
- 		self.destset = destset
+		self.destset = destset
 
 
 	def take_turn(self):
@@ -1037,8 +1037,8 @@ class BasicNpc:
 		if hour == 18:
 			monster.nonplayerchar.move_towards(12,26)
 
-  		else:
- 			if monster.nonplayerchar.destset == False:
+		else:
+			if monster.nonplayerchar.destset == False:
 				locations = ['shop','bar','wander']
 				n = random.choice(locations)
 				if n == 'wander':
@@ -1515,15 +1515,15 @@ def random_unblocked_tile_on_map():
 
 
 def random_unblocked_fartile_on_map():
- 	tries = 500
- 	#1000 tries, and we'll punt - most probably producing an error in the calling code
- 	for i in range(tries):
- 		x = libtcod.random_get_int(0, 0, MAP_WIDTH - 1)
+	tries = 500
+	#1000 tries, and we'll punt - most probably producing an error in the calling code
+	for i in range(tries):
+		x = libtcod.random_get_int(0, 0, MAP_WIDTH - 1)
 		n = math.sqrt(20)
 		r = math.sqrt(x)
 		y = int(n - r)
- 		if not is_blocked(x, y):
- 			return x, y
+		if not is_blocked(x, y):
+			return x, y
 
 
 def random_choice_index(chances):  #choose one option from list of chances, returning its index
@@ -1565,7 +1565,7 @@ def closest_monster(max_range):
 	return closest_enemy
 
 
-def target_tile(max_range=None):
+def target_tile(max_range=None, projectile = False):
 	global key, mouse
 	old_background = [[ Tile(True, False, False, False, False)
 		for dy in range(MAP_HEIGHT) ]
@@ -1585,19 +1585,21 @@ def target_tile(max_range=None):
 			(x, y) = (mouse.cx, mouse.cy)
 			(x, y) = (camera_x + x, camera_y + y)
 
-			libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
-			libtcod.line_init(player.x - camera_x, player.y - camera_y, x - camera_x, y - camera_y)
-			while not dx == None:
-				if libtcod.map_is_in_fov(fov_map, dx + camera_x, dy + camera_y):
-					libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
-					dx, dy = libtcod.line_step()
-				else:
-					libtcod.console_set_char_background(con, dx, dy, libtcod.light_red, libtcod.BKGND_SET)
-					dx, dy = libtcod.line_step()
-				if libtcod.map_is_in_fov(fov_map, x, y):
-					libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
-				else:
-					libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_red, libtcod.BKGND_SET)
+			if projectile == True:
+
+				libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
+				libtcod.line_init(player.x - camera_x, player.y - camera_y, x - camera_x, y - camera_y)
+				while not dx == None:
+					if libtcod.map_is_in_fov(fov_map, dx + camera_x, dy + camera_y):
+						libtcod.console_set_char_background(con, dx, dy, libtcod.light_green, libtcod.BKGND_SET)
+						dx, dy = libtcod.line_step()
+					else:
+						libtcod.console_set_char_background(con, dx, dy, libtcod.light_red, libtcod.BKGND_SET)
+						dx, dy = libtcod.line_step()
+					if libtcod.map_is_in_fov(fov_map, x, y):
+						libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
+					else:
+						libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_red, libtcod.BKGND_SET)
 
 
 		#libtcod.console_flush()
@@ -1644,7 +1646,7 @@ def target_tile(max_range=None):
 def target_monster(max_range=None):
 	#returns a clicked monster inside FOV up to a range, or None if right-clicked
 	while True:
-		(x, y) = target_tile(max_range)
+		(x, y) = target_tile(max_range, True)
 		if x is None:  #player cancelled
 			return None
 
