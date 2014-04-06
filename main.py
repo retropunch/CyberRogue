@@ -1681,7 +1681,7 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 	#finally, some centered text with the values
 	libtcod.console_set_default_foreground(sidebar, libtcod.white)
 	libtcod.console_print_ex(sidebar, x + total_width / 2, y, libtcod.BKGND_NONE, libtcod.CENTER,
-							 name + ': ' + str(value) + '/' + str(maximum))
+							 name + ':' + str(value) + '/' + str(maximum))
 
 
 def menu(header, options, width):
@@ -1952,22 +1952,22 @@ def render_all():
 
 	libtcod.console_print_ex(sidebar, 1, 4, libtcod.BKGND_NONE, libtcod.LEFT, 'Sprawl Depth:' + str(dungeon_level))
 
-	libtcod.console_print_ex(sidebar, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger: ' + str(hunger_stat))
+	libtcod.console_print_ex(sidebar, 1, 5, libtcod.BKGND_NONE, libtcod.LEFT, 'Hunger:' + str(hunger_stat))
 	libtcod.console_print_ex(sidebar, 1, 8, libtcod.BKGND_NONE, libtcod.LEFT, 'Cr:' + str(cred))
 	#libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Time:' + str(hour) + str(amorpm))
 
 
-	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day) + ' ' + str(hour) + str(amorpm))
+	libtcod.console_print_ex(sidebar, 1, 7, libtcod.BKGND_NONE, libtcod.LEFT, 'Day:' + str(day) + ' ' + 'Time:' + str(hour)  + str(amorpm))
 	libtcod.console_print_ex(sidebar, 1, 10, libtcod.BKGND_NONE, libtcod.LEFT, 'Ammo:' + str(player.fighter.ammo))
 
 
-	libtcod.console_print_ex(sidebar, 1, 21, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
+	libtcod.console_print_ex(sidebar, 1, 22, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
 	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
-	libtcod.console_print_frame(sidebar,0,22,SIDEBAR_WIDTH,5,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
-	libtcod.console_print_ex(sidebar, 1, 23, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(sidebar, 9, 23, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
-	libtcod.console_print_ex(sidebar, 1, 24, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-	libtcod.console_print_ex(sidebar, 1, 25, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
+	libtcod.console_print_frame(sidebar,0,23,SIDEBAR_WIDTH,4,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 24, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
+	libtcod.console_print_ex(sidebar, 9, 24, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_ex(sidebar, 1, 25, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
+	libtcod.console_print_ex(sidebar, 9, 25, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
 
 	libtcod.console_set_default_foreground(sidebar, libtcod.white)
 	libtcod.console_print_ex(sidebar, 1, 28, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
