@@ -94,7 +94,7 @@ class Tile:
 		self.blocked = blocked
 
 		self.sludge = sludge
-		self.bar = bar
+		self.bar = bar 
 		self.door = door
 		self.water = water
 
