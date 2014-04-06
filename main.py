@@ -514,10 +514,11 @@ class Fighter:
 
 class NonplayerChar:
 	#combat-related properties and methods (monster, player, NPC).
-	def __init__(self, my_path, lastx, lasty, hp, defense, power, dex, accuracy, hack, eloyalty, vloyalty, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None, use_function=None):
+	def __init__(self, my_path, lastx, lasty, destset, hp, defense, power, dex, accuracy, hack, eloyalty, vloyalty, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None, use_function=None):
 		self.my_path = my_path
 		self.lastx = lastx
 		self.lasty = lasty
+		self.destset = destset
 
 		self.base_max_hp = hp
 		self.hp = hp
@@ -1042,22 +1043,22 @@ class BasicNpc:
 				locations = ['shop','bar','wander']
 				n = random.choice(locations)
 				if n == 'wander':
-					(x,y) = random_unblocked_tile_on_map()
-					self.destset = True
+					(x,y) = random_unblocked_fartile_on_map()
+					monster.nonplayerchar.destset = True
 				if n ==  'shop':
 					x = 6
 					y = 4
-					self.destset = True
+					monster.nonplayerchar.destset = True
 				if n == 'bar':
 					x = 12
 					y = 26
-					self.destset = True
+					monster.nonplayerchar.destset = True
 
-			if monster.x != x and monster.y != y:
+			if monster.x != x or monster.y != y:
 				monster.nonplayerchar.move_towards(x,y)
 
-		   	if monster.x == x and monster.y == y:
-				self.destset = False
+			else:
+				monster.nonplayerchar.destset = False
 
 
 
@@ -2270,7 +2271,7 @@ def hub():
 		features = libtcod.namegen_generate('features')
 		libtcod.namegen_parse('colours.txt')
 		colours = libtcod.namegen_generate('colours')
-		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
+		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, destset=False, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
@@ -2285,7 +2286,7 @@ def hub():
 		libtcod.namegen_parse('colours.txt')
 		colours = libtcod.namegen_generate('colours')
 
-		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
+		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, destset=False, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
