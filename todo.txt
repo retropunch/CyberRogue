@@ -38,11 +38,11 @@ DONE Enemies following you out of LOS (Kirstie)
 At the moment, if you escape their line of sight they just stop, which is sort of rubbish. One easyish way to do it would be via smell, which is the usual way RLs do it. There is a tutorial for it using C++ which shouldn't be toooo hard to convert:
 http://codeumbra.eu/complete-roguelike-tutorial-using-c-and-libtcod-extra-3-scent-tracking
 
--Slightly more random damage and accuracy (Kirstie)
-Damage is just a random extra +0 to +3, but needs to be more MATHEMATICAL (just like you like!). As in, it needs to be something related to the relative power of the creature (for instance, a thug might only do between +0 and +2, whereas a Mutant might do +0 to +5).
-Tohit (your actual accuracy) is this forumla:
-((self.dex/2)+ self.accuracy)) - (randomly 0-3)
-Actually hitting a target requires you to have a higher tohit than the targets dex. This again needs to be a bit more relative rather than just a straight minus 0-3. Unsure of formular to use, as we don't want it too tricksy.
+-Slightly more random damage and perception (Kirstie)
+Damage is just a random extra +0 to +3, but needs to be more MATHEMATICAL (just like you like!). As in, it needs to be something related to the relative strength of the creature (for instance, a thug might only do between +0 and +2, whereas a Mutant might do +0 to +5).
+Tohit (your actual perception) is this forumla:
+((self.dexterityterity/2)+ self.perception)) - (randomly 0-3)
+Actually hitting a target requires you to have a higher tohit than the targets dexterity. This again needs to be a bit more relative rather than just a straight minus 0-3. Unsure of formular to use, as we don't want it too tricksy.
 
 -Enemy shooting
 Enemies can shoot if they get given ammo and the 'BasicShooter' ai and then close into range once they've used it all - this wasn't given to all enemies, as at some point we might want shooters to have different sorts of AI
@@ -133,14 +133,14 @@ NPCs have attributes and clothes (in text form).
 -Added really rubbish fleeing ability for shooters.
 -refined shooting mechanism, monsters now move in for a melee attack players if they get too close, and wait if they are too far away to shoot.
 -Added hacking menu
--Added targetting goggles and sharpshooter visor drops (improved accuracy (and firearm for sharpshooter visor)
+-Added targetting goggles and sharpshooter visor drops (improved perception (and firearm for sharpshooter visor)
 -Tweaked spawns
 
 03/01:
 -Only robots (things with the fighter.robot attribute) are hackable
 -added basic random damage
--added agility, accuracy and dodging attacks
--added some three types of torso armour (TypeI, TypeII and TypeIII which reduces dex)
+-added agility, perception and dodging attacks
+-added some three types of torso armour (TypeI, TypeII and TypeIII which reduces dexterity)
 -added a sort of fade effect on text (might get annoying, let me know if it does)
 -added proper shooting (with shoot attribute for damage and ammo for how many shots they get).
 -added visible feedback when damaged or damaging something!!

@@ -243,7 +243,7 @@ class Object:
 
 class Fighter:
 	#combat-related properties and methods (monster, player, NPC).
-	def __init__(self, my_path, lastx, lasty, hp, defense, power, dex, accuracy, hack, charge, firearmdmg, firearmacc, eloyalty, vloyalty, ammo, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None,):
+	def __init__(self, my_path, lastx, lasty, hp, defense, strength, dexterity, perception, intelligence, charge, firearmdmg, firearmacc, eloyalty, vloyalty, ammo, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None,):
 		self.my_path = my_path
 		self.lastx = lastx
 		self.lasty = lasty
@@ -252,10 +252,10 @@ class Fighter:
 		self.hp = hp
 
 		self.base_defense = defense
-		self.base_power = power
-		self.base_hack = hack
-		self.base_dex = dex
-		self.base_accuracy = accuracy
+		self.base_strength = strength
+		self.base_intelligence = intelligence
+		self.base_dexterity = dexterity
+		self.base_perception = perception
 		self.base_charge = charge
 
 		self.base_eloyalty = eloyalty
@@ -281,9 +281,9 @@ class Fighter:
 
 
 	@property
-	def power(self):  #return actual power, by summing up the bonuses from all equipped items
-		bonus = sum(equipment.power_bonus for equipment in get_all_equipped(self.owner))
-		return self.base_power + bonus
+	def strength(self):  #return actual strength, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.strength_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_strength + bonus
 
 	@property
 	def defense(self):  #return actual defense, by summing up the bonuses from all equipped items
@@ -293,7 +293,7 @@ class Fighter:
 	@property
 	def hack(self):  #return actual defense, by summing up the bonuses from all equipped items
 		bonus = sum(equipment.hack_bonus for equipment in get_all_equipped(self.owner))
-		return self.base_hack + bonus
+		return self.base_intelligence + bonus
 
 	@property
 	def eloyalty(self):  #return actual defense, by summing up the bonuses from all equipped items
@@ -306,14 +306,14 @@ class Fighter:
 		return self.base_vloyalty + bonus
 
 	@property
-	def dex(self):
-		bonus = sum(equipment.dex_bonus for equipment in get_all_equipped(self.owner))
-		return self.base_dex + bonus
+	def dexterity(self):
+		bonus = sum(equipment.dexterity_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_dexterity + bonus
 
 	@property
-	def accuracy(self):
-		bonus = sum(equipment.accuracy_bonus for equipment in get_all_equipped(self.owner))
-		return self.base_accuracy + bonus
+	def perception(self):
+		bonus = sum(equipment.perception_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_perception + bonus
 
 	@property
 	def move_speed(self):
@@ -391,8 +391,8 @@ class Fighter:
 		#a simple formula for attack damage
 		global game_turn
 		damage = (self.firearmdmg - target.fighter.defense) + libtcod.random_get_int(0, 0, 6)
-		tohit = ((self.dex / 4) + self.firearmacc + 2) - libtcod.random_get_int(0, 0, 4)
-		if tohit >= target.fighter.dex:
+		tohit = ((self.dexterity / 4) + self.rangedtohit + 2) - libtcod.random_get_int(0, 0, 4)
+		if tohit >= target.fighter.dexterity:
 			if damage > 0:
 				#make the target take some damage
 				if self.owner == player:
@@ -416,9 +416,9 @@ class Fighter:
 
 	def attack(self, target):
 		#a simple formula for attack damage
-		damage = (self.power - target.fighter.defense) + libtcod.random_get_int(0, 0, 3)
-		tohit = ((self.dex / 2) + self.accuracy) - libtcod.random_get_int(0, 0, 3)
-		if tohit >= target.fighter.dex:
+		damage = (self.strength - target.fighter.defense) + libtcod.random_get_int(0, 0, 3)
+		tohit = ((self.dexterity / 2) + self.perception) - libtcod.random_get_int(0, 0, 3)
+		if tohit >= target.fighter.dexterity:
 			if damage > 0:
 				#make the target take some damage
 				if self.owner == player:
@@ -442,9 +442,9 @@ class Fighter:
 
 	def lightattack(self, target):
 		#a simple formula for attack damage
-		damage = ((self.power - target.fighter.defense) - 2) + libtcod.random_get_int(0, 0, 3)
-		tohit = (((self.dex / 2) + self.accuracy)+2) - libtcod.random_get_int(0, 0, 3)
-		if tohit >= target.fighter.dex:
+		damage = ((self.strength - target.fighter.defense) - 2) + libtcod.random_get_int(0, 0, 3)
+		tohit = (((self.dexterity / 2) + self.perception)+2) - libtcod.random_get_int(0, 0, 3)
+		if tohit >= target.fighter.dexterity:
 			if damage > 0:
 				#make the target take some damage
 				if self.owner == player:
@@ -514,7 +514,7 @@ class Fighter:
 
 class NonplayerChar:
 	#combat-related properties and methods (monster, player, NPC).
-	def __init__(self, my_path, lastx, lasty, setx, sety, destset, hp, defense, power, dex, accuracy, hack,
+	def __init__(self, my_path, lastx, lasty, setx, sety, destset, hp, defense, strength, dexterity, perception, hack,
 				 eloyalty, vloyalty, xp, move_speed, flicker, robot=True, paralysis=False, death_function=None, creddrop=None, use_function=None):
 		self.my_path = my_path
 		self.destset = destset
@@ -525,10 +525,10 @@ class NonplayerChar:
 		self.hp = hp
 
 		self.base_defense = defense
-		self.base_power = power
+		self.base_strength = strength
 		self.base_hack = hack
-		self.base_dex = dex
-		self.base_accuracy = accuracy
+		self.base_dexterity = dexterity
+		self.base_perception = perception
 
 		self.base_eloyalty = eloyalty
 		self.base_vloyalty = vloyalty
@@ -542,9 +542,9 @@ class NonplayerChar:
 		self.use_function = use_function
 
 	@property
-	def power(self):  #return actual power, by summing up the bonuses from all equipped items
-		bonus = sum(equipment.power_bonus for equipment in get_all_equipped(self.owner))
-		return self.base_power + bonus
+	def strength(self):  #return actual strength, by summing up the bonuses from all equipped items
+		bonus = sum(equipment.strength_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_strength + bonus
 
 	@property
 	def defense(self):  #return actual defense, by summing up the bonuses from all equipped items
@@ -567,14 +567,14 @@ class NonplayerChar:
 		return self.base_vloyalty + bonus
 
 	@property
-	def dex(self):
-		bonus = sum(equipment.dex_bonus for equipment in get_all_equipped(self.owner))
-		return self.base_dex + bonus
+	def dexterity(self):
+		bonus = sum(equipment.dexterity_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_dexterity + bonus
 
 	@property
-	def accuracy(self):
-		bonus = sum(equipment.accuracy_bonus for equipment in get_all_equipped(self.owner))
-		return self.base_accuracy + bonus
+	def perception(self):
+		bonus = sum(equipment.perception_bonus for equipment in get_all_equipped(self.owner))
+		return self.base_perception + bonus
 
 	@property
 	def move_speed(self):
@@ -652,8 +652,8 @@ class NonplayerChar:
 		#a simple formula for attack damage
 		global game_turn
 		damage = (self.firearmdmg - target.fighter.defense) + libtcod.random_get_int(0, 0, 6)
-		tohit = ((self.dex / 4) + self.firearmacc + 2) - libtcod.random_get_int(0, 0, 4)
-		if tohit >= target.fighter.dex:
+		tohit = ((self.dexterity / 4) + self.firearmacc + 2) - libtcod.random_get_int(0, 0, 4)
+		if tohit >= target.fighter.dexterity:
 			if damage > 0:
 				if self.owner == player:
 				#make the target take some damage
@@ -683,9 +683,9 @@ class NonplayerChar:
 
 	def attack(self, target):
 		#a simple formula for attack damage
-		damage = (self.power - target.fighter.defense) + libtcod.random_get_int(0, 0, 3)
-		tohit = ((self.dex / 2) + self.accuracy) - libtcod.random_get_int(0, 0, 3)
-		if tohit >= target.fighter.dex:
+		damage = (self.strength - target.fighter.defense) + libtcod.random_get_int(0, 0, 3)
+		tohit = ((self.dexterity / 2) + self.perception) - libtcod.random_get_int(0, 0, 3)
+		if tohit >= target.fighter.dexterity:
 			if damage > 0:
 				if self.owner == player:
 					#make the target take some damage
@@ -806,12 +806,12 @@ class Furniture:
 
 class Equipment:
 	#an object that can be equipped, yielding bonuses. automatically adds the Item component.
-	def __init__(self, slot, power_bonus=0, defense_bonus=0, hack_bonus=0, dex_bonus=0, accuracy_bonus=0, max_hp_bonus=0, firearm_dmg_bonus=0, eloyalty_bonus=0, vloyalty_bonus=0, firearm_acc_bonus=0):
-		self.power_bonus = power_bonus
+	def __init__(self, slot, strength_bonus=0, defense_bonus=0, hack_bonus=0, dex_bonus=0, perception_bonus=0, max_hp_bonus=0, firearm_dmg_bonus=0, eloyalty_bonus=0, vloyalty_bonus=0, firearm_acc_bonus=0):
+		self.strength_bonus = strength_bonus
 		self.defense_bonus = defense_bonus
 		self.hack_bonus = hack_bonus
-		self.dex_bonus = dex_bonus
-		self.accuracy_bonus = accuracy_bonus
+		self.dexterity_bonus = dex_bonus
+		self.perception_bonus = perception_bonus
 		self.max_hp_bonus = max_hp_bonus
 		self.firearm_dmg_bonus = firearm_dmg_bonus
 		self.firearm_acc_bonus = firearm_acc_bonus
@@ -1644,7 +1644,6 @@ def target_tile(max_range=None, projectile = False):
 			return (x, y)
 
 
-
 def target_monster(max_range=None):
 	#returns a clicked monster inside FOV up to a range, or None if right-clicked
 	while True:
@@ -1964,16 +1963,16 @@ def render_all():
 
 	libtcod.console_print_ex(sidebar, 1, 22, libtcod.BKGND_NONE, libtcod.LEFT, 'Skills:')
 	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
-	libtcod.console_print_frame(sidebar,0,23,SIDEBAR_WIDTH,4,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
-	libtcod.console_print_ex(sidebar, 1, 24, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.power))
-	libtcod.console_print_ex(sidebar, 9, 24, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dex))
+	libtcod.console_print_frame(sidebar, 0, 23, SIDEBAR_WIDTH, 4, clear=False,flag=libtcod.BKGND_DEFAULT, fmt=0)
+	libtcod.console_print_ex(sidebar, 1, 24, libtcod.BKGND_NONE, libtcod.LEFT, 'Atk:' + str(player.fighter.strength))
+	libtcod.console_print_ex(sidebar, 9, 24, libtcod.BKGND_NONE, libtcod.LEFT, 'Dex:' + str(player.fighter.dexterity))
 	libtcod.console_print_ex(sidebar, 1, 25, libtcod.BKGND_NONE, libtcod.LEFT, 'Def:' + str(player.fighter.defense))
-	libtcod.console_print_ex(sidebar, 9, 25, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.accuracy))
+	libtcod.console_print_ex(sidebar, 9, 25, libtcod.BKGND_NONE, libtcod.LEFT, 'Acc:' + str(player.fighter.perception))
 
 	libtcod.console_set_default_foreground(sidebar, libtcod.white)
 	libtcod.console_print_ex(sidebar, 1, 28, libtcod.BKGND_NONE, libtcod.LEFT, 'Deck:')
 	libtcod.console_set_default_foreground(sidebar, libtcod.dark_green)
-	libtcod.console_print_frame(sidebar,0,29,SIDEBAR_WIDTH,6,clear=False,flag=libtcod.BKGND_DEFAULT,fmt=0)
+	libtcod.console_print_frame(sidebar, 0, 29,SIDEBAR_WIDTH, 6, clear=False, flag=libtcod.BKGND_DEFAULT, fmt=0)
 	libtcod.console_print_ex(sidebar, 1, 30, libtcod.BKGND_NONE, libtcod.LEFT, '1:' + str(get_equipped_in_slot('Insert 1')))
 	libtcod.console_print_ex(sidebar, 1, 31, libtcod.BKGND_NONE, libtcod.LEFT, '2:' + str(get_equipped_in_slot('Left hand')))
 	libtcod.console_print_ex(sidebar, 1, 32, libtcod.BKGND_NONE, libtcod.LEFT, '3:' + str(get_equipped_in_slot('Right Hand')))
@@ -1987,7 +1986,7 @@ def render_all():
 
 	#blit the contents of "panel" to the root console
 	libtcod.console_blit(panel, 0, 0, SCREEN_WIDTH, PANEL_HEIGHT, 0, 0, PANEL_Y, 0.94, 0.2)
-	libtcod.console_blit(sidebar ,0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,SIDEBAR_X, SIDEBAR_Y, 0.94, 0.2)
+	libtcod.console_blit(sidebar, 0, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT, 0,SIDEBAR_X, SIDEBAR_Y, 0.94, 0.2)
 
 
 
@@ -2034,8 +2033,8 @@ def place_monsters(room):
 		if not is_blocked(x, y):
 			choice = random_choice(monster_chances)
 			tmpData = monster_data[choice]
-			fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=tmpData['hp'], defense=tmpData['defense'], power=tmpData['power'], dex=tmpData['dex'], hack=0,
-										accuracy=tmpData['accuracy'], firearmdmg=tmpData['firearmdmg'], firearmacc=tmpData['firearmacc'], eloyalty=0, vloyalty=0, ammo=tmpData['ammo'],
+			fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=tmpData['hp'], defense=tmpData['defense'], strength=tmpData['strength'], dexterity=tmpData['dexterity'],
+										perception=tmpData['perception'], firearmdmg=tmpData['firearmdmg'], intelligence=tmpData['intelligence'], firearmacc=tmpData['firearmacc'], eloyalty=0, vloyalty=0, ammo=tmpData['ammo'],
 										charge=0, xp=tmpData['xp'], move_speed=tmpData['move_speed'], flicker=0, robot=tmpData['robot'], death_function=tmpData['death_function'], creddrop=tmpData['creddrop'])
 			ai_component = BasicMonster()
 			monster = Object(x, y, tmpData['character'], tmpData['name'], tmpData['character_color'], tmpData['desc'], blocks=True, fighter=fighter_component, ai=ai_component)
@@ -2146,25 +2145,25 @@ def place_objects(room):
 
 			elif choice == 'dagger':
 				#create a dagger
-				equipment_component = Equipment(slot='Right hand', power_bonus=3)
+				equipment_component = Equipment(slot='Right hand', strength_bonus=3)
 				item = Object(x, y, '/', 'a dagger', libtcod.sky,
 							  desc='a worn dagger, built for knife fights', equipment=equipment_component)
 
 			elif choice == 'nanosteelblade':
 				#create a dagger
-				equipment_component = Equipment(slot='Right hand', power_bonus=4)
+				equipment_component = Equipment(slot='Right hand', strength_bonus=4)
 				item = Object(x, y, '/', 'a nano-steel blade', libtcod.dark_sky, make='Erma',
 							  desc='an ' + worldgen.corptwo + ' Nano-Steel Blade', equipment=equipment_component)
 
 			elif choice == 'combatblade':
 				#create a dagger
-				equipment_component = Equipment(slot='Right hand', power_bonus=6, dex_bonus=-1)
+				equipment_component = Equipment(slot='Right hand', strength_bonus=6, dex_bonus=-1)
 				item = Object(x, y, '/', 'a combat blade', libtcod.darker_sky, make='Vorikov',
 							  desc='a ' + worldgen.corpone + ' Combat Blade, Deadly but bulky', equipment=equipment_component)
 
 			elif choice == 'Katana':
 				#create a dagger
-				equipment_component = Equipment(slot='Right hand', power_bonus=8, dex_bonus=1)
+				equipment_component = Equipment(slot='Right hand', strength_bonus=8, dex_bonus=1)
 				item = Object(x, y, '/', 'a katana', libtcod.darkest_sky, make=' ',
 							  desc='a Katana, Deadly and accurate', equipment=equipment_component)
 
@@ -2178,19 +2177,19 @@ def place_objects(room):
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=4, firearm_acc_bonus=1)
 				item = Object(x, y, 231, 'VK-19', libtcod.dark_sky, make='Vorikov',
-							  desc='a ' + worldgen.corpone + ' VK-19 rifle. Accurate and moderately powerful.',  value=150, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-19 rifle. Accurate and moderately strengthful.',  value=150, equipment=equipment_component)
 
 			elif choice == 'vkp5':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=6, firearm_acc_bonus=-2)
 				item = Object(x, y, 231, 'VK-P5', libtcod.darker_sky, make='Vorikov',
-							  desc='a ' + worldgen.corpone + ' VK-P5. A powerful but innacurate peppergun.', value=150, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-P5. A strengthful but innacurate peppergun.', value=150, equipment=equipment_component)
 
 			elif choice == 'vk180':
 				#create a dagger
 				equipment_component = Equipment(slot='Left hand', firearm_dmg_bonus=9, dex_bonus=-3)
 				item = Object(x, y, 231, 'VK-180', libtcod.darkest_sky, make='Vorikov',
-							  desc='a ' + worldgen.corpone + ' VK-180, an immensely powerful heavy rifle which completely cripples your dexterity', value=300, equipment=equipment_component)
+							  desc='a ' + worldgen.corpone + ' VK-180, an immensely strengthful heavy rifle which completely cripples your dexterity', value=300, equipment=equipment_component)
 
 			## Armour:
 
@@ -2221,12 +2220,12 @@ def place_objects(room):
 
 			elif choice == 'goggles':
 				#create a shield
-				equipment_component = Equipment(slot='Head', accuracy_bonus=1)
+				equipment_component = Equipment(slot='Head', perception_bonus=1)
 				item = Object(x, y, 'e', 'a pair of targeting goggles', libtcod.lighter_blue, make='Erma', desc='a pair of' + worldgen.corptwo +  'targetting goggles', equipment=equipment_component)
 
 			elif choice == 'visor':
 				#create a shield
-				equipment_component = Equipment(slot='Head', accuracy_bonus=2, firearm_dmg_bonus=1, vloyalty_bonus=1)
+				equipment_component = Equipment(slot='Head', perception_bonus=2, firearm_dmg_bonus=1, vloyalty_bonus=1)
 				item = Object(x, y, 'e', 'a sharpshooter visor', libtcod.light_blue,  make='Vorikov',
 							  desc='a' + worldgen.corpone + 'sharpshooter visor',  value=200, equipment=equipment_component)
 
@@ -2272,7 +2271,7 @@ def hub():
 		features = libtcod.namegen_generate('features')
 		libtcod.namegen_parse('colours.txt')
 		colours = libtcod.namegen_generate('colours')
-		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, setx=0, sety=0, destset=False, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
+		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, setx=0, sety=0, destset=False, hp=20, defense=10, strength=4, hack=0, dexterity=10, perception=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
@@ -2287,7 +2286,7 @@ def hub():
 		libtcod.namegen_parse('colours.txt')
 		colours = libtcod.namegen_generate('colours')
 
-		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0,  setx=0, sety=0, destset=False, hp=20, defense=10, power=4, hack=0, dex=10, accuracy=4,
+		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0,  setx=0, sety=0, destset=False, hp=20, defense=10, strength=4, hack=0, dexterity=10, perception=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
@@ -2363,7 +2362,7 @@ def hub():
 def factory():
 	cultistplace = [(20,5), (5,24), (7, 4), (9, 8), (30, 10)]
 	for x,y in cultistplace:
-		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=5, power=8, dex=2, hack=0, accuracy=5, firearmdmg=0, firearmacc=0,
+		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=20, defense=5, strength=8, dexterity=2, intelligence=0, perception=5, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=100, move_speed=2, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 		ai_component = CleverMonster()
 		monster = Object(x, y, 'c', 'Cultist', libtcod.light_red, desc='a Leucrocota Cultist',
@@ -2372,7 +2371,7 @@ def factory():
 
 	deviationplace = [(10,5), (5,30), (7, 9), (9, 15), (32, 20)]
 	for x,y in deviationplace:
-		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=120, defense=5, power=10, dex=1, hack=0, accuracy=6, firearmdmg=0, firearmacc=0,
+		fighter_component = Fighter(my_path=0, lastx=0, lasty=0, hp=120, defense=5, strength=10, dexterity=1, intelligence=0, perception=6, firearmdmg=0, firearmacc=0,
 											eloyalty=0, vloyalty=0, ammo=0, charge=0, xp=120, move_speed=3, flicker=0, robot=False, death_function=monster_death, creddrop=0)
 		ai_component = CleverMonster()
 		monster = Object(x, y, 'D', 'Deviation', libtcod.red, desc='a Leucrocota Deviation, a towering amalgamation of decaying flesh and sharp bone',
@@ -2738,8 +2737,8 @@ def handle_keys():
 				msgbox(
 					'Character Information\n\nLevel: ' + str(player.level) + '\nExperience: ' + str(player.fighter.xp) +
 					'\nExperience to level up: ' + str(level_up_xp) + '\n\nMaximum HP: ' + str(player.fighter.max_hp) +
-					'\nAttack: ' + str(player.fighter.power) + '\nDefense: ' + str(player.fighter.defense) +
-					'\nDexterity: ' + str(player.fighter.dex) + '\nAccuracy: ' + str(player.fighter.accuracy) +
+					'\nAttack: ' + str(player.fighter.strength) + '\nDefense: ' + str(player.fighter.defense) +
+					'\nDexterity: ' + str(player.fighter.dexterity) + '\nperception: ' + str(player.fighter.perception) +
 					'\nErma Loyalty: ' + str(player.fighter.eloyalty) + '   Vorikov Loyalty: ' + str(player.fighter.vloyalty),
 					CHARACTER_SCREEN_WIDTH)
 
@@ -2837,17 +2836,17 @@ def level_up():
 		while choice == None:  #keep asking until a choice is made
 			choice = menu('Level up! Choose a stat to raise:\n',
 						  ['Constitution (+20 HP, from ' + str(player.fighter.max_hp) + ')',
-						   'Strength (+1 attack, from ' + str(player.fighter.power) + ')',
-						   'Dexterity (+1 dexterity, from ' + str(player.fighter.base_dex) + ')',
+						   'Strength (+1 attack, from ' + str(player.fighter.strength) + ')',
+						   'Dexterity (+1 dexterity, from ' + str(player.fighter.base_dexterity) + ')',
 						   'Hacking (+1 hacking, +2 charge, from ' + str(player.fighter.charge) + ')'], LEVEL_SCREEN_WIDTH)
 
 		if choice == 0:
 			player.fighter.base_max_hp += 20
 			player.fighter.hp += 20
 		elif choice == 1:
-			player.fighter.base_power += 1
+			player.fighter.base_strength += 1
 		elif choice == 2:
-			player.fighter.base_dex += 1
+			player.fighter.base_dexterity += 1
 		elif choice == 3:
 			player.fighter.hack += 1
 			player.fighter.base_charge += 2
@@ -2973,7 +2972,7 @@ def open_box(obj, opened):
 
 	inventory.append(item)
 	message('You picked up ' + item.name + '!', libtcod.green)
-	object_destroy(obj)
+	object_destroy(obj, opened)
 
 
 def convo(obj):
@@ -3569,8 +3568,8 @@ def new_game():
 	playername = name.capitalize()
 
 	#create object representing the player
-	fighter_component = Fighter(hp=900, lastx=0, lasty=0, my_path=0, defense=1, dex=4, accuracy=2, firearmdmg=2, vloyalty=0, eloyalty=0,
-								firearmacc=sht, ammo=10, power=pwr, hack=hck, charge=10+(hck * 2), xp=0, move_speed=2, flicker=0, robot=False, paralysis=False, death_function=player_death)
+	fighter_component = Fighter(hp=900, lastx=0, lasty=0, my_path=0, defense=1, dexterity=4, perception=2, firearmdmg=2, vloyalty=0, eloyalty=0,
+								firearmacc=sht, ammo=10, strength=pwr, intelligence=hck, charge=10+(hck * 2), xp=0, move_speed=2, flicker=0, robot=False, paralysis=False, death_function=player_death)
 	player = Object(0, 0, '@', playername, libtcod.white, blocks=True, desc=name, fighter=fighter_component)
 
 	#add player start variables - pretty much whatever we want really.
@@ -3606,7 +3605,7 @@ def new_game():
 
 
 	#initial equipment: a knife, pistol
-	equipment_component = Equipment(slot='Right hand', power_bonus=2)
+	equipment_component = Equipment(slot='Right hand', strength_bonus=2)
 	obj = Object(0, 0, '-', 'Knife', libtcod.sky, equipment=equipment_component)
 
 	inventory.append(obj)
@@ -3743,9 +3742,10 @@ def load_data():
 	libtcod.struct_add_property(monsterStruct, 'desc', libtcod.TYPE_STRING, True)
 	libtcod.struct_add_property(monsterStruct, 'hp', libtcod.TYPE_INT, True)
 	libtcod.struct_add_property(monsterStruct, 'defense', libtcod.TYPE_INT, True)
-	libtcod.struct_add_property(monsterStruct, 'power', libtcod.TYPE_INT, True)
-	libtcod.struct_add_property(monsterStruct, 'dex', libtcod.TYPE_INT, True)
-	libtcod.struct_add_property(monsterStruct, 'accuracy', libtcod.TYPE_INT, True)
+	libtcod.struct_add_property(monsterStruct, 'strength', libtcod.TYPE_INT, True)
+	libtcod.struct_add_property(monsterStruct, 'dexterity', libtcod.TYPE_INT, True)
+	libtcod.struct_add_property(monsterStruct, 'intelligence', libtcod.TYPE_INT, True)
+	libtcod.struct_add_property(monsterStruct, 'perception', libtcod.TYPE_INT, True)
 	libtcod.struct_add_property(monsterStruct, 'firearmdmg', libtcod.TYPE_INT, True)
 	libtcod.struct_add_property(monsterStruct, 'firearmacc', libtcod.TYPE_INT, True)
 	libtcod.struct_add_property(monsterStruct, 'ammo', libtcod.TYPE_INT, True)
