@@ -94,7 +94,7 @@ class Tile:
 		self.blocked = blocked
 
 		self.sludge = sludge
-		self.bar = bar 
+		self.bar = bar
 		self.door = door
 		self.water = water
 
@@ -1596,10 +1596,12 @@ def target_tile(max_range=None, projectile = False):
 					else:
 						libtcod.console_set_char_background(con, dx, dy, libtcod.light_red, libtcod.BKGND_SET)
 						dx, dy = libtcod.line_step()
-					if libtcod.map_is_in_fov(fov_map, x, y):
-						libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
-					else:
-						libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_red, libtcod.BKGND_SET)
+
+			else:
+				if libtcod.map_is_in_fov(fov_map, x, y):
+					libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_green, libtcod.BKGND_SET)
+				else:
+					libtcod.console_set_char_background(con, x - camera_x, y - camera_y, libtcod.dark_red, libtcod.BKGND_SET)
 
 
 		#libtcod.console_flush()
