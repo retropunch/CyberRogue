@@ -74,3 +74,18 @@ name "corpcrime"{
 syllablesStart = "insider_trading,bribing_government_officials,assassinating_government_officials,tax_evasion,violating_labor_laws,fraud"
 rules = "%50$s"
 }
+
+name "moderateideology"{
+syllablesStart = "libertarian,liberal,conservative,centrist,social democrat"
+rules = "%50$s"
+}
+
+name "booktitle"{
+syllablesStart = "History_of,Chronicles_of,Expose_of,Truth_of,Understanding,Recontextualizing,The_Rise_and_Fall_of,Corporate_Virtues_in,Greed_and_Villiany_in,Legacy_of,Explaining,Society_and,Reforming"
+rules = "%50$s"
+}
+
+name "job"{
+syllablesStart = "journalist,police_officer,former_employee,historian,former_Director,government_official,former_lobbyist,mercenary"
+rules = "%50$s"
+}

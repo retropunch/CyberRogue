@@ -391,7 +391,7 @@ class Fighter:
 		#a simple formula for attack damage
 		global game_turn
 		damage = (self.firearmdmg - target.fighter.defense) + libtcod.random_get_int(0, 0, 6)
-		tohit = ((self.dexterity / 4) + self.rangedtohit + 2) - libtcod.random_get_int(0, 0, 4)
+		tohit = ((self.dexterity / 4) + self.perception + 2) - libtcod.random_get_int(0, 0, 4)
 		if tohit >= target.fighter.dexterity:
 			if damage > 0:
 				#make the target take some damage
@@ -1044,7 +1044,7 @@ class BasicNpc:
 				if n == 'wander':
 					(monster.nonplayerchar.setx,monster.nonplayerchar.sety) = random_unblocked_tile_on_map()
 					monster.nonplayerchar.destset = True
-				if n ==  'shop':
+				if n == 'shop':
 					monster.nonplayerchar.setx = 6
 					monster.nonplayerchar.sety = 4
 					monster.nonplayerchar.destset = True
@@ -1054,7 +1054,7 @@ class BasicNpc:
 					monster.nonplayerchar.destset = True
 
 			if monster.x != monster.nonplayerchar.setx and monster.y != monster.nonplayerchar.sety:
-				monster.nonplayerchar.move_towards(monster.nonplayerchar.setx,monster.nonplayerchar.sety)
+				monster.nonplayerchar.move_towards(monster.nonplayerchar.setx, monster.nonplayerchar.sety)
 			else:
 				monster.nonplayerchar.destset = False
 
@@ -1735,7 +1735,7 @@ def menu(header, options, width):
 def informationscreen(header, text):
 	global camera_x, camera_y
 
-	width = 58
+	width = 50
 	height = 34
 
 	#create an off-screen console that represents the menu's window
@@ -1745,13 +1745,13 @@ def informationscreen(header, text):
 
 	#print the header, with auto-wrap
 	libtcod.console_set_default_foreground(info, libtcod.green)
-	libtcod.console_print_frame(info, 0,0, width, height, False, libtcod.BKGND_NONE,0)
-	libtcod.console_print_rect_ex(info,0, 0, width, height, libtcod.BKGND_NONE, libtcod.LEFT, header)
+	libtcod.console_print_frame(info, 10, 0, width, height, False, libtcod.BKGND_NONE,0)
+	libtcod.console_print_rect_ex(info, 10, 0, width, height, libtcod.BKGND_NONE, libtcod.LEFT, header)
 
 	#print all the options
 	y = 0
 	#for text in text:
-	libtcod.console_print_rect_ex(info, 1, 1, width -5, height, libtcod.BKGND_NONE, libtcod.LEFT, text)
+	libtcod.console_print_rect_ex(info, 11, 1, width -5, height, libtcod.BKGND_NONE, libtcod.LEFT, text)
 		#y += 1
 
 	#blit the contents of "window" to the root console
@@ -2263,22 +2263,22 @@ def hub():
 
 	#NPCs
 	#NPC direct placement:
-	npcplace = [(4,24), (5,24), (7, 4), (9, 8), (15, 28), (30, 10)]
-	for x,y in npcplace:
-		libtcod.namegen_parse('npcattrib.txt')
-		name = libtcod.namegen_generate('npcnames')
-		clothes = libtcod.namegen_generate('clothes')
-		features = libtcod.namegen_generate('features')
-		libtcod.namegen_parse('colours.txt')
-		colours = libtcod.namegen_generate('colours')
-		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, setx=0, sety=0, destset=False, hp=20, defense=10, strength=4, hack=0, dexterity=10, perception=4,
-											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
-		ai_component = BasicNpc()
-		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
-								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
-		objects.append(npc)
+	#npcplace = [(4,24), (5,24), (7, 4), (9, 8), (15, 28), (30, 10)]
+	#for x,y in npcplace:
+	#	libtcod.namegen_parse('npcattrib.txt')
+	#	name = libtcod.namegen_generate('npcnames')
+	#	clothes = libtcod.namegen_generate('clothes')
+	#	features = libtcod.namegen_generate('features')
+	#	libtcod.namegen_parse('colours.txt')
+	#	colours = libtcod.namegen_generate('colours')
+	#	nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0, setx=0, sety=0, destset=False, hp=20, defense=10, strength=4, hack=0, dexterity=10, perception=4,
+	#										eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
+	#	ai_component = BasicNpc()
+	#	npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
+	#							 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
+	#	objects.append(npc)
 
-	for n in range(1,15):
+	for n in range(1,30):
 		libtcod.namegen_parse('npcattrib.txt')
 		name = libtcod.namegen_generate('npcnames')
 		clothes = libtcod.namegen_generate('clothes')
@@ -2289,9 +2289,9 @@ def hub():
 		nonplayerchar_component = NonplayerChar(my_path=0, lastx=0, lasty=0,  setx=0, sety=0, destset=False, hp=20, defense=10, strength=4, hack=0, dexterity=10, perception=4,
 											eloyalty=0, vloyalty=0, xp=0, move_speed=5, flicker=0, robot=False, death_function=monster_death, creddrop=0, use_function=convo)
 		ai_component = BasicNpc()
+		(x,y) = random_unblocked_tile_on_map()
 		npc = Object(x, y, 'N', name, libtcod.fuchsia, desc= name + "." + " They are " + features + ' and wearing a ' + colours + ' ' + clothes,
 								 blocks=True, nonplayerchar=nonplayerchar_component, ai=ai_component)
-		npc.x, npc.y = random_unblocked_tile_on_map()
 		objects.append(npc)
 
 	#n = range(1,15)
@@ -2559,6 +2559,7 @@ def handle_keys():
 
 	if game_state == 'playing':
 		#movement keys
+		key_char = chr(key.c)
 		if key.vk == libtcod.KEY_UP or key.vk == libtcod.KEY_KP8:
 			if player.fighter.paralysis:
 				take_game_turn()
@@ -2673,6 +2674,22 @@ def handle_keys():
 				take_game_turn()
 				take_game_turn()
 
+		elif key_char == 'f':
+					#ask the player for a target tile to shoot at
+				if player.fighter.ammo >= 1:
+					message('Left-click an enemy to shoot it, or right-click to cancel.', libtcod.light_cyan)
+					monster = target_monster()
+					if monster is None:
+						return 'cancelled'
+					else:
+						player.fighter.shoot(monster)
+						player.fighter.ammo -= 1
+						take_game_turn()
+						take_game_turn()
+						#render_all()
+				else:
+					message('you have run out of bullets')
+
 		else:
 			#test for other keys
 			key_char = chr(key.c)
@@ -2757,24 +2774,10 @@ def handle_keys():
 				except NameError:
 					if upstairs.x == player.x and upstairs.y == player.y:
 						past_level()
+					else:
+						message('There are no stairs here')
 				else:
 					exitfactory()
-
-
-			if key_char == 'f':
-					#ask the player for a target tile to shoot at
-				if player.fighter.ammo >= 1:
-					message('Left-click an enemy to shoot it, or right-click to cancel.', libtcod.light_cyan)
-					monster = target_monster()
-					if monster is None:
-						return 'cancelled'
-					else:
-						player.fighter.shoot(monster)
-						player.fighter.ammo -= 1
-
-				else:
-					message('you have run out of bullets')
-
 
 			if key_char == 'h':
 				#ask the player for a target tile to hack it
@@ -3483,24 +3486,28 @@ def check_time():
 
 
 def show_world():
-	informationscreen('Corporations',
-		'\n'+
-		'Corporation: ' + str(worldgen.corpone)
-		+ '\nDeals in: Weapons and ' + str(worldgen.corponeproducts)
-		+ '\n' +
-		'\nHistory: ' + str(worldgen.corponehistory)
-		+ '\n' + '\n' +
-		'\nCorporation: ' + str(worldgen.corptwo)
-		+ '\nDeals in: Pharmaceuticals and ' + str(worldgen.corptwoproducts)
-		+ '\n' +
-		'\nHistory: ' + str(worldgen.corptwohistory)
-		+ '\n' +  '\n' +
+	choice = menu('', ['History', 'Quit'], 24)
+	if choice == 0:
+		informationscreen('History',
+			'\n'+
+			'Corporation: ' + str(worldgen.corpone)
+			+ '\nDeals in: Weapons and ' + str(worldgen.corponeproducts)
+			+ '\n' +
+			'\nHistory: ' + str(worldgen.corponehistory)
+			+ '\n' + '\n' +
+			'\nCorporation: ' + str(worldgen.corptwo)
+			+ '\nDeals in: Pharmaceuticals and ' + str(worldgen.corptwoproducts)
+			+ '\n' +
+			'\nHistory: ' + str(worldgen.corptwohistory)
+			+ '\n' +  '\n' +
 
-		'\nCorporation: ' + str(worldgen.corpthree)
-		+ '\nDeals in: Electronics and ' + str(worldgen.corpthreeproducts)
-		+ '\n' +
-		'\nHistory: ' + str(worldgen.corpthreehistory)
-		)
+			'\nCorporation: ' + str(worldgen.corpthree)
+			+ '\nDeals in: Electronics and ' + str(worldgen.corpthreeproducts)
+			+ '\n' +
+			'\nHistory: ' + str(worldgen.corpthreehistory)
+			)
+	else:
+		return
 
 
 def evening():
